@@ -22,9 +22,11 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'digits:10'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'mpin' => ['required', 'confirmed']
+            'mpin' => ['required', 'confirmed'],
+            'terms' => ['accepted']
         ]);
 
         $user = User::create([
