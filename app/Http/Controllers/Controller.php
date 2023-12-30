@@ -24,6 +24,21 @@ class Controller extends BaseController
         ];
     }
 
+    /**
+     * secret key
+     * secret key timestamp
+     * public key
+     * data
+     */
+    public function requestHash(array $data)
+    {
+        $headers = $this->ekoHeaders();
+        $string = $headers['secre-key-timestamp'] . $data['utility_number'] . $data['amount'] . $data['user_code'];
+        $signature_request_hash = hash_hmac("SHA256", $string, base64_encode(env('KEY')), true);
+        $request_hash = base64_encode($signature_request_hash);
+        return ['request_hash' => $request_hash];
+    }
+
     public function triggerSms(array $contents)
     {
         //Http request for message triggers

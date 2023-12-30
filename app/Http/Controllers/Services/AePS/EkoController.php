@@ -10,21 +10,6 @@ use Illuminate\Support\Facades\Http;
 class EkoController extends Controller
 {
 
-    /**
-     * secret key
-     * secret key timestamp
-     * public key
-     * data
-     */
-    public function requestHash(array $data)
-    {
-        $headers = $this->ekoHeaders();
-        $string = $headers['secre-key-timestamp'] . $data['aadhaar'] . $data['amount'] . $data['user_code'];
-        $signature_request_hash = hash_hmac("SHA256", $string, base64_encode(env('KEY')), true);
-        $request_hash = base64_encode($signature_request_hash);
-        return ['request_hash' => $request_hash];
-    }
-
     public function merchantAuthentication(Request $request): Response
     {
         $user = auth()->user();
@@ -50,7 +35,7 @@ class EkoController extends Controller
     {
         $user = auth()->user();
         $hash_data = [
-            'aadhaar' => $request->aadhaar,
+            'utility_number' => $request->aadhaar,
             'amount' => $request->amount,
             'user_code' => $user->eko_user_code
         ];
