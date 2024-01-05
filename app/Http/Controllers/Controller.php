@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Firebase\JWT\JWT;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -10,6 +11,9 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    /**
+     * Eko headers
+     */
     public function ekoHeaders(): array
     {
         $encoded_key = base64_encode(env('KEY'));
@@ -37,6 +41,25 @@ class Controller extends BaseController
         $signature_request_hash = hash_hmac("SHA256", $string, base64_encode(env('KEY')), true);
         $request_hash = base64_encode($signature_request_hash);
         return ['request_hash' => $request_hash];
+    }
+
+    /**
+     * Token Generation for Paysprint
+     */
+    public function paysprintHeaders(): array
+    {
+        $key = env('JWT_KEY');
+        $payload = [
+            'timestamp' => time(),
+            'partnerId' => env('PAYSPRINT_PARTNERID'),
+            'reqid' => abs(crc32(uniqid()))
+        ];
+
+        $jwt = JWT::encode($payload, $key, 'HS256');
+        return [
+        'Token' => $jwt,
+        'Authorisedkey' => env('AUTHORISED_KEY')
+        ];
     }
 
     public function triggerSms(array $contents)
