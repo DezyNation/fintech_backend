@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bbps', function (Blueprint $table) {
+        Schema::create('operators', function (Blueprint $table) {
             $table->id();
+            $table->string('category');
+            $table->string('name');
+            $table->string('type');
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bbps');
+        Schema::dropIfExists('operators');
     }
 };

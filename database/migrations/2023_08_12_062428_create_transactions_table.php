@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnUpdate();
             $table->foreignUuid('updated_by')->constrained('users')->cascadeOnUpdate();
             $table->foreignUuid('triggered_by')->constrained('users')->cascadeOnUpdate();
+            $table->string('reference_id');
             $table->string('service');
             $table->text('description');
             $table->decimal('credit_amount', 16, 4);
