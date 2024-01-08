@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,4 +18,10 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-require __DIR__.'/auth.php';
+Route::get('test', function () {
+    $user = User::find('9b0b02eb-df1e-4616-bcb3-43fa5e26d5b7');
+    $role = $user->getRoleId();
+    dd($role);
+});
+
+require __DIR__ . '/auth.php';
