@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class AepsCommission extends Model
 {
     use HasFactory;
+
+    protected $table = 'aeps_commissions';
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Services\AePS\CommissionController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +21,9 @@ Route::get('/', function () {
 
 Route::get('test', function () {
     $user = User::find('9b0b02eb-df1e-4616-bcb3-43fa5e26d5b7');
-    $role = $user->getRoleId();
-    dd($role);
+    $class = new CommissionController();
+    $commision = $class->distributeCommission($user, 'CW', 500);
+    return $commision;
 });
 
 require __DIR__ . '/auth.php';

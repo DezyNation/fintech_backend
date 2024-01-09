@@ -2,28 +2,38 @@
 
 namespace App\Http\Controllers\Services\AePS;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use App\Models\AepsCommission;
+use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Model;
 
 class CommissionController extends Controller
 {
-    public function distributeCommission(User $user, float $amount): Collection
+
+    public function findCommission(User $user, string $service): array
     {
-        $role_id = $user->getRoleId();
-        $plan_id = $user->plan_id;
-        $commission = DB::table('aeps_commissions')->where(['plan_id' => $plan_id, 'role_id' => $role_id])->where('from', '=<', $amount)->where('to', '>', $amount)->first();
+        return [
+            'plan_id' => $user->plan_id ?? 1,
+            'role_id' => $user->getRoleId(),
+            'service' => $service
+        ];
+    }
 
-        $fixed_charge = $commission->fixed_charge;
-        if ($commission->is_flat) {
-            $credit = $commission->commission;
-        } else {
-            $credit = $amount - ($amount*$commission->commission)/100;
+    public function distributeCommission(User $user, string $service, float $amount, bool $parent = false): Model
+    {
+        $instance = AepsCommission::where([$this->findCommission($user, $service)])->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
+        $fixed_charge = $parent ? 0 : $instance->fixed_charge;
+        $credit = $instance->is_flat ? $instance->commission : $amount * $instance->commission / 100;
+        $this->checkParent($user, $service, $amount);
+        return $instance;
+    }
+
+    public function checkParent(User $user, string $service, float $amount)
+    {
+        if (!is_null($user->parent_id)) {
+            $parent = User::find($user->parent_id);
+            $this->distributeCommission($parent, $service, $amount, true);
         }
-
-        return $commission;
     }
 }
