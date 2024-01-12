@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class DmtCommission extends Model
 {
     use HasFactory;
+
+    protected $model = 'dmt_commissions';
 }
