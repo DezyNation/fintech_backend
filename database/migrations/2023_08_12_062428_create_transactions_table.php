@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnUpdate();
             $table->foreignUuid('updated_by')->constrained('users')->cascadeOnUpdate();
             $table->foreignUuid('triggered_by')->constrained('users')->cascadeOnUpdate();

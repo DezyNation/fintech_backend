@@ -16,9 +16,9 @@ class Controller extends BaseController
      */
     public function ekoHeaders(): array
     {
-        $encoded_key = base64_encode(env('KEY'));
-        $secret_key_timestamp = (int)round(microtime(true), 1000);
-        $signature = hash_hmac("SHA256", $secret_key_timestamp, $encoded_key, true);
+        $encoded_key = base64_encode(env('EKO_KEY'));
+        $secret_key_timestamp = (int)round(microtime(true) * 1000);
+        $signature = hash_hmac('SHA256', $secret_key_timestamp, $encoded_key, true);
         $secret_key = base64_encode($signature);
 
         return [
@@ -29,18 +29,18 @@ class Controller extends BaseController
     }
 
     /**
+     * return array
      * secret key
      * secret key timestamp
-     * public key
      * data
      */
-    public function requestHash(array $data)
+    public function requestHash(array $data): array
     {
         $headers = $this->ekoHeaders();
-        $string = $headers['secre-key-timestamp'] . $data['utility_number'] . $data['amount'] . $data['user_code'];
-        $signature_request_hash = hash_hmac("SHA256", $string, base64_encode(env('KEY')), true);
+        $string = $headers['secret-key-timestamp'] . $data['utility_number'] . $data['amount'] . $data['user_code'];
+        $signature_request_hash = hash_hmac("SHA256", $string, base64_encode(env('EKO_KEY')), true);
         $request_hash = base64_encode($signature_request_hash);
-        return ['request_hash' => $request_hash];
+        return array_merge($headers, ['request_hash' => $request_hash]);
     }
 
     /**
@@ -57,8 +57,8 @@ class Controller extends BaseController
 
         $jwt = JWT::encode($payload, $key, 'HS256');
         return [
-        'Token' => $jwt,
-        'Authorisedkey' => env('AUTHORISED_KEY')
+            'Token' => $jwt,
+            'Authorisedkey' => env('AUTHORISED_KEY')
         ];
     }
 

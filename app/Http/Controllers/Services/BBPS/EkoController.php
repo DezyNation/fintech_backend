@@ -11,7 +11,7 @@ class EkoController extends Controller
 {
     public function categoryList(): Response
     {
-        $response = Http::withHeader($this->ekoHeaders())->asJson()
+        $response = Http::asJson()
             ->get('https://staging.eko.in/ekoapi/v2/billpayments/operators_category');
 
         return $response;
@@ -19,7 +19,7 @@ class EkoController extends Controller
 
     public function locationList(): Response
     {
-        $response = Http::withHeader($this->ekoHeaders())->asJson()
+        $response = Http::asJson()
             ->get('https://staging.eko.in/ekoapi/v2/billpayments/operators_location');
 
         return $response;
@@ -32,7 +32,7 @@ class EkoController extends Controller
             'Category' => $request->category
         ];
 
-        $response = Http::withHeader($this->ekoHeaders())->asJson()
+        $response = Http::asJson()
             ->get('https://staging.eko.in/ekoapi/v2/billpayments/operators_location', $data);
 
         return $response;
@@ -40,30 +40,29 @@ class EkoController extends Controller
 
     public function operatorParams($id): Response
     {
-        $response = Http::withHeader($this->ekoHeaders())->asJson()
+        $response = Http::asJson()
             ->get("https://staging.eko.in/ekoapi/v2/billpayments/operators/$id");
 
         return $response;
     }
 
-    public function fetchBill(Request $request): Response
+    public function fetchBill(Request $request)
     {
         $user = auth()->user();
         $data = [
-            'user_code' => $user->eko_user_code,
+            'user_code' => $user->eko_user_code ?? 20810200,
             'cliend_ref_id' => uniqid('BBPS-FB'), //change it
-            'sender_name' => $user->name,
+            'sender_name' => $user->name ?? 'Kaushik',
             'operator_id' => $request->operatorId,
             'utility_acc_no' => $request->utilityAccNo,
             'confirmation_mobile_no' => $request->confirmationMobileNo,
             'source_ip' => $request->ip(),
-            'hc_channel' => $request->hcChannel ?? 0,
-            'latlong' => $request->latlong,
+            'Latlong' => $request->latlong,
             //dob7
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asJson()
-            ->post('https://staging.eko.in/ekoapi/v2/billpayments/fetchbill', $data);
+            ->post('https://staging.eko.in/ekoapi/v2/billpayments/fetchbill?initiator_id=9962981729', $data);
 
         return $response;
     }
@@ -87,12 +86,13 @@ class EkoController extends Controller
             'source_ip' => $request->ip(),
             'latlong' => $request->latlong,
             'amount' => $request->amount,
-            'billfetchresponse' => $request->bill
+            'billfetchresponse' => $request->bill ?? '',
+            'hc_channel' => 1
             //dob7
         ];
 
-        $response = Http::withHeaders(array_merge($this->ekoHeaders(), $this->requestHash($hash_data)))->asJson()
-            ->post('https://staging.eko.in/ekoapi/v2/billpayments/paybill', $data);
+        $response = Http::withHeaders($this->requestHash($hash_data))->asJson()
+            ->post('https://staging.eko.in/ekoapi/v2/billpayments/paybill?initiator_id=9962981729', $data);
 
         return $response;
     }

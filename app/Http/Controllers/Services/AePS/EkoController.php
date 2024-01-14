@@ -31,20 +31,20 @@ class EkoController extends Controller
         return $response;
     }
 
-    public function aepsTransaction(Request $request): Response
+    public function aepsTransaction(Request $request)
     {
         $user = auth()->user();
         $hash_data = [
             'utility_number' => $request->aadhaar,
             'amount' => $request->amount,
-            'user_code' => $user->eko_user_code
+            'user_code' => $user->eko_user_code ?? 20810200
         ];
         $request_hash = $this->requestHash($hash_data);
         $data = [
-            'service_type' => $request->servicType,
+            'service_type' => $request->serviceType,
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => $user->eko_user_code,
-            'customer_id' => $user->phone_number,
+            'user_code' => $user->eko_user_code ?? 20810200,
+            'customer_id' => $user->phone_number ?? 9999999999,
             'aadhar' => $request_hash['request_hash'],
             'client_ref_id' => uniqid("AEPS-AU"),  // Change it
             'amount' => $request->amount,
@@ -53,21 +53,19 @@ class EkoController extends Controller
             'source_ip' => $request->ip(),
             'latlong' => $request->latlong,
             'bank_code' => $request->bankCode,
-            'piddata' => $request->piddata,
             //reference_tid
         ];
-
-        $response = Http::withHeaders(array_merge($this->ekoHeaders(), $request_hash))
+        $response = Http::asJson()->withHeaders($request_hash)
             ->post('https://staging.eko.in/ekoapi/v2/aeps', $data);
 
-        return $response;
+        return $response    ;
     }
 
     public function transactionInquiry(Request $request): Response
     {
         $transaction_id = $request->transactionId;
         $response = Http::withHeaders($this->ekoHeaders())
-        ->get("https://staging.eko.in/ekoapi/v1/transactions/$transaction_id", ['initiator_id' => env('INITIATOR_ID')]);
+            ->get("https://staging.eko.in/ekoapi/v1/transactions/$transaction_id", ['initiator_id' => env('INITIATOR_ID')]);
 
         return $response;
     }
