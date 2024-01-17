@@ -21,7 +21,7 @@ class PaysprintController extends Controller
     {
         $data = [
             'operator' => $request->operatorId,
-            'canumber' => $request->canumber,
+            'canumber' => $request->utilityAccNo,
             'mode' => 'online'
         ];
 
@@ -37,14 +37,14 @@ class PaysprintController extends Controller
             'mode' => 'online',
             'referenceid' => uniqid('BBPS-PB'),
             'operator' => $request->operatorId,
-            'canumber' => $request->canumber,
+            'canumber' => $request->utilityAccNo,
             'amount' => $request->amount,
-            'latitude' => $request->latlong, //divide
-            'longitude' => $request->latlong,  //divide
+            'latitude' => $request->latitude, //divide
+            'longitude' => $request->longitude,  //divide
             'bill_fetch' => $request->bill
         ];
 
-        $response = Http::withHeader($this->paysprintHeaders())->asJson()
+        $response = Http::withHeaders($this->paysprintHeaders())->asJson()
             ->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
 
         return $response;

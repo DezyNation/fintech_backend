@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Services\AePS\EkoController;
 use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
+use App\Http\Controllers\Services\BBPS\PaysprintController;
 use App\Http\Controllers\Services\DMT\EkoController as DMTEkoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,5 +23,5 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::post('aeps', [EkoController::class, 'aepsTransaction']);
-Route::post('bbps', [BBPSEkoController::class, 'payBill']);
+Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTEkoController::class, 'initiateTransaction']);

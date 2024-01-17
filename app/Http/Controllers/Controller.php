@@ -48,7 +48,7 @@ class Controller extends BaseController
      */
     public function paysprintHeaders(): array
     {
-        $key = env('JWT_KEY');
+        $key = env('PAYSPRINT_JWT');
         $payload = [
             'timestamp' => time(),
             'partnerId' => env('PAYSPRINT_PARTNERID'),
