@@ -12,7 +12,7 @@ class PaysprintController extends Controller
     public function customerInfo(Request $request): Response
     {
         $data = [
-            'mobile' => $request->mobileNo,
+            'mobile' => $request->customerId,
             'bank3_flag' => $request->bank3Flag
         ];
 
@@ -25,14 +25,14 @@ class PaysprintController extends Controller
     public function createCustomer(Request $request): Response
     {
         $data = [
-            'mobile' => $request->mobile,
+            'mobile' => $request->phoneNumber,
             'firstname' => $request->firstName,
             'lastname' => $request->lastName,
             'address' => $request->address,
             'otp' => $request->otp,
             'pincode' => $request->pincode,
             'stateresp' => $request->stateresp,
-            'bank3_flag' => $request->bank3Flag,
+            'bank3_flag' => $request->bank3Flag ?? 'No',
             'dob' => $request->dob,
             'gst_state' => $request->gstState,
         ];
@@ -46,11 +46,11 @@ class PaysprintController extends Controller
     public function addRecipient(Request $request): Response
     {
         $data = [
-            'mobile' => $request->mobile,
+            'mobile' => $request->phoneNumber, //phone number of customer
             'benename' => $request->recipientName,
             'address' => $request->address,
             'bankid' => $request->bankId,
-            'accno' => $request->accNo,
+            'accno' => $request->accountNumber,
             'ifsccode' => $request->ifsc,
             'verified' => 0,
             'pincode' => $request->pincode,
@@ -64,10 +64,10 @@ class PaysprintController extends Controller
         return $response;
     }
 
-    public function recipientList(Request $request): Response
+    public function recipientList(int $customer_id): Response
     {
         $data = [
-            'mobile' => $request->mobile
+            'mobile' => $customer_id
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
@@ -79,8 +79,8 @@ class PaysprintController extends Controller
     public function reipientDetails(Request $request): Response
     {
         $data = [
-            'mobile' => $request->mobile,
-            'beneid' => $request->beneId
+            'mobile' => $request->phoneNumber,
+            'beneid' => $request->recipintId
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
@@ -124,7 +124,7 @@ class PaysprintController extends Controller
     {
         $data = [
             'referenceid' => $request->ransactionId,
-            'ackno' => $request->ackno
+            'ackno' => $request->transactionId //Paysprint ackno
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
@@ -133,10 +133,10 @@ class PaysprintController extends Controller
         return $response;
     }
 
-    public function claimRefund(Request $request): Response
+    public function claimRefund(string $transaction_id, Request $request): Response
     {
         $data = [
-            'referenceid' => $request->ransactionId,
+            'referenceid' => $transaction_id,
             'ackno' => $request->ackno,
             'otp' => $request->otp
         ];

@@ -13,7 +13,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code,
+            'user_code' => $request->user()->user_eko_code,
             'client_ref_id' => uniqid('CMS-GL')
         ];
 

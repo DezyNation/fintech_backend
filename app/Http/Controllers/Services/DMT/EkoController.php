@@ -14,7 +14,7 @@ class EkoController extends Controller
         $customer_id = $request->customerId;
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code ?? 20810200
+            'user_code' => $request->user()->user_eko_code ?? 20810200
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())
@@ -44,7 +44,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code ?? 20810200,
+            'user_code' => $request->user()->user_eko_code ?? 20810200,
             'customer_id_type' => 'mobile_number',
             'customer_id' => $request->phoneNumber
         ];
@@ -59,7 +59,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code ?? 20810200,
+            'user_code' => $request->user()->user_eko_code ?? 20810200,
             'bank_id' => $request->bankId,
             'recipient_name' => $request->recipientName,
             'recipient_mobile' => $request->recipientMobile,
@@ -90,7 +90,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code ?? 20810200
+            'user_code' => $request->user()->user_eko_code ?? 20810200
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())
@@ -103,7 +103,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code ?? 20810200,
+            'user_code' => $request->user()->user_eko_code ?? 20810200,
             'client_ref_id' => uniqid('DMT-MT'), //change it
             'timestamp' => now(),
             'currency' => 'INR',
@@ -125,7 +125,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code
+            'user_code' => $request->user()->user_eko_code
         ];
         $transaction_id = $request->transactionId;
 
@@ -141,7 +141,7 @@ class EkoController extends Controller
 
         $data = [
             'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => auth()->user()->user_eko_code,
+            'user_code' => $request->user()->user_eko_code,
             'state' => 1,
             'otp' => $request->otp
         ];
