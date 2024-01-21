@@ -44,91 +44,47 @@ class PaysprintController extends Controller
         return $response;
     }
 
-    public function balanceInquiry(Request $request): Response
+    public function aepsTransaction(Request $request): object
     {
-        $user = auth()->user();
+        $user = $request->user();
         $data = [
             'mobilenumber' => $user->phone_number,
             'submerchantid' => $user->paysprint_merchant_id,
             'accessmodetype' => $user->accessmodetype,
-            'pipe' => 'bank2',
+            'pipe' => 'bank1|bank2|bank3',
             'is_iris' => 'no',
-            'transactiontype' => 'BE',
-            'referenceno' => uniqid("AEPS-AU"),
-            'timestamp' => date('Y-m-d H:i:s'),
-            'adhaarnumber' => $request->adhaarnumber,
-            'latitude' => $request->latlong, //divide
-            'longitude' => $request->latlong,  //divide
-            'data' => $request->piddata,
-            'ipaddress' => $request->ip(),
-            'requestremarks' => $request->remarks,
-            'nationalbankidentification' => $request->bankId
-        ];
-
-        $encryption = $this->encryptBody($data);
-
-        $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index', ['body' => $encryption]);
-
-        return $response;
-    }
-
-    public function withdrawal(Request $request): Response
-    {
-        $user = auth()->user();
-        $data = [
-            'mobilenumber' => $user->phone_number,
-            'submerchantid' => $user->paysprint_merchant_id,
-            'accessmodetype' => $user->accessmodetype,
-            'pipe' => 'bank2',
-            'is_iris' => 'no',
-            'transactiontype' => 'CW',
+            'transactiontype' => $request->serviceType,
             'referenceno' => uniqid("AEPS-CW"),
             'timestamp' => date('Y-m-d H:i:s'),
             'amount' => $request->amount,
-            'adhaarnumber' => $request->adhaarnumber,
-            'latitude' => $request->latlong, //divide
-            'longitude' => $request->latlong,  //divide
+            'adhaarnumber' => $request->adhaar,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'data' => $request->piddata,
             'ipaddress' => $request->ip(),
             'requestremarks' => $request->remarks,
-            'nationalbankidentification' => $request->bankId,
+            'nationalbankidentification' => $request->bankCode,
             'MerAuthTxnId' => $request->authenticity
         ];
 
         $encryption = $this->encryptBody($data);
+        switch ($request->serviceType) {
+            case 'BE':
+                $url = 'https://paysprint.in/service-api/api/v1/service/aeps/balanceenquiry/index';
+                continue;
+            case 'MS':
+                $url = 'https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index';
+                continue;
+            case 'CW':
+                $url = 'https://paysprint.in/service-api/api/v1/service/aeps/authcashwithdraw/index';
+                continue;
+            default:
+                return response("Not a valid service.", 400);
+                break;
+        }
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/aeps/authcashwithdraw/index', ['body' => $encryption]);
-
-        return $response;
-    }
-
-    public function miniStatement(Request $request): Response
-    {
-        $user = auth()->user();
-        $data = [
-            'mobilenumber' => $user->phone_number,
-            'submerchantid' => $user->paysprint_merchant_id,
-            'accessmodetype' => $user->accessmodetype,
-            'pipe' => 'bank2',
-            'is_iris' => 'no',
-            'transactiontype' => 'MS',
-            'referenceno' => uniqid("AEPS-MS"),
-            'timestamp' => date('Y-m-d H:i:s'),
-            'adhaarnumber' => $request->adhaarnumber,
-            'latitude' => $request->latlong, //divide
-            'longitude' => $request->latlong,  //divide
-            'data' => $request->piddata,
-            'ipaddress' => $request->ip(),
-            'requestremarks' => $request->remarks,
-            'nationalbankidentification' => $request->bankId
-        ];
-
-        $encryption = $this->encryptBody($data);
-
-        $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/aeps/ministatement/index', ['body' => $encryption]);
+            ->post($url, ['body' => $encryption]);
 
         return $response;
     }

@@ -31,9 +31,9 @@ class EkoController extends Controller
         return $response;
     }
 
-    public function aepsTransaction(Request $request)
+    public function aepsTransaction(Request $request, int $service): Response
     {
-        $user = auth()->user();
+        $user = $request->user();
         $hash_data = [
             'utility_number' => $request->aadhaar,
             'amount' => $request->amount,
@@ -41,7 +41,7 @@ class EkoController extends Controller
         ];
         $request_hash = $this->requestHash($hash_data);
         $data = [
-            'service_type' => $request->serviceType,
+            'service_type' => $service,
             'initiator_id' => env('INITIATOR_ID'),
             'user_code' => $user->eko_user_code ?? 20810200,
             'customer_id' => $user->phone_number ?? 9999999999,
@@ -53,7 +53,7 @@ class EkoController extends Controller
             'source_ip' => $request->ip(),
             'latlong' => $request->latlong,
             'bank_code' => $request->bankCode,
-            //reference_tid
+            'reference_tid' => $request->authenticity
         ];
         $response = Http::asJson()->withHeaders($request_hash)
             ->post('https://staging.eko.in/ekoapi/v2/aeps', $data);

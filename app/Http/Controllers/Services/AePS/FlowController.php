@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MerchantAuthRequest;
 use App\Http\Controllers\Services\AePS\EkoController;
 use App\Http\Controllers\Services\AePS\PaysprintController;
+use App\Http\Requests\AepsTrxnRequest;
 
 class FlowController extends Controller
 {
@@ -36,16 +37,18 @@ class FlowController extends Controller
         return response()->json(['reference_tid' => $response['MerAuthTxnId']], 200);
     }
 
-    public function transactions(Request $request): JsonResponse
+    public function transactions(AepsTrxnRequest $request): JsonResponse
     {
+        //2D array for multiple api provider
+        $services = ['MS' => 1, 'CW' => 2, 'BE' => 3];
         // Eko request
         $eko = new EkoController();
-        $response = $eko->aepsTransaction($request);
-        return response()->json(['reference_tid' => $response['data']['reference_tid']], 200);
+        $response = $eko->aepsTransaction($request, $services[$request->serviceType]);
+        return response()->json($response, 200);
 
         // Paysprint Request
         $paysprint = new PaysprintController();
-        $response = $paysprint->merchantAuthentication($request);
-        return response()->json(['reference_tid' => $response['MerAuthTxnId']], 200);
+        $response = $paysprint->aepsTransaction($request);
+        return response()->json($response, 200);
     }
 }
