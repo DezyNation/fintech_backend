@@ -58,6 +58,8 @@ class User extends Authenticatable implements JWTSubject
         'mpin' => 'hashed',
     ];
 
+    protected $guard_name = 'api';
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

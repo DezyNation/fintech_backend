@@ -29,7 +29,7 @@ class PaysprintController extends Controller
             'accessmodetype' => $user->accessmodetype,
             'referenceno' => uniqid("AEPS-AU"),
             'timestamp' => date('Y-m-d H:i:s'),
-            'adhaarnumber' => $request->adhaarnumber,
+            'adhaarnumber' => $request->aadhaar,
             'latitude' => $request->latlong, //divide
             'longitude' => $request->latlong,  //divide
             'data' => $request->piddata,
