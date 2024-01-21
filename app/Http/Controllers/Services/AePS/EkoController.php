@@ -19,8 +19,8 @@ class EkoController extends Controller
             'customer_id' => $user->phone_number,
             'aadhar' => $user->aadhaar,
             'client_ref_id' => uniqid("AEPS-AU"),  // Change it
-            'latlong' => $request->latlong,
-            'bank_code' => $request->bankCode,
+            'latlong' => implode(',', [$request->latitude, $request->longitude]),
+            'bank_code' => "HDFC",
             'piddata' => $request->piddata,
             //reference_tid
         ];
@@ -58,7 +58,7 @@ class EkoController extends Controller
         $response = Http::asJson()->withHeaders($request_hash)
             ->post('https://staging.eko.in/ekoapi/v2/aeps', $data);
 
-        return $response    ;
+        return $response;
     }
 
     public function transactionInquiry(Request $request): Response

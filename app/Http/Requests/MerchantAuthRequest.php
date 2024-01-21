@@ -22,9 +22,10 @@ class MerchantAuthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'aadhaar' => 'required|digits:12',
-            'latitude' => 'required|between:-90,90',
-            'longitude' => 'required|between:-180,180',
+            'aadhaar' => ['required', 'digits:12'],
+            'latitude' => ['required', 'between:-90,90'],
+            'longitude' => ['required', 'between:-180,180'],
+            'piddata' => ['required'],
         ];
     }
 }

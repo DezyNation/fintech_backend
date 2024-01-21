@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Services\AePS;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\MerchantAuthRequest;
+use App\Http\Controllers\Services\AePS\EkoController;
+use App\Http\Controllers\Services\AePS\PaysprintController;
 
 class FlowController extends Controller
 {
@@ -19,8 +23,29 @@ class FlowController extends Controller
      * Step 5: Commit or rollback transactions (depends on response)
      */
 
-    public function authentication(): bool
+    public function authentication(MerchantAuthRequest $request): JsonResponse
     {
-        
+        // Eko request
+        $eko = new EkoController();
+        $response = $eko->merchantAuthentication($request);
+        return response()->json(['reference_tid' => $response['data']['reference_tid']], 200);
+
+        // Paysprint Request
+        $paysprint = new PaysprintController();
+        $response = $paysprint->merchantAuthentication($request);
+        return response()->json(['reference_tid' => $response['MerAuthTxnId']], 200);
+    }
+
+    public function transactions(Request $request): JsonResponse
+    {
+        // Eko request
+        $eko = new EkoController();
+        $response = $eko->aepsTransaction($request);
+        return response()->json(['reference_tid' => $response['data']['reference_tid']], 200);
+
+        // Paysprint Request
+        $paysprint = new PaysprintController();
+        $response = $paysprint->merchantAuthentication($request);
+        return response()->json(['reference_tid' => $response['MerAuthTxnId']], 200);
     }
 }
