@@ -46,13 +46,14 @@ class FlowController extends Controller
      */
     public function transactions(AepsTrxnRequest $request): JsonResponse
     {
+        $user_id = $request->user()->id;
         $services = ['MS' => 1, 'CW' => 2, 'BE' => 3];
 
         //Eko Request
         $eko = new EkoController();
         $response = $eko->aepsTransaction($request, $services[$request->serviceType]);
         $result = $this->processResponse($response, $request);
-        TransactionController::store($request->user()->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
+        TransactionController::store($user_id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
         $commission = new CommissionController();
         $commission->distributeCommission(auth()->user(), $request->serviceType, $request->amount);
 
@@ -60,7 +61,7 @@ class FlowController extends Controller
         $paysprint = new PaysprintController();
         $response = $paysprint->aepsTransaction($request);
         $result = $this->processResponse($response, $request);
-        TransactionController::store($request->user()->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
+        TransactionController::store($user_id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
         $commission = new CommissionController();
         $commission->distributeCommission(auth()->user(), $request->serviceType, $request->amount);
 
