@@ -46,24 +46,24 @@ class FlowController extends Controller
      */
     public function transactions(AepsTrxnRequest $request): JsonResponse
     {
-        $user_id = $request->user()->id;
+        $user = $request->user();
         $services = ['MS' => 1, 'CW' => 2, 'BE' => 3];
 
         //Eko Request
         $eko = new EkoController();
         $response = $eko->aepsTransaction($request, $services[$request->serviceType]);
         $result = $this->processResponse($response, $request);
-        TransactionController::store($user_id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
+        TransactionController::store($user->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
         $commission = new CommissionController();
-        $commission->distributeCommission(auth()->user(), $request->serviceType, $request->amount);
+        $commission->distributeCommission($user, $request->serviceType, $request->amount);
 
         // Paysprint Request
         $paysprint = new PaysprintController();
         $response = $paysprint->aepsTransaction($request);
         $result = $this->processResponse($response, $request);
-        TransactionController::store($user_id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
+        TransactionController::store($user->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
         $commission = new CommissionController();
-        $commission->distributeCommission(auth()->user(), $request->serviceType, $request->amount);
+        $commission->distributeCommission($user, $request->serviceType, $request->amount);
 
         return response()->json($result, 200);
     }
