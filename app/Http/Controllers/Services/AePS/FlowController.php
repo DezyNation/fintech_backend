@@ -53,14 +53,12 @@ class FlowController extends Controller
         $eko = new EkoController();
         $response = $eko->aepsTransaction($request, $services[$request->serviceType]);
         $result = $this->processResponse($response, $request);
-        TransactionController::store($user->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
-        $commission = new CommissionController();
-        $commission->distributeCommission($user, $request->serviceType, $request->amount);
 
         // Paysprint Request
         $paysprint = new PaysprintController();
         $response = $paysprint->aepsTransaction($request);
         $result = $this->processResponse($response, $request);
+
         TransactionController::store($user->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
         $commission = new CommissionController();
         $commission->distributeCommission($user, $request->serviceType, $request->amount);
@@ -76,17 +74,17 @@ class FlowController extends Controller
             'reference_id' => $request['client_ref_id'],
             'amount' => $response['data']['amount'],
             'message' => $response['message'],
-            'aadhar' => $response['data']['aadhar'],
+            'aadhar' => substr($request['aadhar'], 0, -8),
             'transaction_time' => $response['data']['transaction_time']
         ];
 
         //Paysprint Response
         $result = [
             'status' => $response['status'],
-            'reference_id' => $$request['client_ref_id'],
+            'reference_id' => $request['client_ref_id'],
             'amount' => $response['data']['amount'],
             'message' => $response['message'],
-            'aadhar' => $$request['aadhar'],
+            'aadhar' => substr($request['aadhar'], 0, -8),
             'transaction_time' => $request['transaction_time']
         ];
 

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public static function store(string $user_id, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response)
+    public static function store(string $user_id, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response): bool
     {
         $user = auth()->user();
         $closing_balance = $user->balance + $credit_amount - $debit_amount;
@@ -26,7 +26,7 @@ class TransactionController extends Controller
             'metadata' => json_encode($response)
         ]);
 
-        User::where('id', $user->id)->update([
+        return User::where('id', $user->id)->update([
             'balance' => $closing_balance,
         ]);
     }
