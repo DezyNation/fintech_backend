@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Services\AePS\CommissionController;
+use App\Http\Controllers\Services\Payout\PaydeerController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +21,6 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-Route::get('test', function () {
-    $user = User::find('9b0b02eb-df1e-4616-bcb3-43fa5e26d5b7');
-    $class = new CommissionController();
-    $commision = $class->distributeCommission($user, 'CW', 500);
-    return $commision;
-});
+Route::get('test', [ReportController::class, 'dailySales']);
 
 require __DIR__ . '/auth.php';

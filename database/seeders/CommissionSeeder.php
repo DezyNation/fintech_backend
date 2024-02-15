@@ -13,6 +13,17 @@ class CommissionSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('aeps_commissions')->insert(['plan_id' => 1, 'role_id' => 4, 'from' => 1, 'to' => 1000, 'commission' => 5, 'is_flat' => 0, 'service' => 'CW', 'created_at' => now(), 'updated_at' => now()]);
+        DB::table('aeps_commissions')->insert([
+            'plan_id' => 1,
+            'role_id' => 1,
+            'from' => 1,
+            'to' => 1000,
+            'commission' => 5,
+            'is_flat' => 0,
+            'service' => 'CW',
+            'fixed_charge' => 1,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 }

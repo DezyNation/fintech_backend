@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\Plan::factory(10)->create();
         // $this->call([RoleSeeder::class, CommissionSeeder::class]);
         // \App\Models\User::factory(10)->create();
+        \App\Models\Transaction::factory(10)->create();
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

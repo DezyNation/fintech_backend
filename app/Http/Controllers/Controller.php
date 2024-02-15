@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use Firebase\JWT\JWT;
+use Illuminate\Cache\Lock;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Client\Response;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class Controller extends BaseController
 {
@@ -62,8 +66,18 @@ class Controller extends BaseController
         ];
     }
 
+    public function paydeerToken(): Response
+    {
+        return Http::post('https://paydeer.in/API/public/api/v1.1/generateToken', ['clientKey' => env('PAYDEER_CLIENT_KEY'), 'clientSecret' => env('PAYDEER_CLIENT_SECRET')]);
+    }
+
     public function triggerSms(array $contents)
     {
         //Http request for message triggers
+    }
+
+    public function lockRecords($key): Lock
+    {
+        return Cache::lock($key, 5);
     }
 }

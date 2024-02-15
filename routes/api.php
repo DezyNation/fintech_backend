@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
+use App\Http\Controllers\Dashboard\User\FundRequestController;
 use App\Http\Controllers\Services\AePS\EkoController;
 use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
 use App\Http\Controllers\Services\BBPS\PaysprintController;
@@ -26,3 +28,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('aeps', [EkoController::class, 'aepsTransaction']);
 Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
+
+/**************** User Routes ****************/
+Route::group(['prefix' => 'user'], function () {
+    Route::apiResource('funds', FundRequestController::class);
+});
+
+/**************** Admin Routes ****************/
+Route::group(['prefix' => 'admin'], function () {
+    Route::apiResource('funds', AdminFundRequestController::class);
+    Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
+});

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('new_registration_token', function (Blueprint $table) {
-            $table->primary('email')->primary();
-            $table->string('token');
-            $table->timestamp('expiry_at');
-            $table->timestamp('created_at')->useCurrent();
+        Schema::table('fund_requests', function (Blueprint $table) {
+            $table->uuid('id')->primary()->after('uuid');
+            $table->string('status')->default('pending')->after('transaction_id');
+            $table->dropColumn('uuid');
         });
     }
 
@@ -24,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('new_registration_token');
+        Schema::table('fund_requests', function (Blueprint $table) {
+            //
+        });
     }
 };

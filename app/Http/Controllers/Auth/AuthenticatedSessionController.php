@@ -17,9 +17,9 @@ class AuthenticatedSessionController extends Controller
 
     public function checkCredentials(Request $request)
     {
-        $request->only(['identifier', 'password']);
+        $request->only(['email', 'password']);
 
-        $identifier = $request['identifier'];
+        $identifier = $request['email'];
 
         $user = User::where('email', $identifier)->orWhere('phone_number', $identifier)->first();
 
@@ -33,11 +33,11 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $this->checkCredentials($request);
 
-        $credentials = $request->only(['identifier', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -88,7 +88,7 @@ class AuthenticatedSessionController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
     }
 }

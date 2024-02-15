@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public static function store(string $user_id, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response): bool
+    public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response)
     {
-        $user = auth()->user();
+        $auth_user = auth()->user();
         $closing_balance = $user->balance + $credit_amount - $debit_amount;
         Transaction::create([
-            'user_id' => $user_id,
-            'updated_by' => $user->id,
-            'triggered_by' => $user->id,
+            'user_id' => $user->id,
+            'updated_by' => $auth_user->id,
+            'triggered_by' => $auth_user->id,
             'reference_id' => $reference_id,
             'service' => $service,
             'description' => $description,
@@ -26,8 +27,7 @@ class TransactionController extends Controller
             'metadata' => json_encode($response)
         ]);
 
-        return User::where('id', $user->id)->update([
-            'balance' => $closing_balance,
-        ]);
+        $user->wallet = $closing_balance;
+        $user->save();
     }
 }
