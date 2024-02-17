@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('credentials', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->string('provider');
-            $table->string('key');
-            $table->string('secret');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->boolean('active')->default(1);
+            $table->boolean('api')->default(1);
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('credentials');
+        Schema::dropIfExists('services');
     }
 };
