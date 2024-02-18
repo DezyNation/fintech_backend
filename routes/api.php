@@ -31,7 +31,7 @@ Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 
 /**************** User Routes ****************/
-Route::group(['prefix' => 'user'], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
 });
