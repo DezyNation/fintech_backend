@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('broadcasts', function (Blueprint $table) {
-            $table->id();
-            $table->string('level')->nullable();
-            $table->text('message')->nullable();
-            $table->timestamps();
+        Schema::table('credentials', function (Blueprint $table) {
+            $table->dropColumn('key');
+            $table->dropColumn('secret');
+            $table->json('keys')->after('id');
         });
     }
 
@@ -24,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('broadcasts');
+        Schema::table('credentials', function (Blueprint $table) {
+            //
+        });
     }
 };

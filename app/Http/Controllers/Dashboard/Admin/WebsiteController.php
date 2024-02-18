@@ -46,8 +46,7 @@ class WebsiteController extends Controller
     {
         $data = Credential::create([
             'provider' => $request->provider,
-            'key' => $request->key,
-            'secret' => $request->secret
+            'keys' => $request->keys,
         ]);
 
         return new GeneralResource($data);
@@ -57,8 +56,7 @@ class WebsiteController extends Controller
     {
         $credential->update([
             'provider' => $request->provider ?? $credential->provider,
-            'key' => $request->key ?? $credential->key,
-            'secret' => $request->secret ?? $credential->secret
+            'keys' => $request->keys ?? $credential->keys,
         ]);
 
         return new GeneralResource($credential);

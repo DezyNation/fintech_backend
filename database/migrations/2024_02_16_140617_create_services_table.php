@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('active')->default(1);
             $table->boolean('api')->default(1);
+            $table->string('provider')->nullable();
             $table->timestamps();
         });
     }

@@ -42,8 +42,9 @@ class AuthenticatedSessionController extends Controller
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-
-        return $this->respondWithToken($token);
+        $user = auth()->user();
+        $user['roles'] = auth()->user()->getRoleNames()->first();
+        return response()->json($this->respondWithToken(['user' => $user])->cookie("token", $token, auth('api')->factory()->getTTL() * 60, '/', null, false, false));
     }
 
     /**

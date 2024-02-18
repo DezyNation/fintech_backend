@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -34,12 +35,14 @@ class RegisteredUserController extends Controller
             // 'terms' => ['accepted']
         ]);
 
+        $role = Role::where('default', true)->first();
+
         $user = User::create([
             // 'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             // 'mpin' => Hash::make($request->mpin)
-        ]);
+        ])->assignRole($role->name);
 
         event(new Registered($user));
 
