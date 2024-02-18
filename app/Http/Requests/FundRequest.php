@@ -22,8 +22,8 @@ class FundRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transactionId' => ['required', 'unique:fund_requests,transaction_id'],
-            'transactionDate' => ['required', 'date', 'before:tomorrow'],
+            'transaction_id' => ['required', 'unique:fund_requests,transaction_id'],
+            'transaction_date' => ['required', 'date', 'before:tomorrow'],
             'amount' => ['required', 'numeric', 'min:1'],
             'userRemarks' => ['nullable', 'string']
         ];

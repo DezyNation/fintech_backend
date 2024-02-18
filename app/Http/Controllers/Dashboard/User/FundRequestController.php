@@ -25,13 +25,13 @@ class FundRequestController extends Controller
     public function store(FundRequest $request)
     {
         $data = Fund::create([
-            'user_id' => $request->user()->id ?? '9b0b0131-d23b-4c45-b7b7-be20fc0b32b6',
-            'transaction_id' => $request->transactionId,
-            'transaction_date' => $request->transactionDate,
+            'user_id' => $request->user()->id,
+            'transaction_id' => $request->transaction_id,
+            'transaction_date' => $request->transaction_date,
             'amount' => $request->amount,
             'opening_balance' => $request->user()->wallet ?? 0,
             'closing_balance' => $request->user()->wallet ?? 0,
-            'user_remarks' => $request->userRemarks
+            'user_remarks' => $request->user_remarks
         ]);
 
         return new GeneralResource($data);
