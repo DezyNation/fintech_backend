@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
+use App\Http\Controllers\Dashboard\User\UserController;
 use App\Http\Controllers\Services\AePS\EkoController;
 use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
 use App\Http\Controllers\Services\BBPS\PaysprintController;
@@ -32,6 +33,7 @@ Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 /**************** User Routes ****************/
 Route::group(['prefix' => 'user'], function () {
     Route::apiResource('funds', FundRequestController::class);
+    Route::get('wallet', [UserController::class, 'wallet']);
 });
 
 /**************** Admin Routes ****************/
