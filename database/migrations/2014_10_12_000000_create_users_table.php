@@ -15,10 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->nullable();
             $table->string('email')->unique();
-            $table->string('phone_number')->unique();
+            $table->string('phone_number')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->string('mpin');
+            $table->string('password')->nullable();
+            $table->string('pin')->nullable();
             $table->string('otp')->nullable();
             $table->timestamp('otp_generated_at')->nullable();
             $table->rememberToken();
