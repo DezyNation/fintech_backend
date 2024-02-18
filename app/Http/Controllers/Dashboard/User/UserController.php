@@ -12,6 +12,6 @@ class UserController extends Controller
     public function wallet(): JsonResource
     {
         $user = auth()->user();
-        return new GeneralResource($user->wallet);
+        return new GeneralResource(['wallet' => $user->wallet]);
     }
 }
