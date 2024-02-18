@@ -44,7 +44,8 @@ class AuthenticatedSessionController extends Controller
         }
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
-        return response()->json($this->respondWithToken(['user' => $user])->cookie("token", $token, auth('api')->factory()->getTTL() * 60, '/', null, false, false));
+        $cookie = cookie("token", $token, auth('api')->factory()->getTTL() * 60, '/', null, true, true);
+        return response()->json($this->respondWithToken(['user' => $user]))->withCookie($cookie);
     }
 
     /**
