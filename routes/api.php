@@ -32,12 +32,12 @@ Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 
 /**************** User Routes ****************/
 Route::group(['prefix' => 'user'], function () {
-    Route::apiResource('funds', FundRequestController::class);
+    Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
 });
 
 /**************** Admin Routes ****************/
 Route::group(['prefix' => 'admin'], function () {
-    Route::apiResource('funds', AdminFundRequestController::class);
+    Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 });
