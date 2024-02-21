@@ -20,9 +20,13 @@ class FundRequestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = Fund::paginate(20);
+        $data = Fund::with(['user' => function ($q) {
+            $q->select('id', 'name');
+        }, 'reviewer' => function ($q) {
+            $q->select('id', 'name');
+        }])->where('status', $request->status)->paginate(20);
         return new GeneralResource($data);
     }
 
@@ -48,10 +52,10 @@ class FundRequestController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'token' => ['required', 'uuid'],
-            'status' => ['nullable', 'in:pending,approved,rejected'],
+            'status' => ['nullable', 'in:approved,rejected'],
+            'admin_remarks' => ['nullable', 'required_if:status,rejected']
         ]);
-        $fund = Fund::where(['id' => $id, 'token' => $request->token, 'status' => 'pending'])->lockForUpdate()->first();
+        $fund = Fund::where(['id' => $id, 'status' => 'pending'])->lockForUpdate()->first();
 
         $user_lock = $this->lockRecords($fund->user_id);
         $fund_lock = $this->lockRecords($fund->token);

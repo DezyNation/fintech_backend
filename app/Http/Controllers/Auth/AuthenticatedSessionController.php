@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
@@ -74,8 +75,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out'])->withCookie(Cookie::forget("token"));
     }
 
     /**

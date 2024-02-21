@@ -24,4 +24,14 @@ class Fund extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    /**
+     * Get the reviewer that user the Fund
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
