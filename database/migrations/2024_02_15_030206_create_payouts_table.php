@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('account_number');
             $table->string('ifsc_code');
             $table->string('beneficiary_name')->nullable();
-            $table->string('status');
+            $table->string('status')->default('pending');
             $table->string('description')->nullable();
             $table->string('mode');
             $table->json('metadata')->nullable();

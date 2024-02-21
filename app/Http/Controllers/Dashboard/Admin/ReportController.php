@@ -18,7 +18,8 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
-            ->whereBetween('created_at', [$request->start, $request->end])->paginate(30);
+            ->whereBetween('created_at', [$request->start, $request->end])
+            ->paginate(30);
 
         return new GeneralResource($data);
     }

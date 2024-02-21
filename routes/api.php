@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Dashboard\Admin\AdminController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
+use App\Http\Controllers\Dashboard\Admin\ReportController;
+use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
 use App\Http\Controllers\Dashboard\User\UserController;
 use App\Http\Controllers\Services\AePS\EkoController;
@@ -41,4 +44,19 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
 Route::group(['prefix' => 'admin'], function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
+
+    Route::group(['prefix' => 'roles'], function () {
+        Route::put('update-role', [AdminController::class, 'updateRole']);
+        Route::put('sync-user-permissions', [AdminController::class, 'updateUserPermission']);
+        Route::put('sync-role-permissions', [AdminController::class, 'updateRolePermission']);
+    });
+
+    Route::group(['prefix' => 'report'], function () {
+        Route::apiResource('ledgers', ReportController::class);
+        Route::get('daily-sales', [ReportController::class, 'dailySales']);
+        Route::get('payout', [ReportController::class, 'payoutReports']);
+    });
+
+    Route::apiResource('user', AdminUserController::class);
+    Route::put('user/send-credentials', [AdminUserController::class, 'sendCredential']);
 });

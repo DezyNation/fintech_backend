@@ -12,17 +12,6 @@ class PaydeerController extends Controller
 {
     public function initiateTransaction(Request $request): Response
     {
-        $request->validate([
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email'],
-            'mobile' => ['required', 'digits:10'],
-            'address' => ['nullable', 'string'],
-            'amount' => ['required', 'numeric', 'min:1'],
-            'txnType' => ['required'],
-            'account' => ['required', 'between:11,16'],
-            'ifsc' => ['required', 'string'],
-        ]);
-
         if (!Cache::has('paydeer-token')) {
             $token = $this->paydeerToken();
             Cache::put('paydeer-token', $token['data']['access_token']);
@@ -31,15 +20,15 @@ class PaydeerController extends Controller
         $token = Cache::get('paydeer-token');
 
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'address' => $request->address,
+            'name' => $request->beneficiary_name,
+            'email' => $request->user()->email,
+            'mobile' => $request->user()->phone_number,
+            'address' => $request->user()->address ?? 'Dubai',
             'amount' => $request->amount,
             'reference' => uniqid('PAYO-PD'),
-            'trans_mode' => $request->txnType,
-            'account' => $request->account,
-            'ifsc' => $request->ifsc
+            'trans_mode' => $request->mode,
+            'account' => $request->account_number,
+            'ifsc' => $request->ifsc_code
         ];
         $response = Http::withHeader('Authorization', 'Bearer ' . $token)
             ->post('https://paydeer.in/API/public/api/v1.1/payoutTransaction/async', $data);
