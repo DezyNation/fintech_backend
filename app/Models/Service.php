@@ -9,5 +9,5 @@ class Service extends Model
 {
     use HasFactory;
 
-    protected $guareded = [];
+    protected $guarded = [];
 }
