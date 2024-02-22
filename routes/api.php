@@ -54,7 +54,7 @@ Route::group(['prefix' => 'admin'], function () {
 
     Route::group(['prefix' => 'controls'], function () {
         Route::get('services', [WebsiteController::class, 'services']);
-        Route::put('services', [WebsiteController::class, 'updateService']);
+        Route::put('services/{service}', [WebsiteController::class, 'updateService']);
         Route::post('services', [WebsiteController::class, 'storeService']);
     });
 
