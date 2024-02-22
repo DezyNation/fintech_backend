@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\Admin\AdminController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Dashboard\Admin\WebsiteController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
 use App\Http\Controllers\Dashboard\User\UserController;
 use App\Http\Controllers\Services\AePS\EkoController;
@@ -49,6 +50,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::put('update-role', [AdminController::class, 'updateRole']);
         Route::put('sync-user-permissions', [AdminController::class, 'updateUserPermission']);
         Route::put('sync-role-permissions', [AdminController::class, 'updateRolePermission']);
+    });
+
+    Route::group(['prefix' => 'controls'], function () {
+        Route::get('services', [WebsiteController::class, 'services']);
+        Route::put('services', [WebsiteController::class, 'updateService']);
+        Route::post('services', [WebsiteController::class, 'storeService']);
     });
 
     Route::group(['prefix' => 'report'], function () {

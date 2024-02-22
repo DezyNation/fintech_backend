@@ -27,11 +27,22 @@ class WebsiteController extends Controller
         return new GeneralResource($service);
     }
 
-    public function storeService(Request $request, Service $service): JsonResource
+    public function storeService(Request $request): JsonResource
     {
-        $service->update([
-            'active' => $request->active ?? $service->active,
-            'api' => $request->api ?? $service->api
+        $request->validate([
+            'name' => ['required', 'string'],
+            'active' => ['required', 'boolean'],
+            'description' => ['required', 'string'],
+            'api' => ['required', 'boolean'],
+            'provider' => ['required', 'boolean']
+        ]);
+
+        $service = Service::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'active' => $request->active,
+            'api' => $request->api,
+            'provider' => $request->provider
         ]);
 
         return new GeneralResource($service);
