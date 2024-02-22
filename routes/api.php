@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::post('aeps', [EkoController::class, 'aepsTransaction']);
 Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
+Route::get('services', [WebsiteController::class, 'services']);
 
 /**************** User Routes ****************/
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
@@ -53,7 +54,6 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     Route::group(['prefix' => 'controls'], function () {
-        Route::get('services', [WebsiteController::class, 'services']);
         Route::put('services/{service}', [WebsiteController::class, 'updateService']);
         Route::post('services', [WebsiteController::class, 'storeService']);
     });
