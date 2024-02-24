@@ -22,7 +22,7 @@ class Fund extends Model
      */
     public function reviewer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     /**

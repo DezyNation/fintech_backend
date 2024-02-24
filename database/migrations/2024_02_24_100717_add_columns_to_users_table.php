@@ -15,7 +15,7 @@ return new class extends Migration
         //     $table->integerIncrements('wallet_id')->after('id');
         // });
 
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('fund_requests', function (Blueprint $table) {
             $table->renameColumn('approved_by', 'updated_by');
         });
     }
