@@ -56,7 +56,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function me(): JsonResponse
     {
-        return response()->json(auth()->user());
+        return response()->json(['user' => auth()->user(), 'role' => auth()->user()->getRoleNames()->first()]);
     }
 
     /**

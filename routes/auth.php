@@ -35,3 +35,7 @@ Route::post('/api/email/verification-notification', [EmailVerificationNotificati
 Route::post('/api/logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->middleware('auth')
                 ->name('logout');
+
+Route::get('/api/auth-user', [AuthenticatedSessionController::class, 'me'])
+                ->middleware('auth')
+                ->name('logout');
