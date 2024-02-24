@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\Admin\AdminController;
+use App\Http\Controllers\Dashboard\Admin\BankController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
@@ -34,6 +35,7 @@ Route::post('aeps', [EkoController::class, 'aepsTransaction']);
 Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 Route::get('services', [WebsiteController::class, 'services']);
+Route::get('banks', [BankController::class, 'index']);
 
 /**************** User Routes ****************/
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|distributor|super_distributor']], function () {
@@ -56,6 +58,7 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
     Route::group(['prefix' => 'controls'], function () {
         Route::put('services/{service}', [WebsiteController::class, 'updateService']);
         Route::post('services', [WebsiteController::class, 'storeService']);
+        Route::apiResource('bank', BankController::class);
     });
 
     Route::group(['prefix' => 'report'], function () {
