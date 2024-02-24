@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class FundRequestController extends Controller
 {
     public function __construct() {
-        $this->middleware('role:retailer|distributor|super disributor');
+        $this->middleware('role:retailer|distributor|super_disributor');
     }
     /**
      * Display a listing of the resource.
