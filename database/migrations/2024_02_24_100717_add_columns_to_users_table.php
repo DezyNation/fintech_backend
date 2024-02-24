@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->integerIncrements('wallet_id')->after('id');
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->integerIncrements('wallet_id')->after('id');
+        // });
 
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('approved_by', 'updated_by');
