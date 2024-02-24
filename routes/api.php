@@ -36,14 +36,14 @@ Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 Route::get('services', [WebsiteController::class, 'services']);
 
 /**************** User Routes ****************/
-Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|distributor|super_distributor']], function () {
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::post('update', [UserController::class, 'updateProfile']);
 });
 
 /**************** Admin Routes ****************/
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin', 'role:admin'], function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 
