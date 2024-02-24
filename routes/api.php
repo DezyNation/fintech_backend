@@ -35,7 +35,7 @@ Route::post('aeps', [EkoController::class, 'aepsTransaction']);
 Route::post('bbps', [PaysprintController::class, 'payBill']);
 Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 Route::get('services', [WebsiteController::class, 'services']);
-Route::get('banks', [BankController::class, 'index']);
+Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|distributor|super_distributor']], function () {

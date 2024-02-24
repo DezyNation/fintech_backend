@@ -34,7 +34,7 @@ class BankController extends Controller
             'account_number' => $request->account_number,
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
-            'status' => $request->status
+            'status' => $request->status ?? 1
         ]);
 
         return new GeneralResource($bank);
@@ -69,7 +69,12 @@ class BankController extends Controller
      */
     public function destroy(Bank $bank)
     {
-        $bank->delete();
-        return response()->noContent();
+        $data = $bank->delete();
+        return $data;
+    }
+
+    public function activeBanks()
+    {
+        return new GeneralResource(Bank::where('status', true)->get());
     }
 }
