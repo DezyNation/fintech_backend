@@ -43,7 +43,11 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|di
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::post('update', [UserController::class, 'updateProfile']);
-    Route::apiResource('ledgers', UserReportController::class);
+
+    Route::group(['prefix' => 'report'], function () {
+        Route::apiResource('ledger', UserReportController::class);
+        Route::get('payout', [UserReportController::class, 'payouts']);
+    });
 });
 
 /**************** Admin Routes ****************/
