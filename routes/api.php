@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Dashboard\Admin\WebsiteController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
+use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
 use App\Http\Controllers\Dashboard\User\UserController;
 use App\Http\Controllers\Services\AePS\EkoController;
 use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
@@ -42,6 +43,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|di
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::post('update', [UserController::class, 'updateProfile']);
+    Route::apiResource('ledgers', UserReportController::class);
 });
 
 /**************** Admin Routes ****************/
