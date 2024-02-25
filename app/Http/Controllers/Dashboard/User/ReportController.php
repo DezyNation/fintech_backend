@@ -18,12 +18,11 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->search;
+        $search = $request->transaction_id;
         if (!is_null($search) || !empty($search)) {
             $data = Transaction::where('user_id', $request->user()->id)
                 ->where(function ($q) use ($request) {
-                    $q->where('reference_id', $request->search)
-                        ->orWhere('description', 'like', '%' . $request->search . '%');
+                    $q->where('reference_id', $request->transaction_id);
                 })
                 ->paginate(30);
         } else {
