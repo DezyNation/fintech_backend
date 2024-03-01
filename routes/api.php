@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\Admin\AdminController;
 use App\Http\Controllers\Dashboard\Admin\BankController;
+use App\Http\Controllers\Dashboard\Admin\CommissionController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
@@ -76,5 +77,11 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
     Route::group(['prefix' => 'manage-user'], function () {
         Route::apiResource('users', AdminUserController::class);
         Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
+    });
+
+    Route::group(['prefix' => 'commissions'], function () {
+        Route::get('get-commission', [CommissionController::class, 'getCommission']);
+        Route::post('create-commission', [CommissionController::class, 'createCommission']);
+        Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);
     });
 });

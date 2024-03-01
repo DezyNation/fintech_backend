@@ -59,4 +59,43 @@ class CommissionController extends Controller
 
         return $data;
     }
+
+    public function updateCommission(Request $request, string $id): JsonResource
+    {
+        $request->validate([
+            'service' => ['required', 'in:payout,aeps']
+        ]);
+        $service = $request->service;
+        switch ($service) {
+            case 'payout':
+                $commission = PayoutCommission::findOrFail($id);
+                $data = $this->updatePayoutCommission($request, $commission);
+                break;
+
+            default:
+                $data = new GeneralResource('no data sent');
+                break;
+        }
+
+        return $data;
+    }
+
+    public function getCommission(Request $request): JsonResource
+    {
+        $request->validate([
+            'service' => ['required', 'in:payout,aeps']
+        ]);
+        $service = $request->service;
+        switch ($service) {
+            case 'payout':
+                $data = new GeneralResource(PayoutCommission::paginate(10));
+                break;
+
+            default:
+                $data = new GeneralResource('no data sent');
+                break;
+        }
+
+        return $data;
+    }
 }

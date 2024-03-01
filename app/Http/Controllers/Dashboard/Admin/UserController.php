@@ -17,9 +17,9 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return new GeneralResource(User::all()->paginate(10));
+        return new GeneralResource(User::role($request->role)->paginate(10));
     }
 
     /**
