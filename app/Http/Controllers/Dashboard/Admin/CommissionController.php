@@ -80,7 +80,7 @@ class CommissionController extends Controller
         return $data;
     }
 
-    public function getCommission(Request $request): JsonResource
+    public function getCommission(Request $request, $id): JsonResource
     {
         $request->validate([
             'service' => ['required', 'in:payout,aeps']
@@ -88,7 +88,7 @@ class CommissionController extends Controller
         $service = $request->service;
         switch ($service) {
             case 'payout':
-                $data = new GeneralResource(PayoutCommission::paginate(10));
+                $data = new GeneralResource(PayoutCommission::where('plan_id', $id)->paginate(10));
                 break;
 
             default:
