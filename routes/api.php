@@ -81,6 +81,8 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::put('restore/{id}', [AdminUserController::class, 'restore']);
     });
 
+    Route::get('document/{path}', [AdminUserController::class, 'downloadDocument']);
+
     Route::apiResource('plans', PlanController::class);
 
     Route::group(['prefix' => 'commissions'], function () {

@@ -11,6 +11,7 @@ use App\Http\Resources\GeneralResource;
 use App\Mail\SendPassword;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -19,9 +20,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return new GeneralResource(User::role($request->role)->with('plan', function ($q) {
+        return new GeneralResource(User::role($request->role)->with(['plan' => function ($q) {
             $q->select(['id', 'name']);
-        })->withTrashed()->paginate(10));
+        }, 'documents'])->withTrashed()->paginate(10));
     }
 
     /**
@@ -60,7 +61,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return new GeneralResource($user);
+        return new GeneralResource($user->with('documents'));
     }
 
     /**
@@ -137,8 +138,11 @@ class UserController extends Controller
             $request->credential_type => Hash::make($password)
         ]);
 
-        //  TODO: Implement SMS sending functionality.
-
         return new GeneralResource($user);
+    }
+
+    public function downloadDocument(string $path)
+    {
+        return Storage::download($path);
     }
 }
