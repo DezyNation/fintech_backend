@@ -73,6 +73,8 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::get('payout', [ReportController::class, 'payoutReports']);
     });
 
-    Route::apiResource('user', AdminUserController::class);
-    Route::put('user/send-credentials', [AdminUserController::class, 'sendCredential']);
+    Route::group(['prefix' => 'manage-user'], function () {
+        Route::apiResource('users', AdminUserController::class);
+        Route::put('send-credentials', [AdminUserController::class, 'sendCredential']);
+    });
 });

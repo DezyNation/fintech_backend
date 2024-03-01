@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
-        'mpin',
+        'pin',
         'otp',
         'otp_generated_at'
     ];
@@ -56,7 +56,7 @@ class User extends Authenticatable implements JWTSubject
         'otp_generated_at' => 'datetime',
         'password' => 'hashed',
         'otp' => 'hashed',
-        'mpin' => 'hashed',
+        'pin' => 'hashed',
     ];
 
     protected $guard_name = 'api';
