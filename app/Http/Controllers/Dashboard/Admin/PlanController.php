@@ -14,7 +14,7 @@ class PlanController extends Controller
      */
     public function index()
     {
-        return new GeneralResource(Plan::with('user')->all());
+        return new GeneralResource(Plan::with('user')->get());
     }
 
     /**
