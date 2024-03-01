@@ -29,6 +29,7 @@ class PlanController extends Controller
 
         $plan = Plan::create([
             'name' => $request->name,
+            'user_id' => $request->user()->id,
             'default' => $request->default
         ]);
 
