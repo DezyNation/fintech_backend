@@ -75,6 +75,6 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
 
     Route::group(['prefix' => 'manage-user'], function () {
         Route::apiResource('users', AdminUserController::class);
-        Route::put('send-credentials', [AdminUserController::class, 'sendCredential']);
+        Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
     });
 });
