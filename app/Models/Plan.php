@@ -12,6 +12,8 @@ class Plan extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     /**
      * Get all of the aeps for the Plan
      *

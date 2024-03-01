@@ -14,7 +14,7 @@ class PlanController extends Controller
      */
     public function index()
     {
-        return new GeneralResource(Plan::paginate(30));
+        return new GeneralResource(Plan::all());
     }
 
     /**
@@ -22,7 +22,17 @@ class PlanController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'default' => ['required', 'boolean']
+        ]);
+
+        $plan = Plan::create([
+            'name' => $request->name,
+            'default' => $request->default
+        ]);
+
+        return new GeneralResource($plan);
     }
 
     /**
@@ -30,16 +40,21 @@ class PlanController extends Controller
      */
     public function show(Plan $plan)
     {
-        $data = $plan->with(['payouts'])->paginate(30);
+        $data = $plan->with(['payouts'])->get();
         return new GeneralResource($data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Plan $plan)
     {
-        
+        $plan->update([
+            'name' => $request->name ?? $plan->name,
+            'default' => $request->default ?? $plan->default
+        ]);
+
+        return new GeneralResource($plan);
     }
 
     /**

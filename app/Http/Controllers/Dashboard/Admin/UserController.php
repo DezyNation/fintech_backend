@@ -19,9 +19,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return new GeneralResource(User::role($request->role)->with('plan', function($q){
-            $q->select(['id','name']);
-        })->paginate(10));
+        return new GeneralResource(User::role($request->role)->with('plan', function ($q) {
+            $q->select(['id', 'name']);
+        })->withTrashed()->paginate(10));
     }
 
     /**
@@ -90,6 +90,12 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+        return response()->noContent();
+    }
+
+    public function restore(string $id)
+    {
+        User::withTrashed()->findOrFail($id)->restore();
         return response()->noContent();
     }
 
