@@ -14,7 +14,7 @@ class PlanController extends Controller
      */
     public function index()
     {
-        return new GeneralResource(Plan::all());
+        return new GeneralResource(Plan::with('user')->all());
     }
 
     /**
@@ -41,7 +41,7 @@ class PlanController extends Controller
      */
     public function show(Plan $plan)
     {
-        $data = $plan->with(['payouts'])->get();
+        $data = $plan->with(['payouts', 'user'])->get();
         return new GeneralResource($data);
     }
 

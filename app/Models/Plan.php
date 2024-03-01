@@ -7,6 +7,7 @@ use App\Models\PayoutCommission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Plan extends Model
 {
@@ -32,5 +33,15 @@ class Plan extends Model
     public function payouts(): HasMany
     {
         return $this->hasMany(PayoutCommission::class);
+    }
+
+    /**
+     * Get the user that owns the Plan
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
