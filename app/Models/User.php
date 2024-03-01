@@ -4,14 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Illuminate\Support\Str;
 use App\Traits\HasRolesExtra;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
@@ -30,7 +33,10 @@ class User extends Authenticatable implements JWTSubject
         'pin',
         'phone_number',
         'otp',
-        'otp_generated_at'
+        'otp_generated_at',
+        'admin_remarks',
+        'pan_number',
+        'aadhaar_number'
     ];
 
     /**
@@ -61,6 +67,20 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
+    protected function aadhaarNumber(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string | null $value) => Str::mask($value, '*', 0, 8),
+        );
+    }
+
+    protected function panNumber(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string | null $value) => Str::mask($value, '*', 2, -4),
+        );
+    }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -79,5 +99,15 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    /**
+     * Get the plan that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 }

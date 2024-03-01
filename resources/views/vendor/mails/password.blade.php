@@ -51,7 +51,7 @@
                                         <p
                                             style="color:#455056; font-size:18px;line-height:20px; margin:0; font-weight: 500;">
                                             <strong
-                                                style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">{{$credential_type}}</strong>f{{$password}}
+                                                style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">{{$credential_type}}</strong>{{$password}}
                                         </p>
 
                                         <a href="{{env('FRONTEND_URL')}}/login"

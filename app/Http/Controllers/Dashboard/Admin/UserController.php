@@ -19,7 +19,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return new GeneralResource(User::role($request->role)->paginate(10));
+        return new GeneralResource(User::role($request->role)->with('plan', function($q){
+            $q->select(['id','name']);
+        })->paginate(10));
     }
 
     /**
@@ -74,8 +76,9 @@ class UserController extends Controller
             'middle_name' => $middle_name,
             'last_name' => $last_name,
             'name' => $first_name . $middle_name . $last_name,
-            'phone_number' => $request->phone_number,
-            'email' => $request->email
+            'phone_number' => $request->phone_number ?? $user->phone_number,
+            'email' => $request->email ?? $user->email,
+            'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks
         ]);
 
         return new GeneralResource($user);
@@ -93,9 +96,7 @@ class UserController extends Controller
     public function sendCredential(Request $request, User $user): JsonResource
     {
         $request->validate([
-            'channel' => ['required', 'in:email,phone_number'],
-            'email' => ['required_if:channel,email', 'exists:users'],
-            'phone_number' => ['required_if:channel,phone_number', 'exists:users'],
+            'channel' => ['required', 'in:email,sms'],
             'credential_type' => ['required', 'in:password,pin']
         ]);
 
@@ -108,12 +109,16 @@ class UserController extends Controller
 
     public function emailCredentials(Request $request, User $user): JsonResource
     {
-        $password = Str::random(8);
+        if ($request->credential_type == 'password') {
+            $password = Str::random(8);
+        } else {
+            $password = rand(100001, 999999);
+        }
         $user->update([
             $request->credential_type => Hash::make($password)
         ]);
 
-        Mail::to($request->email)
+        Mail::to($user->email)
             ->send(new SendPassword($password, $request->credential_type));
 
         return new GeneralResource($user);
