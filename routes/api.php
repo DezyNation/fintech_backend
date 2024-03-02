@@ -57,7 +57,7 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 
-    Route::group(['prefix' => 'roles'], function () {
+    Route::group(['prefix' => 'manage-access'], function () {
         Route::put('update-role', [AdminController::class, 'updateRole']);
         Route::put('sync-user-permissions', [AdminController::class, 'updateUserPermission']);
         Route::put('sync-role-permissions', [AdminController::class, 'updateRolePermission']);
