@@ -40,6 +40,8 @@ class User extends Authenticatable implements JWTSubject
         'aadhaar_number'
     ];
 
+    protected $guarded = [];
+
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -79,6 +79,7 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::apiResource('users', AdminUserController::class);
         Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
         Route::put('restore/{id}', [AdminUserController::class, 'restore']);
+        Route::post('document/{user}', [AdminUserController::class, 'uploadDocument']);
     });
 
     Route::get('document/{path}', [AdminUserController::class, 'downloadDocument']);

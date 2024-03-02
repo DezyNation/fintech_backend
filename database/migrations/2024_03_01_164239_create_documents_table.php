@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('user_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->string('documnt_type');
+            $table->string('document_type');
             $table->string('address');
             $table->boolean('verified')->default(0);
             $table->timestamps();

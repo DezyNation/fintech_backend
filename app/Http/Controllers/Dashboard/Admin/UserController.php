@@ -9,7 +9,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\GeneralResource;
 use App\Mail\SendPassword;
+use App\Models\Document;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,9 +61,10 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(string $id)
     {
-        return new GeneralResource($user->with('documents'));
+        $user = User::with('documents')->findOrFail($id);
+        return new GeneralResource($user);
     }
 
     /**
@@ -69,6 +72,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        return $request->all();
         $first_name = $request->first_name ?? $user->first_name;
         $middle_name = $request->middle_name ?? $user->middle_name;
         $last_name = $request->last_name ?? $user->last_name;
@@ -81,6 +85,28 @@ class UserController extends Controller
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks
         ]);
+
+        return new GeneralResource($user);
+    }
+
+    public function uploadDocument(Request $request, User $user)
+    {
+        $request->validate([
+            'document_type' => ['required', 'string', 'max:30'],
+            'file' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+        ]);
+
+        Document::updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'document_type' => $request->document_type
+            ],
+            [
+                'address' => $request->file('file')->store("users/{$request->document_type}"),
+                'updated_at' => now(),
+                'created_at' => now()
+            ]
+        );
 
         return new GeneralResource($user);
     }
