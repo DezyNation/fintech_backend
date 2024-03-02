@@ -63,7 +63,7 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::with('documents')->findOrFail($id);
+        $user = User::with(['documents', 'roles', 'permissions'])->findOrFail($id);
         return new GeneralResource($user);
     }
 
