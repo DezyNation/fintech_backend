@@ -61,6 +61,8 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::put('update-role', [AdminController::class, 'updateRole']);
         Route::put('sync-user-permissions', [AdminController::class, 'updateUserPermission']);
         Route::put('sync-role-permissions', [AdminController::class, 'updateRolePermission']);
+        Route::get('permissions', [AdminController::class, 'permissions']);
+        Route::get('roles', [AdminController::class, 'roles']);
     });
 
     Route::group(['prefix' => 'controls'], function () {

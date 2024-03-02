@@ -7,6 +7,7 @@ use App\Http\Resources\GeneralResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
@@ -29,5 +30,15 @@ class AdminController extends Controller
     {
         $role->syncPermissions($request->permissions);
         return new GeneralResource($role);
+    }
+
+    public function permissions(): JsonResource
+    {
+        return new GeneralResource(Permission::all());
+    }
+
+    public function roles(): JsonResource
+    {
+        return new GeneralResource(Role::all());
     }
 }
