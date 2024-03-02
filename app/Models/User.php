@@ -40,6 +40,8 @@ class User extends Authenticatable implements JWTSubject
         'aadhaar_number',
         'first_name',
         'last_name',
+        'plan_id',
+        'capped_balance',
         'middle_name'
     ];
 

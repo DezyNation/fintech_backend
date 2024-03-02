@@ -82,7 +82,9 @@ class UserController extends Controller
             'name' => $first_name .' '. $middle_name .' '. $last_name,
             'phone_number' => $request->phone_number ?? $user->phone_number,
             'email' => $request->email ?? $user->email,
-            'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks
+            'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
+            'plan_id' => $request->plan_id ?? $user->plan_id,
+            'capped_balance' => $request->capped_balance ?? $user->capped_balance
         ]);
 
         return new GeneralResource($user);
