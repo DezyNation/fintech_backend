@@ -37,7 +37,10 @@ class User extends Authenticatable implements JWTSubject
         'otp_generated_at',
         'admin_remarks',
         'pan_number',
-        'aadhaar_number'
+        'aadhaar_number',
+        'first_name',
+        'last_name',
+        'middle_name'
     ];
 
     protected $guarded = [];

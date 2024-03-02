@@ -72,7 +72,6 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        return $request->all();
         $first_name = $request->first_name ?? $user->first_name;
         $middle_name = $request->middle_name ?? $user->middle_name;
         $last_name = $request->last_name ?? $user->last_name;
@@ -80,7 +79,7 @@ class UserController extends Controller
             'first_name' => $first_name,
             'middle_name' => $middle_name,
             'last_name' => $last_name,
-            'name' => $first_name . $middle_name . $last_name,
+            'name' => $first_name .' '. $middle_name .' '. $last_name,
             'phone_number' => $request->phone_number ?? $user->phone_number,
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks

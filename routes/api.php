@@ -77,6 +77,7 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
 
     Route::group(['prefix' => 'manage-user'], function () {
         Route::apiResource('users', AdminUserController::class);
+        Route::post('update-user/{user}', [AdminUserController::class, 'update']);
         Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
         Route::put('restore/{id}', [AdminUserController::class, 'restore']);
         Route::post('document/{user}', [AdminUserController::class, 'uploadDocument']);
