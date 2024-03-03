@@ -32,6 +32,11 @@ class AdminController extends Controller
         return new GeneralResource($role);
     }
 
+    public function rolePermissions(Role $role): JsonResource
+    {
+        return new GeneralResource($role->getAllPermissions());
+    }
+
     public function permissions(): JsonResource
     {
         return new GeneralResource(Permission::all());
