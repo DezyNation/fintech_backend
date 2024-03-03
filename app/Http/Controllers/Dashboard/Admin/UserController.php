@@ -76,19 +76,16 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $first_name = $request->first_name ?? $user->first_name;
-        $middle_name = $request->middle_name ?? $user->middle_name;
-        $last_name = $request->last_name ?? $user->last_name;
         $user->update([
-            'first_name' => $first_name,
-            'middle_name' => $middle_name,
-            'last_name' => $last_name,
-            'name' => $first_name . ' ' . $middle_name . ' ' . $last_name,
-            'phone_number' => $request->phone_number ?? $user->phone_number,
-            'email' => $request->email ?? $user->email,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
-            'plan_id' => $request->plan_id ?? $user->plan_id,
-            'capped_balance' => $request->capped_balance ?? $user->capped_balance
+            'plan_id' => $request->plan_id,
+            'capped_balance' => $request->capped_balance
         ]);
 
         return new GeneralResource($user);
