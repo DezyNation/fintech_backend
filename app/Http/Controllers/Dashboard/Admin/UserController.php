@@ -63,7 +63,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = User::with(['documents', 'roles', 'permissions'])->findOrFail($id);
+        $user = User::with(['documents', 'roles' =>  function ($role) {
+            $role->select('name', 'id');
+        }, 'permissions' => function ($permission) {
+            $permission->select('id', 'name');
+        }])->findOrFail($id);
         return new GeneralResource($user);
     }
 
@@ -79,7 +83,7 @@ class UserController extends Controller
             'first_name' => $first_name,
             'middle_name' => $middle_name,
             'last_name' => $last_name,
-            'name' => $first_name .' '. $middle_name .' '. $last_name,
+            'name' => $first_name . ' ' . $middle_name . ' ' . $last_name,
             'phone_number' => $request->phone_number ?? $user->phone_number,
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
