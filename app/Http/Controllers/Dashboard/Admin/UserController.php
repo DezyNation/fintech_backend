@@ -122,6 +122,11 @@ class UserController extends Controller
         return response()->noContent();
     }
 
+    public function userPermissions(User $user)
+    {
+        return new GeneralResource($user->getAllPermissions());
+    }
+
     public function restore(string $id)
     {
         User::withTrashed()->findOrFail($id)->restore();
