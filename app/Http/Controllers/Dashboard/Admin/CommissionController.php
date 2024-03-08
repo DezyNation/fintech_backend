@@ -29,19 +29,19 @@ class CommissionController extends Controller
     public function createPayoutCommission(CommissionRequest $request): JsonResource
     {
         $data = PayoutCommission::create([
-            'plan_id' => $request->planId,
-            'role_id' => $request->roleId,
+            'plan_id' => $request->plan_id,
+            'role_id' => $request->role_id,
             'from' => $request->from,
             'to' => $request->to,
-            'fixed_charge' => $request->fixedCharge,
+            'fixed_charge' => $request->fixed_charge,
             'commission' => $request->commission,
-            'is_flat' => $request->isFlat,
+            'is_flat' => $request->is_flat,
         ]);
 
         return new GeneralResource($data);
     }
 
-    public function createCommission(Request $request): JsonResource
+    public function createCommission(CommissionRequest $request): JsonResource
     {
         $request->validate([
             'service' => ['required', 'in:payout,aeps']

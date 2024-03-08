@@ -11,7 +11,7 @@ class CommissionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,10 +25,10 @@ class CommissionRequest extends FormRequest
             'from' => ['required', 'min:1', 'numeric'],
             'to' => ['required', 'min:1', 'numeric'],
             'service' => ['nullable', 'string'],
-            'planId' => ['required', 'exists:plans,id'],
-            'roleId' => ['required', 'exists:roles,id'],
-            'fixedCharge' => ['required', 'numeric', 'min:0'],
-            'isFlat' => ['required', 'boolean'],
+            'plan_id' => ['required', 'exists:plans,id'],
+            'role_id' => ['required', 'exists:roles,id'],
+            'fixed_charge' => ['required', 'numeric', 'min:0'],
+            'is_flat' => ['required', 'boolean'],
             'commission' => ['required', 'numeric', 'min:0'],
         ];
     }
