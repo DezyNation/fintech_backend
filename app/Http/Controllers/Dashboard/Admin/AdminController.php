@@ -39,11 +39,11 @@ class AdminController extends Controller
 
     public function permissions(): JsonResource
     {
-        return new GeneralResource(Permission::all());
+        return GeneralResource::collection(Permission::all());
     }
 
     public function roles(): JsonResource
     {
-        return new GeneralResource(Role::all());
+        return GeneralResource::collection(Role::all());
     }
 }

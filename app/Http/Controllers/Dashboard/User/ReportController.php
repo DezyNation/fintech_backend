@@ -31,7 +31,7 @@ class ReportController extends Controller
                 ->paginate(30);
         }
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     /**
@@ -72,7 +72,7 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     public function showFundRequests(Request $request, Fund $fund): JsonResource
@@ -82,7 +82,7 @@ class ReportController extends Controller
             ->with('reviewer')
             ->paginate(30);
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     public function payouts(Request $request): JsonResource
@@ -91,6 +91,6 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 }

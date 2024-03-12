@@ -21,7 +21,7 @@ class ReportController extends Controller
             ->whereBetween('created_at', [$request->start, $request->end])
             ->paginate(30);
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     /**
@@ -46,7 +46,7 @@ class ReportController extends Controller
             })
             ->paginate(30);
 
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     /**
@@ -75,13 +75,13 @@ class ReportController extends Controller
             });
         });
 
-        return new GeneralResource($transaction);
+        return GeneralResource::collection($transaction);
     }
 
     public function payoutReports(Request $request): JsonResource
     {
         $data = Payout::with('user')->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 }

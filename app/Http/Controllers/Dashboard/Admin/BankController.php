@@ -14,7 +14,7 @@ class BankController extends Controller
      */
     public function index()
     {
-        return new GeneralResource(Bank::all());
+        return GeneralResource::collection(Bank::all());
     }
 
     /**
@@ -75,6 +75,6 @@ class BankController extends Controller
 
     public function activeBanks()
     {
-        return new GeneralResource(Bank::where('status', true)->get());
+        return GeneralResource::collection(Bank::where('status', true)->get());
     }
 }

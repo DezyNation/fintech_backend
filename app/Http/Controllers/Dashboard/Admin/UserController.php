@@ -22,7 +22,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        return new GeneralResource(User::role($request->role)->with(['plan' => function ($q) {
+        return GeneralResource::collection(User::role($request->role)->with(['plan' => function ($q) {
             $q->select(['id', 'name']);
         }, 'documents'])->withTrashed()->paginate(10));
     }

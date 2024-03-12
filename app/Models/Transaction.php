@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\GeneralResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -86,6 +87,6 @@ class Transaction extends Model
             ];
         }
 
-        return collect($formattedResult);
+        return GeneralResource::collection($formattedResult);
     }
 }

@@ -14,7 +14,7 @@ class WebsiteController extends Controller
 {
     public function services(): JsonResource
     {
-        return new GeneralResource(Service::all());
+        return GeneralResource::collection(Service::all());
     }
 
     public function updateService(Request $request, Service $service): JsonResource

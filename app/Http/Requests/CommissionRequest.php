@@ -22,9 +22,11 @@ class CommissionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'service' => ['required', 'in:payout,aeps,dmt,bbps,lic'],
             'from' => ['required', 'min:1', 'numeric'],
             'to' => ['required', 'min:1', 'numeric'],
-            'service' => ['nullable', 'string'],
+            'service_type' => ['required_if:service,aeps', 'string', 'in:CW,MS,AP,BE'],
+            'operator_id' => ['required_if:service,bbps', 'exists:operators,id'],
             'plan_id' => ['required', 'exists:plans,id'],
             'role_id' => ['required', 'exists:roles,id'],
             'fixed_charge' => ['required', 'numeric', 'min:0'],

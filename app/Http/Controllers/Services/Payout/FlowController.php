@@ -17,7 +17,7 @@ class FlowController extends Controller
      */
     public function index()
     {
-        return new GeneralResource(Payout::paginate(30));
+        return GeneralResource::collection(Payout::paginate(30));
     }
 
     /**
@@ -32,7 +32,7 @@ class FlowController extends Controller
 
         if ($request->provider == 'paydeer') {
             $class = new PaydeerController();
-            $response = $class->initiateTransaction($request);
+            $class->initiateTransaction($request);
         }
 
         Payout::create([

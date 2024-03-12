@@ -27,7 +27,7 @@ class FundRequestController extends Controller
         }, 'reviewer' => function ($q) {
             $q->select('id', 'name', 'wallet_id');
         }])->where('status', $request->status)->paginate(20);
-        return new GeneralResource($data);
+        return GeneralResource::collection($data);
     }
 
     /**
@@ -77,7 +77,7 @@ class FundRequestController extends Controller
             $fund_lock->release();
         });
 
-        return $fund;
+        return new GeneralResource($fund);
     }
 
     /**
@@ -106,7 +106,7 @@ class FundRequestController extends Controller
             $fund_lock->release();
         });
 
-        return $fund;
+        return new GeneralResource($fund);
     }
 
     public function fundTransfer(Request $request, User $user): JsonResource
