@@ -80,4 +80,10 @@ class UserController extends Controller
 
         return new GeneralResource($request->user());
     }
+
+    public function permissions(Request $request): JsonResource
+    {
+        $user = User::findOrFail($request->user()->id);
+        return GeneralResource::collection($user->getAllPermissions());
+    }
 }

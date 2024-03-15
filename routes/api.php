@@ -46,9 +46,10 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
     Route::group(['prefix' => 'services'], function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
     });
-
+    
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
+    Route::get('permissions', [UserController::class, 'permissions']);
     Route::put('update', [UserController::class, 'updateProfile']);
     Route::post('document', [UserController::class, 'uploadDocument']);
     Route::put('credential', [UserController::class, 'updateCredential']);
@@ -110,5 +111,4 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
  * verify pan
  * verify aadhaar
  * verify phone number
- * fetch auth user permissions
  */
