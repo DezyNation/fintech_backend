@@ -106,9 +106,3 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);
     });
 });
-
-/**
- * verify pan
- * verify aadhaar
- * verify phone number
- */

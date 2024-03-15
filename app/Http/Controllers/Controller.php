@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Otp;
 use Firebase\JWT\JWT;
 use Illuminate\Cache\Lock;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Http\Client\Response;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Resources\GeneralResource;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -71,13 +79,31 @@ class Controller extends BaseController
         return Http::post('https://paydeer.in/API/public/api/v1.1/generateToken', ['clientKey' => env('PAYDEER_CLIENT_KEY'), 'clientSecret' => env('PAYDEER_CLIENT_SECRET')]);
     }
 
-    public function triggerSms(array $contents)
+    public function triggerSms(Request $request, array $contents)
     {
-        //Http request for message triggers
+        $user = $request->user();
+        $link = env('FRONTEND_URL');
+        $phone = $user->phone_number;
+        $password = Str::random(8);
+        $this->storeOtp($password, 'phone_login');
+        $text = `Hello {$user->name}, Welcome to . Visit {$link}/login to start your transaction use Login Id : {$user->email} and Password : $password. -From PESA24 TECHNOLOGY PRIVATE LIMITED`;
+        $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
     }
 
     public function lockRecords($key): Lock
     {
         return Cache::lock($key, 30);
+    }
+
+    public function storeOtp(string $password, string $intent): JsonResource
+    {
+        $data = Otp::create([
+            'user_id' => auth()->user()->id,
+            'password' => Hash::make($password),
+            'intent' => $intent,
+            'expiry_at' => Carbon::now()->addMinutes(5)
+        ]);
+
+        return new GeneralResource($data);
     }
 }
