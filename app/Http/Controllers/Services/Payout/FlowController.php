@@ -2,22 +2,28 @@
 
 namespace App\Http\Controllers\Services\Payout;
 
+use Carbon\Carbon;
+use App\Models\Payout;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
-use App\Http\Resources\GeneralResource;
-use App\Models\Payout;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Resources\GeneralResource;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class FlowController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return GeneralResource::collection(Payout::paginate(30));
+        $data = Payout::where('user_id', $request->user()->id)
+            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->paginate(30);
+
+        return GeneralResource::collection($data);
     }
 
     /**
@@ -25,17 +31,21 @@ class FlowController extends Controller
      */
     public function store(PayoutRequest $request)
     {
-        $lock = Cache::lock($request->user()->id, 5);
+        $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
             throw new HttpResponseException(response()->json(['message' => "Failed to acquire lock"], 423));
         }
 
-        if ($request->provider == 'paydeer') {
-            $class = new PaydeerController();
-            $class->initiateTransaction($request);
+        $class_name = Str::of($request->provider . "_" . "controller")->studly();
+        $class = __NAMESPACE__ . "\\" . $class_name;
+        $instance = new $class;
+        if (!class_exists($class)) {
+            abort(501, 'Provider not supported');
+            $lock->release();
         }
+        $instance->initiateTransaction($request);
 
-        Payout::create([
+        $payout = Payout::create([
             'user_id' => $request->user()->id,
             'provider' => $request->provider,
             'reference_id' => uniqid('PYT'),
@@ -48,6 +58,10 @@ class FlowController extends Controller
             'metadata' => json_encode([]),
             'remarks' => $request->remarks
         ]);
+
+        $lock->release();
+
+        return new GeneralResource($payout);
     }
 
     /**

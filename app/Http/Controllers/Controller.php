@@ -78,6 +78,6 @@ class Controller extends BaseController
 
     public function lockRecords($key): Lock
     {
-        return Cache::lock($key, 5);
+        return Cache::lock($key, 30);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PayoutRequest extends FormRequest
 {
@@ -22,6 +23,7 @@ class PayoutRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'provider' => ['required', Rule::exists('services', 'provider')->where('active', true)],
             'account_number' => ['required', 'digits_between:9,17'],
             'ifsc_code' => ['required', 'string', 'regex:/^[A-Za-z]{4}\d{7}$/'],
             'beneficiary_name' => ['required', 'string'],

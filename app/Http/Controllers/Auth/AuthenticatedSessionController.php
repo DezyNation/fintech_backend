@@ -22,7 +22,7 @@ class AuthenticatedSessionController extends Controller
 
         $identifier = $request['email'];
 
-        $user = User::where('email', $identifier)->orWhere('phone_number', $identifier)->first();
+        $user = User::whereAny(['email', 'phone_number'], '=', $request->email)->first();
 
         if (!$user || !Hash::check($request['password'], $user->password)) {
             throw ValidationException::withMessages([

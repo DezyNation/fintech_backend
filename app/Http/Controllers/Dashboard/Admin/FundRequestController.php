@@ -117,7 +117,7 @@ class FundRequestController extends Controller
             'remarks' => ['required', 'string']
         ]);
 
-        $lock = Cache::lock($user->id, 5);
+        $lock = Cache::lock($user->id, 30);
         if (!$lock->get()) {
             throw new HttpResponseException(response()->json(['message' => "Failed to acquire lock"], 423));
         }

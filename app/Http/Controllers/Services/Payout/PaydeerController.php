@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Services\Payout;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -10,7 +11,14 @@ use Illuminate\Support\Facades\Http;
 
 class PaydeerController extends Controller
 {
-    public function initiateTransaction(Request $request): Response
+    /**
+     * Initiate a payout transaction.
+     *
+     * @param PayoutRequest $request The request instance containing all the necessary data for the transaction.
+     * @return Response The response instance from the paydeer API.
+     */
+
+    public function initiateTransaction(PayoutRequest $request): Response
     {
         if (!Cache::has('paydeer-token')) {
             $token = $this->paydeerToken();

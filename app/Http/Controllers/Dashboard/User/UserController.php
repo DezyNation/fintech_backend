@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard\User;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\GeneralResource;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\GeneralResource;
+use App\Models\Document;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -20,16 +24,60 @@ class UserController extends Controller
     public function updateProfile(Request $request): JsonResource
     {
         $user = User::find($request->user()->id);
-        $first_name = $request->first_name ?? $user->first_name;
-        $middle_name = $request->middle_name ?? $user->middle_name;
-        $last_name = $request->last_name ?? $user->last_name;
         $user->update([
-            'first_name' => $first_name,
-            'middle_name' => $middle_name,
-            'last_name' => $last_name,
-            'name' => $first_name . $middle_name . $last_name
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
+            'phone_number' => $request->phone_number ?? $user->phone_number,
+            'aadhaar_number' => $request->aadhaar_number ?? $user->aadhaar_number,
+            'pan_number' => $request->pan_number ?? $user->pan_number
         ]);
 
         return new GeneralResource($user);
+    }
+
+    public function updateCredential(Request $request): JsonResource
+    {
+        $request->validate([
+            'credential_type' => ['required', 'in:password,pin'],
+            'old_credential' => ['required', 'max:8'],
+            'new_credential' => ['required', 'max:8', 'confirmed']
+        ]);
+
+        $user = User::findOrFail($request->user()->id);
+        if (!Hash::check($request->old_credential, $user->{$request->credential_type})) {
+            throw ValidationException::withMessages([
+                'error' => ['Credentials do not match our records.']
+            ]);
+        }
+
+        $user->update([
+            $request->credential_type => $request->credential
+        ]);
+
+        return new GeneralResource($user);
+    }
+
+    public function uploadDocument(Request $request)
+    {
+        $request->validate([
+            'document_type' => ['required', 'string', 'max:30'],
+            'file' => ['required', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+        ]);
+
+        Document::updateOrInsert(
+            [
+                'user_id' => $request->user()->id,
+                'document_type' => $request->document_type
+            ],
+            [
+                'address' => $request->file('file')->store("users/{$request->document_type}"),
+                'updated_at' => now(),
+                'created_at' => now()
+            ]
+        );
+
+        return new GeneralResource($request->user());
     }
 }

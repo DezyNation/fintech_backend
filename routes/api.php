@@ -16,6 +16,7 @@ use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
 use App\Http\Controllers\Services\BBPS\PaysprintController;
 use App\Http\Controllers\Services\DMT\EkoController as DMTEkoController;
 use App\Http\Controllers\Services\DMT\PaysprintController as DMTPaysprintController;
+use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,15 +42,22 @@ Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
-Route::group(['prefix' => 'user', 'middleware' => ['auth:api', 'role:retailer|distributor|super_distributor']], function () {
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
+    Route::group(['prefix' => 'services'], function () {
+        Route::post('payout', [PayoutFlowController::class, 'store']);
+    });
+
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
-    Route::post('update', [UserController::class, 'updateProfile']);
+    Route::put('update', [UserController::class, 'updateProfile']);
+    Route::post('document', [UserController::class, 'uploadDocument']);
+    Route::put('credential', [UserController::class, 'updateCredential']);
 
     Route::group(['prefix' => 'report'], function () {
         Route::apiResource('ledger', UserReportController::class);
-        Route::get('payout', [UserReportController::class, 'payouts']);
+        Route::get('payout', [PayoutFlowController::class, 'index']);
     });
+
 });
 
 /**************** Admin Routes ****************/
@@ -97,3 +105,10 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
         Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);
     });
 });
+
+/**
+ * verify pan
+ * verify aadhaar
+ * verify phone number
+ * fetch auth user permissions
+ */

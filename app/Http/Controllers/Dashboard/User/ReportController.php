@@ -21,9 +21,7 @@ class ReportController extends Controller
         $search = $request->transaction_id;
         if (!is_null($search) || !empty($search)) {
             $data = Transaction::where('user_id', $request->user()->id)
-                ->where(function ($q) use ($request) {
-                    $q->where('reference_id', $request->transaction_id);
-                })
+                ->whereAny(['refernce_id', 'id'], 'LIKE', "%$search%")
                 ->paginate(30);
         } else {
             $data = Transaction::where('user_id', $request->user()->id)
@@ -80,15 +78,6 @@ class ReportController extends Controller
         $data = $fund->where('user_id', $request->user()->id)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->with('reviewer')
-            ->paginate(30);
-
-        return GeneralResource::collection($data);
-    }
-
-    public function payouts(Request $request): JsonResource
-    {
-        $data = Payout::where('user_id', $request->user()->id)
-            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 
         return GeneralResource::collection($data);
