@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Services\Payout;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -18,7 +17,7 @@ class PaydeerController extends Controller
      * @return Response The response instance from the paydeer API.
      */
 
-    public function initiateTransaction(PayoutRequest $request): Response
+    public function initiateTransaction(PayoutRequest $request): array
     {
         if (!Cache::has('paydeer-token')) {
             $token = $this->paydeerToken();
@@ -40,6 +39,13 @@ class PaydeerController extends Controller
         ];
         $response = Http::withHeader('Authorization', 'Bearer ' . $token)
             ->post('https://paydeer.in/API/public/api/v1.1/payoutTransaction/async', $data);
-        return $response;
+
+        $array = [
+            'status' => $response['status'] ?? 'error',
+            'message' => $response['message'] ?? $response['data']['message'],
+            'transaction_status' => $response['data']['status']
+        ];
+
+        return ['response' => $response, 'metadata' => $array];
     }
 }

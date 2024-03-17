@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\GeneralResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
@@ -43,7 +42,13 @@ class FlowController extends Controller
             abort(501, 'Provider not supported');
             $lock->release();
         }
-        $instance->initiateTransaction($request);
+
+        $transaction = $instance->initiateTransaction($request);
+
+        if ($transaction['metadata']['status'] != 'success') {
+            abort(400, ['data' => ['message' => $transaction['metadata']['message']]]);
+            $lock->release();
+        }
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,
@@ -53,9 +58,9 @@ class FlowController extends Controller
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
-            'status' => $request->status,
-            'description' => $request->description,
-            'metadata' => json_encode([]),
+            'status' => $transaction['metadata']['status'],
+            'description' => $transaction['metadata']['message'],
+            'metadata' => json_encode($transaction['response']),
             'remarks' => $request->remarks
         ]);
 
