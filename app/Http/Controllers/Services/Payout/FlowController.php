@@ -33,7 +33,7 @@ class FlowController extends Controller
     {
         $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
-            throw new HttpResponseException(response()->json(['message' => "Failed to acquire lock"], 423));
+            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
         }
 
         $class_name = Str::of($request->provider . "_" . "controller")->studly();

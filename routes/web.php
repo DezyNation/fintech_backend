@@ -19,9 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return ['Laravel' => app()->version()];
+    return ['NXGenius' => 'v1'];
 });
 
-Route::post('test', [FlowController::class, 'store'])->middleware(['auth:api']);
 
 require __DIR__ . '/auth.php';

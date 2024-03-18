@@ -35,9 +35,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('aeps', [EkoController::class, 'aepsTransaction']);
-Route::post('bbps', [PaysprintController::class, 'payBill']);
-Route::post('dmt', [DMTPaysprintController::class, 'addRecipient']);
 Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
 
@@ -46,7 +43,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
     Route::group(['prefix' => 'services'], function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
     });
-    
+
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::get('permissions', [UserController::class, 'permissions']);
