@@ -7,6 +7,7 @@ use App\Models\Payout;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -39,7 +40,7 @@ class FlowController extends Controller
         $class = __NAMESPACE__ . "\\" . $class_name;
         $instance = new $class;
         if (!class_exists($class)) {
-            abort(501, 'Provider not supported');
+            abort(501, ['data' => ['message' => "Provider not supported."]]);
             $lock->release();
         }
 
@@ -50,19 +51,24 @@ class FlowController extends Controller
             $lock->release();
         }
 
+        $reference_id = uniqid('PYT');
+
         $payout = Payout::create([
             'user_id' => $request->user()->id,
             'provider' => $request->provider,
-            'reference_id' => uniqid('PYT'),
+            'reference_id' => $reference_id,
             'account_number' => $request->account_number,
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
             'status' => $transaction['metadata']['status'],
             'description' => $transaction['metadata']['message'],
-            'metadata' => json_encode($transaction['response']),
             'remarks' => $request->remarks
         ]);
+
+        TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated", 0, $request->amount, []);
+        $commission_class = new CommissionController;
+        $commission_class->distributeCommission($request->user(), $request->amount);
 
         $lock->release();
 

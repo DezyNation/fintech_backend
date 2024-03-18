@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payout extends Model
 {
     use HasFactory;
-    
+
+    protected $guarded = [];
+
     /**
      * Get the user that owns the Payout
      *

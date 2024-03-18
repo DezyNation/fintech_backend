@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Services\AePS\CommissionController;
+use App\Http\Controllers\Services\Payout\FlowController;
 use App\Http\Controllers\Services\Payout\PaydeerController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,6 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-Route::get('test', [ReportController::class, 'dailySales']);
+Route::post('test', [FlowController::class, 'store'])->middleware(['auth:api']);
 
 require __DIR__ . '/auth.php';
