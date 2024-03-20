@@ -20,8 +20,6 @@ class AuthenticatedSessionController extends Controller
     {
         $request->only(['email', 'password']);
 
-        $identifier = $request['email'];
-
         $user = User::whereAny(['email', 'phone_number'], '=', $request->email)->first();
 
         if (!$user || !Hash::check($request['password'], $user->password)) {
@@ -45,7 +43,7 @@ class AuthenticatedSessionController extends Controller
         }
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
-        $cookie = cookie("token", $token, auth('api')->factory()->getTTL() * 60, '/', null, true, true);
+        $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', null, true, true);
         return response()->json($this->respondWithToken(['user' => $user]))->withCookie($cookie);
     }
 
@@ -90,7 +88,7 @@ class AuthenticatedSessionController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
 }

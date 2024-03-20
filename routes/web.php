@@ -5,6 +5,7 @@ use App\Http\Controllers\Services\AePS\CommissionController;
 use App\Http\Controllers\Services\Payout\FlowController;
 use App\Http\Controllers\Services\Payout\PaydeerController;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,9 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    dd($request->user());
     return ['NXGenius' => 'v1'];
-});
+})->middleware('auth:api');
 
 
 require __DIR__ . '/auth.php';

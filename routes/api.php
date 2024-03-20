@@ -11,11 +11,6 @@ use App\Http\Controllers\Dashboard\Admin\WebsiteController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
 use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
 use App\Http\Controllers\Dashboard\User\UserController;
-use App\Http\Controllers\Services\AePS\EkoController;
-use App\Http\Controllers\Services\BBPS\EkoController as BBPSEkoController;
-use App\Http\Controllers\Services\BBPS\PaysprintController;
-use App\Http\Controllers\Services\DMT\EkoController as DMTEkoController;
-use App\Http\Controllers\Services\DMT\PaysprintController as DMTPaysprintController;
 use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,15 +26,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/user', function (Request $request) {
+    return dd($request);
+})->middleware('auth:api');
 
 Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
-Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
+Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::group(['prefix' => 'services'], function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
     });

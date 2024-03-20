@@ -31,6 +31,7 @@ class FlowController extends Controller
      */
     public function store(PayoutRequest $request)
     {
+        return $request->user();
         $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
             throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
