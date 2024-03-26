@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/user', function (Request $request) {
-    return dd($request);
+    return $request->user();
 })->middleware('auth:api');
 
 Route::get('services', [WebsiteController::class, 'services']);
@@ -37,6 +37,7 @@ Route::get('banks', [BankController::class, 'activeBanks']);
 Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::group(['prefix' => 'services'], function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
+        // ->middleware('payout');
     });
 
     Route::apiResource('fund-requests', FundRequestController::class);

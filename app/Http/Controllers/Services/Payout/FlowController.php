@@ -31,7 +31,6 @@ class FlowController extends Controller
      */
     public function store(PayoutRequest $request)
     {
-        return $request->user();
         $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
             throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
@@ -48,8 +47,8 @@ class FlowController extends Controller
         $transaction = $instance->initiateTransaction($request);
 
         if ($transaction['metadata']['status'] != 'success') {
-            abort(400, ['data' => ['message' => $transaction['metadata']['message']]]);
             $lock->release();
+            abort(400, $transaction['metadata']['message']);
         }
 
         $reference_id = uniqid('PYT');

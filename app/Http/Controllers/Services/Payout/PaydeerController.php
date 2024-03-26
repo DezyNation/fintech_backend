@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Services\Payout;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PaydeerController extends Controller
 {
@@ -17,7 +20,7 @@ class PaydeerController extends Controller
      * @return Response The response instance from the paydeer API.
      */
 
-    public function initiateTransaction(PayoutRequest $request): array
+    public function initiateTransaction(PayoutRequest $request): array | Exception
     {
         if (!Cache::has('paydeer-token')) {
             $token = $this->paydeerToken();
@@ -29,7 +32,7 @@ class PaydeerController extends Controller
         $data = [
             'name' => $request->beneficiary_name,
             'email' => $request->user()->email,
-            'mobile' => $request->user()->phone_number,
+            'mobile' => $request->user()->phone_number ?? 9971412064,
             'address' => $request->user()->address ?? 'Dubai',
             'amount' => $request->amount,
             'reference' => uniqid('PAYO-PD'),
@@ -42,8 +45,8 @@ class PaydeerController extends Controller
 
         $array = [
             'status' => $response['status'] ?? 'error',
-            'message' => $response['message'] ?? $response['data']['message'],
-            'transaction_status' => $response['data']['status']
+            'message' => $response['message'],
+            // 'transaction_status' => $response['data']['status'] ?? 'failed'
         ];
 
         return ['response' => $response, 'metadata' => $array];
