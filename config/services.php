@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'razorpay' => [
+        'key' => env('RAZORPAY_KEY'),
+        'secret' => env('RAZORPAY_SECRET'),
+        'base_url' => 'https://api.razorpay.com'
+    ]
+
 ];

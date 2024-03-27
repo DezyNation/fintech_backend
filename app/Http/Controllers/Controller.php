@@ -95,6 +95,11 @@ class Controller extends BaseController
         return Cache::lock($key, 30);
     }
 
+    public function releaseLock($key): bool
+    {
+        return Cache::lock($key)->release();
+    }
+
     public function storeOtp(string $password, string $intent): JsonResource
     {
         $data = Otp::create([

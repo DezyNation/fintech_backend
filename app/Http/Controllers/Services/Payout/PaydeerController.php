@@ -20,7 +20,7 @@ class PaydeerController extends Controller
      * @return Response The response instance from the paydeer API.
      */
 
-    public function initiateTransaction(PayoutRequest $request): array | Exception
+    public function initiateTransaction(PayoutRequest $request, string $reference_id): array | Exception
     {
         if (!Cache::has('paydeer-token')) {
             $token = $this->paydeerToken();
@@ -35,7 +35,7 @@ class PaydeerController extends Controller
             'mobile' => $request->user()->phone_number ?? 9971412064,
             'address' => $request->user()->address ?? 'Dubai',
             'amount' => $request->amount,
-            'reference' => uniqid('PAYO-PD'),
+            'reference' => $reference_id,
             'trans_mode' => $request->mode,
             'account' => $request->account_number,
             'ifsc' => $request->ifsc_code
