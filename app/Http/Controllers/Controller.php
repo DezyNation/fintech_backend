@@ -13,11 +13,15 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\GeneralResource;
+use App\Models\Payout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Ramsey\Uuid\UuidInterface;
 
 class Controller extends BaseController
 {
@@ -110,5 +114,12 @@ class Controller extends BaseController
         ]);
 
         return new GeneralResource($data);
+    }
+
+    public function generateIdempotentKey(): UuidInterface
+    {
+        return once(function () {
+            return Str::uuid();
+        });
     }
 }
