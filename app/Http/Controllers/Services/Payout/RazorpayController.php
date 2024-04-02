@@ -51,17 +51,22 @@ class RazorpayController extends Controller
             'fund_account_id' => $fund_id['id'],
             'mode' => $request->mode,
             'amount' => $request->amount * 100,
+            'refernce_id' => $reference_id,
             'currency' => 'INR',
             'purpose' => 'payout'
         ];
 
-        $response = Http::withBasicAuth(config('services.razorpay.key'), config('services.razorpay.secret'))->asJson()
+        $response = Http::retry(2, 100)->withBasicAuth(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        )
+            ->asJson()
+            ->withHeader('X-Payout-Idempotency', $this->generateIdempotentKey())
             ->post(config('services.razorpay.base_url') . '/v1/payouts', $data);
 
         $array = [
             'status' => $response['status'] ?? 'error',
             'message' => $response['message'],
-            // 'transaction_status' => $response['data']['status'] ?? 'failed'
         ];
 
         return ['response' => $response, 'metadata' => $array];

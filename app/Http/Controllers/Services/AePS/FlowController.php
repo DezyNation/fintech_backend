@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\Services\AePS;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MerchantAuthRequest;
-use App\Http\Controllers\Services\AePS\EkoController;
-use App\Http\Controllers\Services\AePS\PaysprintController;
+use App\Http\Requests\AepsTransactionRequest;
 use App\Http\Controllers\TransactionController;
-use App\Http\Requests\AepsTrxnRequest;
+use App\Http\Controllers\Services\AePS\EkoController;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Http\Controllers\Services\AePS\PaysprintController;
+use App\Http\Resources\GeneralResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class FlowController extends Controller
 {
@@ -44,26 +48,37 @@ class FlowController extends Controller
      * Commission distribution
      * Return data
      */
-    public function transactions(AepsTrxnRequest $request): JsonResponse
+    public function transactions(AepsTransactionRequest $request): JsonResource
     {
-        $user = $request->user();
-        $services = ['MS' => 1, 'CW' => 2, 'BE' => 3];
+        $lock = $this->lockRecords($request->user()->id);
+        if (!$lock->get()) {
+            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+        }
 
-        //Eko Request
-        $eko = new EkoController();
-        $response = $eko->aepsTransaction($request, $services[$request->serviceType]);
-        $result = $this->processResponse($response, $request);
+        $class_name = Str::of($request->provider . "_" . "controller")->studly();
+        $class = __NAMESPACE__ . "\\" . $class_name;
+        $instance = new $class;
+        if (!class_exists($class)) {
+            abort(501, ['data' => ['message' => "Provider not supported."]]);
+            $lock->release();
+        }
 
-        // Paysprint Request
-        $paysprint = new PaysprintController();
-        $response = $paysprint->aepsTransaction($request);
-        $result = $this->processResponse($response, $request);
+        $reference_id = uniqid('PYT');
 
-        TransactionController::store($user->id, $response['reference_id'], "AEPS-{$request->serviceType}", "Random desc", 100, 100, $result);
-        $commission = new CommissionController();
-        $commission->distributeCommission($user, $request->serviceType, $request->amount);
+        $transaction = $instance->initiateTransaction($request, $reference_id);
 
-        return response()->json($result, 200);
+        if ($transaction['metadata']['status'] != 'success') {
+            $lock->release();
+            abort(400, $transaction['metadata']['message']);
+        }
+
+        TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated", 0, $request->amount, []);
+        $commission_class = new CommissionController;
+        $commission_class->distributeCommission($request->user(), $request->service, $request->amount);
+
+        $lock->release();
+
+        return new GeneralResource("");
     }
 
     public function processResponse($response, $request): array

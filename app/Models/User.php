@@ -20,7 +20,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids, HasRolesExtra, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesExtra, SoftDeletes, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -72,8 +72,6 @@ class User extends Authenticatable implements JWTSubject
         'otp' => 'hashed',
         'pin' => 'hashed',
     ];
-
-    protected $guard_name = 'api';
 
     protected function aadhaarNumber(): Attribute
     {

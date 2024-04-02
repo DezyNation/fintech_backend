@@ -40,8 +40,8 @@ class PaydeerController extends Controller
             'account' => $request->account_number,
             'ifsc' => $request->ifsc_code
         ];
-        $response = Http::withHeader('Authorization', 'Bearer ' . $token)
-            ->post('https://paydeer.in/API/public/api/v1.1/payoutTransaction/async', $data);
+        $response = Http::withToken($token)
+            ->post(config('services.paydeer.base_url') . '/API/public/api/v1.1/payoutTransaction/async', $data);
 
         $array = [
             'status' => $response['status'] ?? 'error',

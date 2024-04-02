@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class AepsTrxnRequest extends FormRequest
+class AepsTransactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,13 @@ class AepsTrxnRequest extends FormRequest
     {
         $allowed_services = ['MS', 'CW', 'BE'];
         return [
+            'provider' => ['required', Rule::exists('services', 'provider')->where('active', true)],
             'aadhaar' => ['required', 'digits:12'],
             'amount' => ['required', 'integer', 'min:1'],
-            'serviceType' => ['required', Rule::in($allowed_services)],
-            'piddata' => ['required', 'string'],
+            'service_type' => ['required', Rule::in($allowed_services)],
+            'pid_data' => ['required', 'string'],
             'authenticity' => ['required'],
-            'bankCode' => ['required'],
+            'bank_code' => ['required'],
             'latitude' => ['required', 'between:-90,90'],
             'longitude' => ['required', 'between:-180,180'],
         ];

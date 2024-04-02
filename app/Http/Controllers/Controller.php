@@ -80,7 +80,7 @@ class Controller extends BaseController
 
     public function paydeerToken(): Response
     {
-        return Http::post('https://paydeer.in/API/public/api/v1.1/generateToken', ['clientKey' => env('PAYDEER_CLIENT_KEY'), 'clientSecret' => env('PAYDEER_CLIENT_SECRET')]);
+        return Http::post(config('services.paydeer.base_url') . '/API/public/api/v1.1/generateToken', ['clientKey' => config('services.paydeer.key'), 'clientSecret' => config('services.paydeer.secret')]);
     }
 
     public function triggerSms(Request $request, array $contents)
@@ -116,10 +116,10 @@ class Controller extends BaseController
         return new GeneralResource($data);
     }
 
-    public function generateIdempotentKey(): UuidInterface
+    public function generateIdempotentKey(): string
     {
         return once(function () {
-            return Str::uuid();
+            return (string) Str::uuid();
         });
     }
 }

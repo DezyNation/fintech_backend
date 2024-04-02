@@ -35,6 +35,12 @@ return [
         'key' => env('RAZORPAY_KEY'),
         'secret' => env('RAZORPAY_SECRET'),
         'base_url' => 'https://api.razorpay.com'
-    ]
+    ],
+
+    'paydeer' => [
+        'key' => env('PAYDEER_CLIENT_KEY'),
+        'secret' => env('PAYDEER_CLIENT_SECRET'),
+        'base_url' => 'https://paydeer.in'
+    ],
 
 ];

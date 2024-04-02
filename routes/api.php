@@ -35,10 +35,7 @@ Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
-    Route::group(['prefix' => 'services'], function () {
-        Route::post('payout', [PayoutFlowController::class, 'store']);
-        // ->middleware('payout');
-    });
+    Route::post('payout', [PayoutFlowController::class, 'store']);
 
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
@@ -51,7 +48,6 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
         Route::get('payout', [PayoutFlowController::class, 'index']);
     });
-
 });
 
 /**************** Admin Routes ****************/
@@ -93,7 +89,7 @@ Route::group(['prefix' => 'admin', 'role:admin'], function () {
 
     Route::apiResource('plans', PlanController::class);
 
-    Route::group(['prefix' => 'commissions'], function () {
+    Route::prefix('commissions')->group(function () {
         Route::get('get-commission/{id}', [CommissionController::class, 'getCommission']);
         Route::post('create-commission', [CommissionController::class, 'createCommission']);
         Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);

@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class FlowController extends Controller
 {
@@ -29,7 +30,7 @@ class FlowController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PayoutRequest $request)
+    public function store(PayoutRequest $request): JsonResource
     {
         $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
@@ -44,14 +45,14 @@ class FlowController extends Controller
             $lock->release();
         }
 
-        $transaction = $instance->initiateTransaction($request);
+        $reference_id = uniqid('PYT');
+
+        $transaction = $instance->initiateTransaction($request, $reference_id);
 
         if ($transaction['metadata']['status'] != 'success') {
             $lock->release();
             abort(400, $transaction['metadata']['message']);
         }
-
-        $reference_id = uniqid('PYT');
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,
