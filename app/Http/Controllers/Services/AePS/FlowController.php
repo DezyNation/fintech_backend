@@ -1,22 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Services\AePS;
+namespace App\Http\Controllers\Services\Aeps;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MerchantAuthRequest;
-use App\Http\Requests\AepsTransactionRequest;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\Services\AePS\EkoController;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Http\Controllers\Services\AePS\PaysprintController;
 use App\Http\Resources\GeneralResource;
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Requests\MerchantAuthRequest;
+use App\Http\Controllers\TransactionController;
+use App\Models\Aeps;
 
 class FlowController extends Controller
 {
+
     /**
      * -----------------------------------------
      * All AePS requests will be processed here
@@ -40,69 +36,57 @@ class FlowController extends Controller
         $response = $paysprint->merchantAuthentication($request);
         return response()->json(['reference_tid' => $response['MerAuthTxnId']], 200);
     }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
 
     /**
-     * Validate request first
-     * Identify service using given array
-     * Make API call and store response
-     * Commission distribution
-     * Return data
+     * Store a newly created resource in storage.
      */
-    public function transactions(AepsTransactionRequest $request): JsonResource
+    public function store(Request $request)
     {
-        $lock = $this->lockRecords($request->user()->id);
-        if (!$lock->get()) {
-            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
-        }
+        $reference_id = uniqid('PAY-');
+        $transaction = $this->initiateRequests($request, $reference_id);
 
-        $class_name = Str::of($request->provider . "_" . "controller")->studly();
-        $class = __NAMESPACE__ . "\\" . $class_name;
-        $instance = new $class;
-        if (!class_exists($class)) {
-            abort(501, ['data' => ['message' => "Provider not supported."]]);
-            $lock->release();
-        }
+        // Aeps::create([
+        //     'user_id' => $request->user()->id,
 
-        $reference_id = uniqid('PYT');
-
-        $transaction = $instance->initiateTransaction($request, $reference_id);
-
-        if ($transaction['metadata']['status'] != 'success') {
-            $lock->release();
-            abort(400, $transaction['metadata']['message']);
-        }
+        // ]);
 
         TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated", 0, $request->amount, []);
         $commission_class = new CommissionController;
-        $commission_class->distributeCommission($request->user(), $request->service, $request->amount);
+        $commission_class->distributeCommission($request->user(), 'aeps', $request->amount);
 
-        $lock->release();
+        $this->releaseLock($request->user()->id);
 
         return new GeneralResource("");
     }
 
-    public function processResponse($response, $request): array
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        //Eko Response
-        $result = [
-            'status' => $response['status'],
-            'reference_id' => $request['client_ref_id'],
-            'amount' => $response['data']['amount'],
-            'message' => $response['message'],
-            'aadhar' => substr($request['aadhar'], 0, -8),
-            'transaction_time' => $response['data']['transaction_time']
-        ];
+        //
+    }
 
-        //Paysprint Response
-        $result = [
-            'status' => $response['status'],
-            'reference_id' => $request['client_ref_id'],
-            'amount' => $response['data']['amount'],
-            'message' => $response['message'],
-            'aadhar' => substr($request['aadhar'], 0, -8),
-            'transaction_time' => $request['transaction_time']
-        ];
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
 
-        return $result;
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
     }
 }

@@ -32,27 +32,8 @@ class FlowController extends Controller
      */
     public function store(PayoutRequest $request): JsonResource
     {
-        $lock = $this->lockRecords($request->user()->id);
-        if (!$lock->get()) {
-            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
-        }
-
-        $class_name = Str::of($request->provider . "_" . "controller")->studly();
-        $class = __NAMESPACE__ . "\\" . $class_name;
-        $instance = new $class;
-        if (!class_exists($class)) {
-            abort(501, ['data' => ['message' => "Provider not supported."]]);
-            $lock->release();
-        }
-
-        $reference_id = uniqid('PYT');
-
-        $transaction = $instance->initiateTransaction($request, $reference_id);
-
-        if ($transaction['metadata']['status'] != 'success') {
-            $lock->release();
-            abort(400, $transaction['metadata']['message']);
-        }
+        $reference_id = uniqid('PAY-');
+        $transaction = $this->initiateRequests($request, $reference_id);
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,
@@ -71,7 +52,7 @@ class FlowController extends Controller
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount);
 
-        $lock->release();
+        $this->releaseLock($request->user()->id);
 
         return new GeneralResource($payout);
     }

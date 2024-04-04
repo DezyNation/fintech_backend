@@ -2,26 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AepsTransactionRequest;
+use App\Http\Requests\BbpsTransactionRequest;
+use App\Http\Requests\PayoutRequest;
 use Carbon\Carbon;
 use App\Models\Otp;
 use Firebase\JWT\JWT;
+use App\Models\Payout;
 use Illuminate\Cache\Lock;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\GeneralResource;
-use App\Models\Payout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Ramsey\Uuid\UuidInterface;
 
 class Controller extends BaseController
 {
@@ -121,5 +125,37 @@ class Controller extends BaseController
         return once(function () {
             return (string) Str::uuid();
         });
+    }
+
+    /**
+     * Initiate transactions of all services.
+     *
+     * @param  Request $request
+     * @param string $prefix
+     * @param array $additional_data
+     */
+    public function initiateRequests(AepsTransactionRequest | PayoutRequest | BbpsTransactionRequest $request, string $reference_id, array $additional_data = null)
+    {
+        $lock = $this->lockRecords($request->user()->id);
+        if (!$lock->get()) {
+            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+        }
+
+        $class_name = Str::of($request->provider . "_" . "controller")->studly();
+        $class = __NAMESPACE__ . "\\" . $class_name;
+        $instance = new $class;
+        if (!class_exists($class)) {
+            abort(501, ['data' => ['message' => "Provider not supported."]]);
+            $lock->release();
+        }
+
+        $transaction = $instance->initiateTransaction($request, $reference_id, $additional_data);
+
+        if ($transaction['metadata']['status'] != 'success') {
+            $lock->release();
+            abort(400, $transaction['metadata']['message']);
+        }
+
+        return $transaction;
     }
 }
