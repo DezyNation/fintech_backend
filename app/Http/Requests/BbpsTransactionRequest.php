@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BbpsTransactionRequest extends FormRequest
@@ -22,7 +23,11 @@ class BbpsTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'provider' => ['required', Rule::exists('services', 'provider')->where('active', true)],
+            'operator_id' => ['required', 'exists:operators,id'],
+            'amount'      => ['required', 'numeric', 'min:1'],
+            'utility_number' => ['required', 'string', 'max:30'],
+            'bill_response' => ['required', 'json']
         ];
     }
 }

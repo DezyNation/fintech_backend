@@ -24,20 +24,26 @@ class FlowController extends Controller
      */
     public function store(BbpsTransactionRequest $request)
     {
-        $reference_id = uniqid('PAY-');
+        $reference_id = uniqid('BBPS-');
         $transaction = $this->initiateRequests($request, $reference_id);
 
-        Bbps::crat([
-
+        $bbps = Bbps::create([
+            'user_id' => $request->user()->id,
+            'operator_id' => $request->operator_id,
+            'amount' => $request->amount,
+            'status' => $transaction->status,
+            'transaction_id' => $transaction->transaction_id,
+            'utility_number' => $request->utility_number,
+            'phone_number' => $request->phone_number
         ]);
-        
+
         TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated", 0, $request->amount, []);
         $commission_class = new CommissionController;
-        $commission_class->distributeCommission($request->user(), 5, 'bbps', $request->amount);
+        $commission_class->distributeCommission($request->user(), $request->operator_id, 'bbps', $request->amount);
 
         $this->releaseLock($request->user()->id);
 
-        return new GeneralResource("");
+        return new GeneralResource($bbps);
     }
 
     /**

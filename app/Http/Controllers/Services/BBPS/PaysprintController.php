@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Services\BBPS;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BbpsTransactionRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -31,17 +32,17 @@ class PaysprintController extends Controller
         return $response;
     }
 
-    public function payBill(Request $request): Response
+    public function payBill(BbpsTransactionRequest $request, string $reference_id): Response
     {
         $data = [
             'mode' => 'online',
-            'referenceid' => uniqid('BBPS-PB'),
-            'operator' => $request->operatorId,
-            'canumber' => $request->utilityAccNo,
+            'referenceid' => $reference_id,
+            'operator' => $request->operator_id,
+            'canumber' => $request->utility_number,
             'amount' => $request->amount,
             'latitude' => $request->latitude, //divide
             'longitude' => $request->longitude,  //divide
-            'bill_fetch' => $request->bill
+            'bill_fetch' => $request->bill_response
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()

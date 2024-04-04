@@ -53,7 +53,7 @@ class UserController extends Controller
         }
 
         $user->update([
-            $request->credential_type => $request->credential
+            $request->credential_type => Hash::make($request->credential)
         ]);
 
         return new GeneralResource($user);

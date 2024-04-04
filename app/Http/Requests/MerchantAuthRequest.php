@@ -23,9 +23,9 @@ class MerchantAuthRequest extends FormRequest
     {
         return [
             'aadhaar' => ['required', 'digits:12'],
-            'latitude' => ['required', 'between:-90,90'],
-            'longitude' => ['required', 'between:-180,180'],
-            'piddata' => ['required'],
+            'latitude' => ['required', 'between:8,38'],
+            'longitude' => ['required', 'between:68,98'],
+            'pid_data' => ['required'],
         ];
     }
 }

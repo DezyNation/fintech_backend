@@ -1,19 +1,20 @@
 <?php
 
-use App\Http\Controllers\Dashboard\Admin\AdminController;
-use App\Http\Controllers\Dashboard\Admin\BankController;
-use App\Http\Controllers\Dashboard\Admin\CommissionController;
-use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
-use App\Http\Controllers\Dashboard\Admin\PlanController;
-use App\Http\Controllers\Dashboard\Admin\ReportController;
-use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Dashboard\Admin\WebsiteController;
-use App\Http\Controllers\Dashboard\User\FundRequestController;
-use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
-use App\Http\Controllers\Dashboard\User\UserController;
-use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Services\Bbps\FlowController as BbpsFlowController;
+use App\Http\Controllers\Dashboard\User\UserController;
+use App\Http\Controllers\Dashboard\Admin\BankController;
+use App\Http\Controllers\Dashboard\Admin\PlanController;
+use App\Http\Controllers\Dashboard\Admin\AdminController;
+use App\Http\Controllers\Dashboard\Admin\ReportController;
+use App\Http\Controllers\Dashboard\Admin\WebsiteController;
+use App\Http\Controllers\Dashboard\Admin\CommissionController;
+use App\Http\Controllers\Dashboard\User\FundRequestController;
+use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
+use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
+use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,10 @@ Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
-    Route::post('payout', [PayoutFlowController::class, 'store']);
+    Route::prefix('transaction')->group(function () {
+        Route::post('payout', [PayoutFlowController::class, 'store']);
+        Route::post('bbps', [BbpsFlowController::class, 'store']);
+    });
 
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
@@ -44,14 +48,14 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::post('document', [UserController::class, 'uploadDocument']);
     Route::put('credential', [UserController::class, 'updateCredential']);
 
-    Route::group(['prefix' => 'report'], function () {
+    Route::prefix('reports')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
         Route::get('payout', [PayoutFlowController::class, 'index']);
     });
 });
 
 /**************** Admin Routes ****************/
-Route::group(['prefix' => 'admin', 'role:admin'], function () {
+Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 

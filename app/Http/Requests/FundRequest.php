@@ -25,7 +25,7 @@ class FundRequest extends FormRequest
             'transaction_id' => ['required', 'unique:fund_requests,transaction_id'],
             'transaction_date' => ['required', 'date', 'before:tomorrow'],
             'amount' => ['required', 'numeric', 'min:1'],
-            'userRemarks' => ['nullable', 'string']
+            'user_remarks' => ['nullable', 'string']
         ];
     }
 }
