@@ -43,4 +43,11 @@ return [
         'base_url' => 'https://paydeer.in'
     ],
 
+    'eko' => [
+        'initiator_id' => env('EKO_INITIATOR_ID'),
+        'key' => env('EKO_KEY'),
+        'developer_key' => env('EKO_DEVELOPER_KEY'),
+        'base_url' => 'https://staging.eko.in'
+    ],
+
 ];

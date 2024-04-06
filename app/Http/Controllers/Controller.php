@@ -36,13 +36,13 @@ class Controller extends BaseController
      */
     public function ekoHeaders(): array
     {
-        $encoded_key = base64_encode(env('EKO_KEY'));
+        $encoded_key = base64_encode(config('services.eko.key'));
         $secret_key_timestamp = (int)round(microtime(true) * 1000);
         $signature = hash_hmac('SHA256', $secret_key_timestamp, $encoded_key, true);
         $secret_key = base64_encode($signature);
 
         return [
-            'developer_key' => env('DEVELOPER_KEY'),
+            'developer_key' => config('services.eko.developer_key'),
             'secret-key' => $secret_key,
             'secret-key-timestamp' => $secret_key_timestamp
         ];
