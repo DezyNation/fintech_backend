@@ -15,6 +15,7 @@ use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
 use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
+use App\Http\Controllers\Dashboard\User\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,12 +37,13 @@ Route::get('banks', [BankController::class, 'activeBanks']);
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
-    Route::prefix('transaction')->group(function () {
+    Route::prefix('transaction')->middleware('onboard_active')->group(function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
         Route::post('bbps', [BbpsFlowController::class, 'store']);
     });
 
     Route::apiResource('fund-requests', FundRequestController::class);
+    Route::apiResource('address', AddressController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::get('permissions', [UserController::class, 'permissions']);
     Route::put('update', [UserController::class, 'updateProfile']);

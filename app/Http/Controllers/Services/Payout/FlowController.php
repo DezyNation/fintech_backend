@@ -43,8 +43,8 @@ class FlowController extends Controller
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
-            'status' => $transaction['metadata']['status'],
-            'description' => $transaction['metadata']['message'],
+            'status' => $transaction['status'],
+            'description' => $transaction['message'],
             'remarks' => $request->remarks
         ]);
 

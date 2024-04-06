@@ -42,6 +42,7 @@ class EkoController extends Controller
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id): array
     {
+        $this->activateService($request, 45);
         $data = [
             'recipient_id' => $request->recipient_id,
             'amount' => $request->amount * 100,
@@ -59,6 +60,25 @@ class EkoController extends Controller
             ->post(config('services.eko.base_url') . '/ekoapi/v2/transactions', $data);
 
         return $this->processResponse($response, 'eko');
+    }
+
+    public function activateService(PayoutRequest $request, int $service_code)
+    {
+        $data = [
+            'initiator_id' => config('services.eko.initiator_id'),
+            'user_code' => $request->user()->eko_user_code,
+            'service_code' => $service_code
+        ];
+
+        $response = Http::withHeaders($this->ekoHeaders())->asJson()
+            ->post(config('services.eko.base_url') . '/ekoapi/v1/user/service/activate', $data);
+
+        if ($response['status'] == 0 && $response['data']['service_status'] == 1) {
+            return true;
+        } else {
+            $this->releaseLock($request->user()->id);
+            abort(403, $response['message']);
+        }
     }
 
     /**

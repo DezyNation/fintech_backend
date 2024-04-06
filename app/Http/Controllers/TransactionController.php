@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -24,10 +25,12 @@ class TransactionController extends Controller
             'debit_amount' => $debit_amount,
             'opening_balance' => $user->wallet,
             'closing_balance' => $closing_balance,
-            'metadata' => json_encode($response)
         ]);
-
+        
+        DB::transaction(function () use ($user, $closing_balance) {
+        $user->lockForUpdate();
         $user->wallet = $closing_balance;
         $user->save();
+        }, 3);
     }
 }

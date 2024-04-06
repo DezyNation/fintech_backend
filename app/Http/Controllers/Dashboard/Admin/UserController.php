@@ -85,7 +85,8 @@ class UserController extends Controller
             'email' => $request->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
             'plan_id' => $request->plan_id,
-            'capped_balance' => $request->capped_balance
+            'capped_balance' => $request->capped_balance,
+            'active' => $request->active
         ]);
 
         return new GeneralResource($user);
@@ -124,7 +125,7 @@ class UserController extends Controller
 
     public function userPermissions(User $user)
     {
-        return new GeneralResource($user->getAllPermissions());
+        return GeneralResource::collection($user->getAllPermissions());
     }
 
     public function restore(string $id)

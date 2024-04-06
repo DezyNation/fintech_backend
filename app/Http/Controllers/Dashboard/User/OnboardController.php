@@ -21,7 +21,7 @@ class OnboardController extends Controller
             'mobile' => $user->phone_number,
             'first_name' => $user->first_name,
             'email' => $user->email,
-            'residence_address' => $user->address,
+            'residence_address' => $user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at']),
             'dob' => $user->dob,
             'shop_name' => $user->shop_name
         ];

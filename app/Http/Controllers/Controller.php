@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\GeneralResource;
+use App\Models\Service;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller as BaseController;
@@ -141,7 +142,8 @@ class Controller extends BaseController
             throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
         }
 
-        $class_name = Str::of($request->provider . "_" . "controller")->studly();
+        $service = Service::findOrFail($request->service_id);
+        $class_name = Str::of($service->provider . "_" . "controller")->studly();
         $class = __NAMESPACE__ . "\\" . $class_name;
         $instance = new $class;
         if (!class_exists($class)) {

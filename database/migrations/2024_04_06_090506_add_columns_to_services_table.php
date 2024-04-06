@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->date('date_of_birth')->nullable()->after('pin');
-            $table->boolean('active')->default(0)->after('remember_token');
-            $table->string('shop_name')->nullable()->after('date_of_birth');
+        Schema::table('services', function (Blueprint $table) {
+            $table->boolean('onboard_required')->default(0)->after('active');
+            $table->boolean('activation_required')->default(0)->after('onboard_required');
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('services', function (Blueprint $table) {
             //
         });
     }
