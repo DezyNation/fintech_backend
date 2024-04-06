@@ -16,6 +16,7 @@ use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
 use App\Http\Controllers\Dashboard\User\ReportController as UserReportController;
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\User\AddressController;
+use App\Http\Controllers\Dashboard\User\OnboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::apiResource('address', AddressController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
+    Route::get('onboard', [OnboardController::class, 'ekoOnboard'])->middleware('profile');
     Route::get('permissions', [UserController::class, 'permissions']);
     Route::put('update', [UserController::class, 'updateProfile']);
     Route::post('document', [UserController::class, 'uploadDocument']);
