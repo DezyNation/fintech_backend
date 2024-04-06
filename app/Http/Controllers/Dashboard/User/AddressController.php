@@ -31,13 +31,13 @@ class AddressController extends Controller
             'shop_name' => ['required', 'string']
         ]);
         $data['user_id'] = $request->user()->id;
-        
-        $data = Address::upsert(
-            $data,
-            ['user_id']
+
+        Address::updateOrInsert(
+            ['user_id' => $data['user_id']],
+            $data
         );
 
-        return new GeneralResource($data);
+        return $data;
     }
 
     /**
