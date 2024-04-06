@@ -27,7 +27,8 @@ class AddressController extends Controller
             'street' => ['required', 'string'],
             'city' => ['required', 'string'],
             'state' => ['required', 'string'],
-            'pincode' => ['required', 'digits_between:6,8']
+            'pincode' => ['required', 'digits_between:6,8'],
+            'shop_name' => ['required', 'string']
         ]);
         $data['user_id'] = $request->user()->id;
         
