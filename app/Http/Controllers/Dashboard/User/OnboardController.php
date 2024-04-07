@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Dashboard\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OnboardController extends Controller
 {
@@ -17,23 +19,31 @@ class OnboardController extends Controller
         $user = $request->user();
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'pan_number' => $user->pan_number,
+            'pan_number' => $user->getRawOriginal('pan_number'),
             'mobile' => $user->phone_number,
             'first_name' => $user->first_name,
+            'middle_name' => $user->middle_name,
+            'last_name' => $user->last_name,
             'email' => $user->email,
-            'residence_address' => $user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at']),
-            'dob' => $user->dob,
+            'residence_address' => json_encode($user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at'])),
+            'dob' => Carbon::parse($user->dob)->format('yyy-mm-dd'),
             'shop_name' => $user->shop_name
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->post(config('services.eko.base_url') . '/ekoapi/v1/user/onboard', $data);
+            ->put(config('services.eko.base_url') . '/ekoapi/v1/user/onboard', $data);
 
+        if ($response->failed()) {
+            abort(400, $response['message'] ?? "Failed to onboard");
+        }
+        
         if ($response['status'] == 0) {
             $user = User::findOrFail($user->id);
             $user->eko_user_code = $response['data']['user_code'];
             $user->save();
         }
+
+        Log::info($response);
 
         return $user;
     }

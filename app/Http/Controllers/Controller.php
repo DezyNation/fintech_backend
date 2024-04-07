@@ -137,27 +137,8 @@ class Controller extends BaseController
      */
     public function initiateRequests(AepsTransactionRequest | PayoutRequest | BbpsTransactionRequest $request, string $reference_id, array $additional_data = null)
     {
-        $lock = $this->lockRecords($request->user()->id);
-        if (!$lock->get()) {
-            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
-        }
 
-        $service = Service::findOrFail($request->service_id);
-        $class_name = Str::of($service->provider . "_" . "controller")->studly();
-        $class = __NAMESPACE__ . "\\" . $class_name;
-        $instance = new $class;
-        if (!class_exists($class)) {
-            abort(501, ['data' => ['message' => "Provider not supported."]]);
-            $lock->release();
-        }
 
-        $transaction = $instance->initiateTransaction($request, $reference_id, $additional_data);
-
-        if ($transaction['metadata']['status'] != 'success') {
-            $lock->release();
-            abort(400, $transaction['metadata']['message']);
-        }
-
-        return $transaction;
+        // return $transaction;
     }
 }

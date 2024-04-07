@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
+use App\Models\Service;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -32,8 +33,28 @@ class FlowController extends Controller
      */
     public function store(PayoutRequest $request): JsonResource
     {
+        
+        $lock = $this->lockRecords($request->user()->id);
+        if (!$lock->get()) {
+            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+        }
+        
+        $service = Service::findOrFail($request->service_id);
+        $class_name = Str::of($service->provider . "_" . "controller")->studly();
+        $class = __NAMESPACE__ . "\\" . $class_name;
+        $instance = new $class;
+        if (!class_exists($class)) {
+            abort(501, "Provider not supported.");
+            $lock->release();
+        }
+        
         $reference_id = uniqid('PAY-');
-        $transaction = $this->initiateRequests($request, $reference_id);
+        $transaction = $instance->initiateTransaction($request, $reference_id);
+
+        if ($transaction['status'] != 'success') {
+            $lock->release();
+            abort(400, $transaction['message']);
+        }
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,

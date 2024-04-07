@@ -43,10 +43,12 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         Route::post('bbps', [BbpsFlowController::class, 'store']);
     });
 
+    Route::prefix('onboard')->controller(OnboardController::class)->group(function(){
+        Route::get('eko', 'ekoOnboard')->middleware('profile');
+    });
     Route::apiResource('fund-requests', FundRequestController::class);
     Route::apiResource('address', AddressController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
-    Route::get('onboard', [OnboardController::class, 'ekoOnboard'])->middleware('profile');
     Route::get('permissions', [UserController::class, 'permissions']);
     Route::put('update', [UserController::class, 'updateProfile']);
     Route::post('document', [UserController::class, 'uploadDocument']);

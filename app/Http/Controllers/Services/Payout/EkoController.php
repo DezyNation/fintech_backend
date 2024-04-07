@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class EkoController extends Controller
 {
@@ -42,22 +43,22 @@ class EkoController extends Controller
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id): array
     {
-        $this->activateService($request, 45);
+        $this->activateService($request, $service_code = 45);
         $data = [
-            'recipient_id' => $request->recipient_id,
-            'amount' => $request->amount * 100,
-            'timestamp' => now(),
-            'currency' => 'INR',
-            'customer_id' => $request->phone_number ?? $request->user()->phone_number,
             'initiator_id' => config('services.eko.initiator_id'),
             'client_ref_id' => $reference_id,
-            'state' => 1,
-            'channel' => $request->mode,
-            'user_code' => $request->user()->eko_user_code
+            'service_code' => $service_code,
+            'payment_mode' => $request->mode,
+            'recipient_name' => $request->beneficiary_name,
+            'account' => $request->accont_number,
+            'ifsc' => $request->ifsc_code,
+            'sender_name' => $request->user()->name,
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->post(config('services.eko.base_url') . '/ekoapi/v2/transactions', $data);
+            ->post(config('services.eko.base_url') . "/ekoapi/v1/user_code:{$request->user()->eko_user_code}/settlement", $data);
+
+        Log::info($response);
 
         return $this->processResponse($response, 'eko');
     }
@@ -69,15 +70,23 @@ class EkoController extends Controller
             'user_code' => $request->user()->eko_user_code,
             'service_code' => $service_code
         ];
+        Log::info($data);
 
-        $response = Http::withHeaders($this->ekoHeaders())->asJson()
-            ->post(config('services.eko.base_url') . '/ekoapi/v1/user/service/activate', $data);
+        $response = Http::withHeaders($this->ekoHeaders())->asMultipart()
+            ->put(config('services.eko.base_url') . '/ekoapi/v1/user/service/activate', $data);
+
+        Log::info($response->status());
+
+        if ($response->failed()) {
+            $this->releaseLock($request->user()->id);
+            abort(403, $response['message'] ?? "Failed.");
+        }
 
         if ($response['status'] == 0 && $response['data']['service_status'] == 1) {
             return true;
         } else {
             $this->releaseLock($request->user()->id);
-            abort(403, $response['message']);
+            abort(403, $response['message'] ?? "Failed to Activate Service");
         }
     }
 

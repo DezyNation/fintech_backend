@@ -16,7 +16,7 @@ class ProfileComplete
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (is_null($user->phone_number) || is_null($user->date_of_birth) || is_null($user->pan_number) || count($user->address) == 0) {
+        if (is_null($user->phone_number) || is_null($user->date_of_birth) || is_null($user->pan_number) || empty($user->address)) {
             return response()->json(['message' => 'Please complete your profile.'], 400);
         }
         return $next($request);
