@@ -12,20 +12,21 @@ use Illuminate\Support\Facades\Log;
 class EkoController extends Controller
 {
 
-    public function processResponse(Response $response, string $provider): array
+    public function processResponse(Response $response, int $status): array
     {
-        switch ($provider) {
-            case 'eko':
-                if ($response['status'] == 1) {
+        switch ($status) {
+            case 0:
+                if ($response['data']['tx_status'] == (0 || 1 || 5)) {
                     $data = [
                         'status' => 'success',
                         'message' => $response['message'],
-                        'transaction_status' => $response['data']['txstatus_desc']
+                        'transaction_status' => strtolower($response['data']['txstatus_desc'])
                     ];
                 } else {
                     $data = [
                         'status' => 'error',
-                        'message' => $response['message'] ?? "An error occurred while processing your request",
+                        'message' => $response['message'],
+                        'transaction_status' => $response['data']['txstatus_desc']
                     ];
                 }
                 break;
@@ -50,17 +51,24 @@ class EkoController extends Controller
             'service_code' => $service_code,
             'payment_mode' => $request->mode,
             'recipient_name' => $request->beneficiary_name,
-            'account' => $request->accont_number,
+            'account' => $request->account_number,
             'ifsc' => $request->ifsc_code,
             'sender_name' => $request->user()->name,
+            'amount' => $request->amount
         ];
 
-        $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->post(config('services.eko.base_url') . "/ekoapi/v1/user_code:{$request->user()->eko_user_code}/settlement", $data);
+        $response = Http::withHeaders($this->ekoHeaders())
+            ->asForm()
+            ->post(config('services.eko.base_url') . "/ekoapi/v1/agent/user_code:{$request->user()->eko_user_code}/settlement", $data);
 
-        Log::info($response);
+        Log::info(['response' => $response->body(), 'request' => $data]);
 
-        return $this->processResponse($response, 'eko');
+        if ($response->failed()) {
+            $this->releaseLock($request->user()->id);
+            abort($response->status(), "Gateway Failure!");
+        }
+
+        return $this->processResponse($response, $response['status']);
     }
 
     public function activateService(PayoutRequest $request, int $service_code)
@@ -70,19 +78,16 @@ class EkoController extends Controller
             'user_code' => $request->user()->eko_user_code,
             'service_code' => $service_code
         ];
-        Log::info($data);
 
-        $response = Http::withHeaders($this->ekoHeaders())->asMultipart()
+        $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put(config('services.eko.base_url') . '/ekoapi/v1/user/service/activate', $data);
-
-        Log::info($response->status());
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
             abort(403, $response['message'] ?? "Failed.");
         }
 
-        if ($response['status'] == 0 && $response['data']['service_status'] == 1) {
+        if (($response['status'] == 0 || $response['status'] == 1295) && $response['data']['service_status'] == 1) {
             return true;
         } else {
             $this->releaseLock($request->user()->id);
@@ -90,20 +95,16 @@ class EkoController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function updateTransaction(string $transaction_id)
     {
-        //
-    }
+        $response = Http::withHeaders($this->ekoHeaders())
+            ->get(config('services.eko.base_url') . "/ekoapi/v1/transactions/client_ref_id:$transaction_id", ['initiator_id' => config('services.eko.initiator_id')]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        if ($response->failed()) {
+            abort($response->status(), "Failed to fetch data. Please try again later.");
+        }
+
+        return $this->processResponse($response, $response['status']);
     }
 
     /**
@@ -119,7 +120,6 @@ class EkoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
     }
 
     /**

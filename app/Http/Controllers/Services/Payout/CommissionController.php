@@ -18,7 +18,7 @@ class CommissionController extends Controller
         ];
     }
 
-    public function distributeCommission(User $user, float $amount, bool $parent = false, bool $calculation = false): Model
+    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
         $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
@@ -29,7 +29,7 @@ class CommissionController extends Controller
                 'credit_amount' => $credit
             ];
         }
-        TransactionController::store($user, '', 'payout-commission', "Test dec", $credit, $fixed_charge, []);
+        TransactionController::store($user, $reference_id, 'payout-commission', "Payout Commission", $credit, $fixed_charge);
         $this->checkParent($user, $amount);
         return $instance;
     }

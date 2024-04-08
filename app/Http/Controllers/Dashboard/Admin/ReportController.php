@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\GeneralResource;
+use Carbon\Carbon;
 use App\Models\Payout;
 use App\Models\Transaction;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Resources\GeneralResource;
+use App\Exports\Dashboard\Admin\PayoutExport;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Exports\Dashboard\Admin\TransactionExport;
 
 class ReportController extends Controller
 {
@@ -83,5 +86,23 @@ class ReportController extends Controller
         $data = Payout::with('user')->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
         return GeneralResource::collection($data);
+    }
+
+    public function eexport(Request $request)
+    {
+        $request->validate(['user_id' => ['required', 'exists:users,id']]);
+        switch ($request['report']) {
+            case 'payouts':
+                return Excel::download(new PayoutExport($request->from, $request->to, $request->user_id), 'payouts.xlsx');
+                break;
+
+            case 'transactions':
+                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), 'transactions.xlsx');
+                break;
+
+            default:
+                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), 'transactions.xlsx');
+                break;
+        }
     }
 }

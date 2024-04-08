@@ -36,16 +36,14 @@ class OnboardController extends Controller
         if ($response->failed()) {
             abort(400, $response['message'] ?? "Failed to onboard");
         }
-        
+
         if ($response['status'] == 0) {
             $user = User::findOrFail($user->id);
             $user->eko_user_code = $response['data']['user_code'];
             $user->save();
         }
 
-        Log::info($response);
-
-        return $user;
+        return ['message' => $response['message']] ?? ['eko_id' => $user->eko_user_code];
     }
 
     /**

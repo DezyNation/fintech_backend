@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('debit_amount', 16, 4);
             $table->decimal('opening_balance', 16, 4);
             $table->decimal('closing_balance', 16, 4);
-            $table->json('metadata');
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }

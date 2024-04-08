@@ -17,6 +17,7 @@ use App\Http\Controllers\Dashboard\User\ReportController as UserReportController
 use App\Http\Controllers\Dashboard\Admin\FundRequestController as AdminFundRequestController;
 use App\Http\Controllers\Dashboard\User\AddressController;
 use App\Http\Controllers\Dashboard\User\OnboardController;
+use App\Http\Controllers\Services\Payout\CallbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         Route::post('bbps', [BbpsFlowController::class, 'store']);
     });
 
-    Route::prefix('onboard')->controller(OnboardController::class)->group(function(){
+    Route::prefix('onboard')->controller(OnboardController::class)->group(function () {
         Route::get('eko', 'ekoOnboard')->middleware('profile');
     });
     Route::apiResource('fund-requests', FundRequestController::class);
@@ -57,6 +58,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::prefix('reports')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
         Route::get('payout', [PayoutFlowController::class, 'index']);
+        Route::post('export', [UserReportController::class, 'export']);
     });
 });
 
@@ -84,6 +86,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::apiResource('ledgers', ReportController::class);
         Route::get('daily-sales', [ReportController::class, 'dailySales']);
         Route::get('payout', [ReportController::class, 'payoutReports']);
+        Route::post('export', [UserReportController::class, 'export']);
     });
 
     Route::group(['prefix' => 'manage-user'], function () {
@@ -104,4 +107,12 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::post('create-commission', [CommissionController::class, 'createCommission']);
         Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);
     });
+
+    Route::prefix('transactions')->group(function () {
+        Route::put('payout/{id}', [PayoutFlowController::class, 'update']);
+    });
+});
+
+Route::prefix('callback/payout')->controller(CallbackController::class)->group(function () {
+    Route::post('eko', 'eko');
 });

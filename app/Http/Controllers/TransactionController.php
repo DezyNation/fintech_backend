@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response)
+    public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response = null)
     {
-        $auth_user = auth()->user();
+        $auth_user = auth()->user() ?? $user;
         $closing_balance = $user->wallet + $credit_amount - $debit_amount;
         Transaction::create([
             'user_id' => $user->id,
@@ -26,11 +26,21 @@ class TransactionController extends Controller
             'opening_balance' => $user->wallet,
             'closing_balance' => $closing_balance,
         ]);
-        
+
         DB::transaction(function () use ($user, $closing_balance) {
-        $user->lockForUpdate();
-        $user->wallet = $closing_balance;
-        $user->save();
+            $user->lockForUpdate();
+            $user->wallet = $closing_balance;
+            $user->save();
+        }, 3);
+    }
+
+    public static function reverseTransaction(string $reference_id)
+    {
+        DB::transaction(function () use ($reference_id) {
+            $transactions = Transaction::where('reference_id', $reference_id)->get();
+            foreach ($transactions as $transaction) {
+                self::store(User::find($transaction->user_id), $reference_id, $transaction->service, 'Refunding for' . ' ' . $transaction->description, $transaction->debit_amount, $transaction->credit_amount);
+            }
         }, 3);
     }
 }

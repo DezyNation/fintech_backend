@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Dashboard\User;
 
+use App\Exports\Dashboard\User\PayoutExport;
+use App\Exports\Dashboard\User\TransactionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResource;
 use App\Models\Fund;
@@ -10,6 +12,7 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -81,5 +84,22 @@ class ReportController extends Controller
             ->paginate(30);
 
         return GeneralResource::collection($data);
+    }
+
+    public function eexport(Request $request)
+    {
+        switch ($request['report']) {
+            case 'payouts':
+                return Excel::download(new PayoutExport($request->from, $request->to), 'payouts.xlsx');
+                break;
+
+            case 'transactions':
+                return Excel::download(new TransactionExport($request->from, $request->to), 'transactions.xlsx');
+                break;
+
+            default:
+                return Excel::download(new TransactionExport($request->from, $request->to), 'transactions.xlsx');
+                break;
+        }
     }
 }
