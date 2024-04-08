@@ -86,7 +86,7 @@ class ReportController extends Controller
         return GeneralResource::collection($data);
     }
 
-    public function eexport(Request $request)
+    public function export(Request $request)
     {
         switch ($request['report']) {
             case 'payouts':

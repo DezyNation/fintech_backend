@@ -39,7 +39,7 @@ class EkoController extends Controller
                 break;
         }
 
-        return $data;
+        return ['data' =>  $data, 'response' => $response->body()];
     }
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id): array

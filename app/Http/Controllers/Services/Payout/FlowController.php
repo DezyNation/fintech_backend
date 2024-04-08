@@ -11,7 +11,6 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
 use App\Models\Service;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 
@@ -37,7 +36,7 @@ class FlowController extends Controller
 
         $lock = $this->lockRecords($request->user()->id);
         if (!$lock->get()) {
-            throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+            abort(423, "Can't lock user account");
         }
 
         $service = Service::findOrFail($request->service_id);
@@ -52,9 +51,9 @@ class FlowController extends Controller
         $reference_id = uniqid('PAY-');
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
-        if ($transaction_request['status'] != 'success') {
+        if ($transaction_request['data']['status'] != 'success') {
             $lock->release();
-            abort(400, $transaction_request['message']);
+            abort(400, $transaction_request['data']['message']);
         }
 
         $payout = Payout::create([
@@ -65,9 +64,10 @@ class FlowController extends Controller
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
-            'status' => $transaction_request['transaction_status'],
-            'description' => $transaction_request['message'],
+            'status' => $transaction_request['data']['transaction_status'],
+            'description' => $transaction_request['data']['message'],
             'remarks' => $request->remarks,
+            'metadata' => $transaction_request['response']
         ]);
 
         TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated", 0, $request->amount);
@@ -90,32 +90,31 @@ class FlowController extends Controller
                     ->orWhere('status', 'hold');
             })->findOrFail($id);
 
-            $lock = $this->lockRecords($payout->user_id);
-            if (!$lock->get()) {
-                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
-            }
-
             $class_name = Str::of($payout->provider . "_" . "controller")->studly();
             $class = __NAMESPACE__ . "\\" . $class_name;
             $instance = new $class;
             if (!class_exists($class)) {
-                $lock->release();
                 abort(501, "Provider not supported.");
             }
 
             $transaction_request = $instance->updateTransaction($payout->reference_id);
 
-            if ($transaction_request['status'] != 'success') {
-                $lock->release();
-                abort(400, $transaction_request['message']);
+            if ($transaction_request['data']['status'] != 'success') {
+                abort(400, $transaction_request['data']['message']);
             }
 
-            if ($transaction_request['transaction_status'] == ('failed' || 'refunded')) {
+            if ($transaction_request['data']['transaction_status'] == ('failed' || 'refunded')) {
+
+                $lock = $this->lockRecords($payout->user_id);
+                if (!$lock->get()) {
+                   abort(423, "Can't lock user account");
+                }
+
                 $payout->status = 'failed';
                 $payout->save();
                 TransactionController::reverseTransaction($payout->reference_id);
+                $lock->release();
             }
-
             return new GeneralResource($payout);
         }, 2);
 

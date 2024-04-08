@@ -88,7 +88,7 @@ class ReportController extends Controller
         return GeneralResource::collection($data);
     }
 
-    public function eexport(Request $request)
+    public function export(Request $request)
     {
         $request->validate(['user_id' => ['required', 'exists:users,id']]);
         switch ($request['report']) {
