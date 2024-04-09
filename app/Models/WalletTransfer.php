@@ -48,4 +48,15 @@ class WalletTransfer extends Model
 
         return $query;
     }
+
+    public function scopeFiterByRequest($query, Request $request)
+    {
+
+        if (!empty($request['receiver_id'])) {
+            $query->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where('users.phone_number', $request->user_id);
+        }
+
+        return $query;
+    }
 }
