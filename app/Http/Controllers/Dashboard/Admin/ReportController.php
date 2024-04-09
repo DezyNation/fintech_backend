@@ -92,7 +92,7 @@ class ReportController extends Controller
 
     public function fundRequestReport(Request $request): JsonResource
     {
-        $data = Fund::adminFiterByRequest($request)->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->paginate(30);
+        $data = Fund::adminFiterByRequest($request)->with('reviewer')->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->paginate(30);
         return GeneralResource::collection($data);
     }
 
