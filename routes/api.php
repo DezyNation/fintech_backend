@@ -36,6 +36,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
+Route::get('verify/{id}', [UserController::class, 'verifyUser']);
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
@@ -45,7 +46,6 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         Route::post('wallet-transfer', [FundRequestController::class, 'walletTransfer']);
     });
 
-    Route::get('verify/{id}', [UserController::class, 'verifyUser']);
 
     Route::prefix('onboard')->controller(OnboardController::class)->group(function () {
         Route::get('eko', 'ekoOnboard')->middleware('profile');
