@@ -89,7 +89,8 @@ class FundRequestController extends Controller
             'from' => $user->id,
             'to' => $request->receiver_id,
             'reference_id' => $reference_id,
-            'remarks' => $request->user_remarks,
+            'user_remarks' => $request->user_remarks,
+            'status' => 'success',
             'amount' => $request->amount,
             'approved_by' => $user->id
         ]);
