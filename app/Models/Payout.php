@@ -39,4 +39,26 @@ class Payout extends Model
 
         return $query;
     }
+
+    public function scopeAdminFiterByRequest($query, Request $request)
+    {
+        if (!empty($request['transaction_id'])) {
+            $query->where('reference_id', 'like', "%{$request->transaction_id}%");
+        }
+
+        if (!empty($request['utr'])) {
+            $query->where('utr', 'like', "%{$request->utr}%");
+        }
+
+        if (!empty($request['account_number'])) {
+            $query->where('account_number', 'like', "%{$request->account_number}%");
+        }
+
+        if (!empty($request['user_id'])) {
+            $query->join('users', 'users.id', '=', 'payouts.user_id')
+                ->where('users.phone_number', $request->user_id);
+        }
+
+        return $query;
+    }
 }

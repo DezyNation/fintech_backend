@@ -12,6 +12,8 @@ use App\Http\Resources\GeneralResource;
 use App\Exports\Dashboard\Admin\PayoutExport;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Exports\Dashboard\Admin\TransactionExport;
+use App\Models\Fund;
+use App\Models\WalletTransfer;
 
 class ReportController extends Controller
 {
@@ -21,6 +23,7 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
+            ->adminFiterByRequest($request)
             ->whereBetween('created_at', [$request->start, $request->end])
             ->paginate(30);
 
@@ -81,9 +84,23 @@ class ReportController extends Controller
         return GeneralResource::collection($transaction);
     }
 
+    public function walletTransferReport(Request $request): JsonResource
+    {
+        $data = WalletTransfer::adminFiterByRequest($request)->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->paginate(30);
+        return GeneralResource::collection($data);
+    }
+
+    public function fundRequestReport(Request $request): JsonResource
+    {
+        $data = Fund::adminFiterByRequest($request)->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->paginate(30);
+        return GeneralResource::collection($data);
+    }
+
     public function payoutReports(Request $request): JsonResource
     {
-        $data = Payout::with('user')->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
+        $data = Payout::with('user')
+            ->adminFilterByRequest($request)
+            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
         return GeneralResource::collection($data);
     }

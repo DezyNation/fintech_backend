@@ -91,11 +91,14 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::apiResource('ledgers', ReportController::class);
         Route::get('daily-sales', [ReportController::class, 'dailySales']);
         Route::get('payout', [ReportController::class, 'payoutReports']);
+        Route::get('wallet-transfer', [ReportController::class, 'walletTransferReport']);
+        Route::get('fund-request', [ReportController::class, 'fundRequestReport']);
         Route::post('export', [UserReportController::class, 'export']);
     });
 
     Route::group(['prefix' => 'manage-user'], function () {
         Route::apiResource('users', AdminUserController::class);
+        Route::put('address', [AdminUserController::class, 'address']);
         Route::post('update-user/{user}', [AdminUserController::class, 'update']);
         Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
         Route::put('restore/{id}', [AdminUserController::class, 'restore']);

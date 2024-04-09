@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\GeneralResource;
 use App\Mail\SendPassword;
+use App\Models\Address;
 use App\Models\Document;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
@@ -174,6 +175,25 @@ class UserController extends Controller
         ]);
 
         return new GeneralResource($user);
+    }
+
+    public function address(Request $request, string $user_id)
+    {
+        $data = $request->validate([
+            'street' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'state' => ['required', 'string'],
+            'pincode' => ['required', 'digits_between:6,8'],
+            'shop_name' => ['required', 'string']
+        ]);
+        $data['user_id'] = User::findOrFail($user_id)->id;
+
+        Address::updateOrInsert(
+            ['user_id' => $data['user_id']],
+            $data
+        );
+
+        return $data;
     }
 
     public function downloadDocument(string $path)

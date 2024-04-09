@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Http\Request;
 
 class Transaction extends Model
 {
@@ -88,5 +89,26 @@ class Transaction extends Model
         }
 
         return GeneralResource::collection($formattedResult);
+    }
+
+    public function scopeAdminFiterByRequest($query, Request $request)
+    {
+        if (!empty($request['transaction_id'])) {
+            $query->where('reference_id', 'like', "%{$request->transaction_id}%");
+        }
+
+
+        if (!empty($request['user_id'])) {
+            $query->join('users', 'users.id', '=', 'payouts.user_id')
+                ->join('users as reviewer', 'users.id', '=', 'payouts.user_id')
+                ->join('users as initiator', 'users.id', '=', 'payouts.user_id')
+                ->where(function ($q) use ($request) {
+                    $q->where('users.phone_number', $request->user_id)
+                        ->orWhere('reviewer.phone_number', $request->user_id)
+                        ->orWhere('initiator.phone_number', $request->user_id);
+                });
+        }
+
+        return $query;
     }
 }
