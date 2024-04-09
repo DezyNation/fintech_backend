@@ -20,6 +20,7 @@ class EkoController extends Controller
                     $data = [
                         'status' => 'success',
                         'message' => $response['message'],
+                        'utr' => $response['data']['bank_ref_num'] ?? null,
                         'transaction_status' => strtolower($response['data']['txstatus_desc'])
                     ];
                 } else {

@@ -21,6 +21,11 @@ class CommissionController extends Controller
     public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
+
+        if (!$instance) {
+            return false;
+        }
+
         $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
         $credit = $instance->is_flat ? $instance->commission : $amount * $instance->commission / 100;
         if ($calculation == true) {

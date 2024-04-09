@@ -21,9 +21,20 @@ class FlowController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Payout::where('user_id', $request->user()->id)
-            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-            ->paginate(30);
+        $reference_id = $request['transaction_id'];
+        $utr = $request['utr'];
+        $account_number = $request['account_number'];
+
+        if (!empty($reference_id) || !empty($utr) || !empty($account_number)) {
+            $data = Payout::where(['user_id' => $request->user()->id])
+                ->fiterByRequest($request)
+                ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+                ->paginate(30);
+        } else {
+            $data = Payout::where('user_id', $request->user()->id)
+                ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+                ->paginate(30);
+        }
 
         return GeneralResource::collection($data);
     }
@@ -55,6 +66,12 @@ class FlowController extends Controller
             $lock->release();
             abort(400, $transaction_request['data']['message']);
         }
+        
+        if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated'])) {
+            $status = "pending";
+        } else {
+            $status = $transaction_request['data']['transaction_status'];
+        }
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,
@@ -64,7 +81,9 @@ class FlowController extends Controller
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
-            'status' => $transaction_request['data']['transaction_status'],
+            'amount' => $request->amount,
+            'utr' => $transaction_request['data']['utr'],
+            'status' => $status,
             'description' => $transaction_request['data']['message'],
             'remarks' => $request->remarks,
             'metadata' => $transaction_request['response']
@@ -107,7 +126,7 @@ class FlowController extends Controller
 
                 $lock = $this->lockRecords($payout->user_id);
                 if (!$lock->get()) {
-                   abort(423, "Can't lock user account");
+                    abort(423, "Can't lock user account");
                 }
 
                 $payout->status = 'failed';

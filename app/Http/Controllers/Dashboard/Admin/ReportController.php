@@ -90,18 +90,21 @@ class ReportController extends Controller
 
     public function export(Request $request)
     {
-        $request->validate(['user_id' => ['required', 'exists:users,id']]);
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'format' => ['required', 'in:xlsx,pdf']
+        ]);
         switch ($request['report']) {
             case 'payouts':
-                return Excel::download(new PayoutExport($request->from, $request->to, $request->user_id), 'payouts.xlsx');
+                return Excel::download(new PayoutExport($request->from, $request->to, $request->user_id), "payouts.{$request->format}");
                 break;
 
             case 'transactions':
-                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), 'transactions.xlsx');
+                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
                 break;
 
             default:
-                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), 'transactions.xlsx');
+                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
                 break;
         }
     }

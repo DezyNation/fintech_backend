@@ -55,7 +55,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::post('document', [UserController::class, 'uploadDocument']);
     Route::put('credential', [UserController::class, 'updateCredential']);
 
-    Route::prefix('reports')->group(function () {
+    Route::prefix('report')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
         Route::get('payout', [PayoutFlowController::class, 'index']);
         Route::post('export', [UserReportController::class, 'export']);

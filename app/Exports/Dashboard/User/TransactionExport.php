@@ -5,9 +5,12 @@ namespace App\Exports\Dashboard\User;
 use Carbon\Carbon;
 use App\Models\Transaction;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class TransactionExport implements FromCollection
+class TransactionExport implements FromCollection, WithStyles, WithHeadings, ShouldAutoSize
 {
     protected $from;
     protected $to;

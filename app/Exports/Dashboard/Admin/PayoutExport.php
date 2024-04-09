@@ -5,9 +5,12 @@ namespace App\Exports\Dashboard\Admin;
 use App\Models\Payout;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PayoutExport implements FromCollection
+class PayoutExport implements FromCollection, WithStyles, WithHeadings, ShouldAutoSize
 {
 
     protected $from;
