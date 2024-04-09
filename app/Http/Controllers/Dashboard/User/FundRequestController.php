@@ -83,6 +83,13 @@ class FundRequestController extends Controller
 
         $receiver = User::findOrFail($request->receiver_id);
         $user = $request->user();
+        $sender_lock = $this->lockRecords($user->id);
+        $receiver_lock = $this->lockRecords($receiver->id);
+
+        if (!$sender_lock->get() || !$receiver_lock->get()) {
+            abort(423, "Can not perform this operation at the moment");
+        }
+
         $reference_id = uniqid("WT");
 
         $data = WalletTransfer::create([
@@ -97,6 +104,9 @@ class FundRequestController extends Controller
 
         TransactionController::store($user, $reference_id, 'wallet_transfer', "Mony Transfer to {$receiver->name}", 0, $request->amount);
         TransactionController::store($receiver, $reference_id, 'wallet_transfer', "Mony received from {$user->name}", $request->amount, 0);
+
+        $sender_lock->release();
+        $receiver_lock->release();
 
         return new GeneralResource($data);
     }
