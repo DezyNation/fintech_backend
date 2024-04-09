@@ -87,4 +87,10 @@ class UserController extends Controller
         $user = User::findOrFail($request->user()->id);
         return GeneralResource::collection($user->getAllPermissions());
     }
+
+    public function verifyUser(string $id)
+    {
+        $user = User::where('phone_number', $id)->select('id', 'name')->firstOrFail();
+        return new GeneralResource($user);
+    }
 }

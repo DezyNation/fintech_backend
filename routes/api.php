@@ -42,7 +42,10 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::prefix('transaction')->middleware('onboard_active')->group(function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
         Route::post('bbps', [BbpsFlowController::class, 'store']);
+        Route::post('wallet-transfer', [FundRequestController::class, 'walletTransfer']);
     });
+
+    Route::get('verify/{id}', [UserController::class, 'verifyUser']);
 
     Route::prefix('onboard')->controller(OnboardController::class)->group(function () {
         Route::get('eko', 'ekoOnboard')->middleware('profile');
@@ -58,6 +61,8 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::prefix('report')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
         Route::get('payout', [PayoutFlowController::class, 'index']);
+        Route::get('wallet-transfer', [UserReportController::class, 'walletTransfers']);
+        Route::get('daily-sales', [UserReportController::class, 'dailySales']);
         Route::post('export', [UserReportController::class, 'export']);
     });
 });
@@ -110,6 +115,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
 
     Route::prefix('transactions')->group(function () {
         Route::put('payout/{id}', [PayoutFlowController::class, 'update']);
+        Route::post('fund-transfer', [AdminFundRequestController::class, 'fundTransfer']);
     });
 });
 

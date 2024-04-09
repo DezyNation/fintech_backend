@@ -132,12 +132,12 @@ class FundRequestController extends Controller
                 $opening_balance = $user->wallet;
                 $closing_balance = $user->wallet + $request->amount;
                 $reference_id = Str::random(8);
-                TransactionController::store($user, $reference_id, 'fund-request', 'Fund Request approved.', $request->amount, 0, ['metadata' => $reference_id]);
+                TransactionController::store($user, $reference_id, 'fund-request', 'Fund Request approved.', $request->amount, 0);
             } else {
                 $opening_balance = $user->wallet;
                 $closing_balance = $user->wallet - $request->amount;
                 $reference_id = Str::random(8);
-                TransactionController::store($user, $reference_id, 'fund-request', 'Fund Request approved.', 0, $request->amount, ['metadata' => $reference_id]);
+                TransactionController::store($user, $reference_id, 'fund-request', 'Fund Request approved.', 0, $request->amount);
             }
 
             $data = FundTransfer::create([

@@ -9,6 +9,7 @@ use App\Http\Resources\GeneralResource;
 use App\Models\Fund;
 use App\Models\Payout;
 use App\Models\Transaction;
+use App\Models\WalletTransfer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,6 +34,19 @@ class ReportController extends Controller
         }
 
         return GeneralResource::collection($data);
+    }
+
+    public function dailySales(Request  $request): JsonResource
+    {
+        $data = Transaction::where('user_id', $request->user()->id)->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])->get();
+
+        $transaction = $data->groupBy(['user_id', 'service'])->map(function ($item) {
+            return $item->map(function ($key) {
+                return ['debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
+            });
+        });
+
+        return GeneralResource::collection($transaction);
     }
 
     /**
@@ -70,6 +84,15 @@ class ReportController extends Controller
     public function fundRequests(Request $request): JsonResource
     {
         $data = Fund::where('user_id', $request->user()->id)
+            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->paginate(30);
+
+        return GeneralResource::collection($data);
+    }
+
+    public function walletTransfers(Request $request): JsonResource
+    {
+        $data = WalletTransfer::where('user_id', $request->user()->id)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 

@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard\User;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\FundRequest;
-use App\Http\Resources\GeneralResource;
 use App\Models\Fund;
 use Illuminate\Http\Request;
+use App\Models\WalletTransfer;
+use App\Http\Requests\FundRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\TransactionController;
+use App\Http\Resources\GeneralResource;
+use App\Models\Transaction;
+use App\Models\User;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class FundRequestController extends Controller
 {
@@ -60,5 +65,38 @@ class FundRequestController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function walletTransfer(Request $request): JsonResource
+    {
+        $request->validate(
+            [
+                'amount' => ['required', 'min:1', 'numeric'],
+                'receiver_id' => ['required', 'exists:users,id']
+            ]
+
+        );
+
+        if ($request->receiver_id == $request->user()->id) {
+            abort(400, "You can not transfer money to yourself.");
+        }
+
+        $receiver = User::findOrFail($request->receiver_id);
+        $user = $request->user();
+        $reference_id = uniqid("WT");
+
+        $data = WalletTransfer::create([
+            'from' => $user->id,
+            'to' => $request->receiver_id,
+            'reference_id' => $reference_id,
+            'remarks' => $request->user_remarks,
+            'amount' => $request->amount,
+            'approved_by' => $user->id
+        ]);
+
+        TransactionController::store($user, $reference_id, 'wallet_transfer', "Mony Transfer to {$receiver->name}", 0, $request->amount);
+        TransactionController::store($receiver, $reference_id, 'wallet_transfer', "Mony received from {$user->name}", $request->amount, 0);
+
+        return new GeneralResource($data);
     }
 }

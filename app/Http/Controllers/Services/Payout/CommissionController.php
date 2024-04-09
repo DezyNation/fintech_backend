@@ -34,7 +34,7 @@ class CommissionController extends Controller
                 'credit_amount' => $credit
             ];
         }
-        TransactionController::store($user, $reference_id, 'payout-commission', "Payout Commission", $credit, $fixed_charge);
+        TransactionController::store($user, $reference_id, 'payout_commission', "Payout Commission", $credit, $fixed_charge);
         $this->checkParent($user, $amount);
         return $instance;
     }
