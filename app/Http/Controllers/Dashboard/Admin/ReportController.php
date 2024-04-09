@@ -86,7 +86,10 @@ class ReportController extends Controller
 
     public function walletTransferReport(Request $request): JsonResource
     {
-        $data = WalletTransfer::adminFiterByRequest($request)->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->paginate(30);
+        $data = WalletTransfer::adminFiterByRequest($request)
+            ->with(['sender', 'receiver'])
+            ->whereBetween('created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+            ->paginate(30);
         return GeneralResource::collection($data);
     }
 
