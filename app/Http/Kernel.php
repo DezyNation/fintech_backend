@@ -68,7 +68,7 @@ class Kernel extends HttpKernel
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-        'payout' => \App\Http\Middleware\Services\PayoutMinimumBalance::class,
+        'balance' => \App\Http\Middleware\WalletBalance::class,
         'profile' => \App\Http\Middleware\ProfileComplete::class,
         'onboard_active' => \App\Http\Middleware\OnboardUser::class,
     ];
