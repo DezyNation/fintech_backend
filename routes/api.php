@@ -37,6 +37,7 @@ Route::get('/user', function (Request $request) {
 Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
 Route::get('verify/{id}', [UserController::class, 'verifyUser']);
+Route::put('credentials', [UserController::class, 'updateCredential'])->middleware('auth:api');
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
@@ -56,7 +57,6 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::get('permissions', [UserController::class, 'permissions']);
     Route::put('update', [UserController::class, 'updateProfile']);
     Route::post('document', [UserController::class, 'uploadDocument']);
-    Route::put('credential', [UserController::class, 'updateCredential']);
 
     Route::prefix('report')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
