@@ -68,7 +68,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
 });
 
 /**************** Admin Routes ****************/
-Route::prefix('admin')->middleware(['auth:api'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 
