@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\Plan::factory(10)->create();
         $this->call([
-            RoleSeeder::class,
+            // RoleSeeder::class,
             // CommissionSeeder::class,
-            // UserSeeder::class
+            UserSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
     }
