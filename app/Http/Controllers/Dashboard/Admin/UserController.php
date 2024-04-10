@@ -68,7 +68,7 @@ class UserController extends Controller
             $role->select('name', 'id');
         }, 'permissions' => function ($permission) {
             $permission->select('id', 'name');
-        }])->findOrFail($id)->getRawOriginal(['pan_number', 'aadhaar_number']);
+        }])->findOrFail($id)->getRawOriginal('pan_number');
         return new GeneralResource($user);
     }
 
