@@ -82,13 +82,13 @@ class UserController extends Controller
             'middle_name' => $request->middle_name ?? $user->middle_name,
             'last_name' => $request->last_name ?? $user->last_name,
             'name' => Str::squish($request->first_name ?? $user->first_name . ' ' . $request->middle_name ?? $user->middle_name . ' ' . $request->last_name ?? $user->last_name),
-            'phone_number' => $request->phone_number,
+            'phone_number' => $request->phone_number ?? $user->phone_number,
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
-            'plan_id' => $request->plan_id,
+            'plan_id' => $request->plan_id ?? $user->plan_id,
             'capped_balance' => $request->capped_balance,
-            'active' => $request->active,
-            'date_of_birth' => $request->date_of_birth
+            'active' => $request->active ?? $user->active,
+            'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth
         ]);
 
         return new GeneralResource($user);
