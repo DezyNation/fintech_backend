@@ -198,7 +198,7 @@ class UserController extends Controller
 
     public function getAddress(Request $request, string $user_id)
     {
-        $data = Address::where('user_id', $user_id)->firstOrFail();
+        $data = Address::where('user_id', $user_id)->first();
 
         return new GeneralResource($data);
     }
