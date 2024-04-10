@@ -68,7 +68,7 @@ class UserController extends Controller
             $role->select('name', 'id');
         }, 'permissions' => function ($permission) {
             $permission->select('id', 'name');
-        }])->findOrFail($id)->getRawOriginal();
+        }])->findOrFail($id);
         return new GeneralResource($user);
     }
 
