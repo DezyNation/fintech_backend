@@ -31,7 +31,7 @@ class OnboardController extends Controller
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->put(config('services.eko.base_url') . '/ekoapi/v1/user/onboard', $data);
+            ->put(config('services.eko.base_url') . '/v1/user/onboard', $data);
 
         if ($response->failed()) {
             abort(400, $response['message'] ?? "Failed to onboard");
