@@ -99,6 +99,7 @@ Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::group(['prefix' => 'manage-user'], function () {
         Route::apiResource('users', AdminUserController::class);
         Route::put('address/{user_id}', [AdminUserController::class, 'address']);
+        Route::GET('address/{user_id}', [AdminUserController::class, 'address']);
         Route::post('update-user/{user}', [AdminUserController::class, 'update']);
         Route::put('send-credentials/{user}', [AdminUserController::class, 'sendCredential']);
         Route::put('restore/{id}', [AdminUserController::class, 'restore']);

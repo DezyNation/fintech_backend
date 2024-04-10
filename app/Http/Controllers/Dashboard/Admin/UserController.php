@@ -196,6 +196,13 @@ class UserController extends Controller
         return $data;
     }
 
+    public function getAddress(Request $request, string $user_id)
+    {
+        $data = Address::where('user_id', $user_id)->firstOrFail();
+
+        return new GeneralResource($data);
+    }
+
     public function downloadDocument(string $path)
     {
         return Storage::download($path);
