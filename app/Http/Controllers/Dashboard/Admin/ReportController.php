@@ -22,9 +22,10 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
+
+            $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
             ->adminFiterByRequest($request)
-            ->whereBetween('created_at', [$request->start, $request->end])
+            ->whereBetween('transactions.created_at', [$request->from, $request->to])
             ->paginate(30);
 
         return GeneralResource::collection($data);

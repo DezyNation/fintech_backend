@@ -68,7 +68,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
 });
 
 /**************** Admin Routes ****************/
-Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth:api'])->group(function () {
     Route::apiResource('fund-requests', AdminFundRequestController::class);
     Route::post('funds/assign-request', [AdminFundRequestController::class, 'assignRequest']);
 
@@ -88,7 +88,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
     });
 
     Route::group(['prefix' => 'report'], function () {
-        Route::apiResource('ledgers', ReportController::class);
+        Route::apiResource('ledger', ReportController::class);
         Route::get('daily-sales', [ReportController::class, 'dailySales']);
         Route::get('payout', [ReportController::class, 'payoutReports']);
         Route::get('wallet-transfer', [ReportController::class, 'walletTransferReport']);

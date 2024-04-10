@@ -34,7 +34,7 @@ class Transaction extends Model
      */
     public function beneficiary(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id')->select(['id', 'name', 'phone_number']);
     }
 
     /**
@@ -44,7 +44,7 @@ class Transaction extends Model
      */
     public function reviewer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(User::class, 'updated_by')->select(['id', 'name', 'phone_number']);
     }
 
     /**
@@ -54,7 +54,7 @@ class Transaction extends Model
      */
     public function triggered_by(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'triggered_by');
+        return $this->belongsTo(User::class, 'triggered_by')->select(['id', 'name', 'phone_number']);
     }
 
     public static function dailySales($query)
@@ -99,14 +99,8 @@ class Transaction extends Model
 
 
         if (!empty($request['user_id'])) {
-            $query->join('users', 'users.id', '=', 'payouts.user_id')
-                ->join('users as reviewer', 'users.id', '=', 'payouts.user_id')
-                ->join('users as initiator', 'users.id', '=', 'payouts.user_id')
-                ->where(function ($q) use ($request) {
-                    $q->where('users.phone_number', $request->user_id)
-                        ->orWhere('reviewer.phone_number', $request->user_id)
-                        ->orWhere('initiator.phone_number', $request->user_id);
-                });
+            $query->join('users', 'users.id', '=', 'transactions.user_id')
+                ->where('users.phone_number', $request->user_id)->select('transactions.*');
         }
 
         return $query;

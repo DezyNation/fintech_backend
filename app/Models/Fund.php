@@ -39,8 +39,9 @@ class Fund extends Model
     public function scopeAdminFiterByRequest($query, Request $request)
     {
         if (!empty($request['user_id'])) {
-            $query->join('users', 'users.id', '=', 'payouts.user_id')
-                ->where('users.phone_number', $request->user_id);
+            $query->join('users', 'users.id', '=', 'fund_requests.user_id')
+                ->where('users.phone_number', $request->user_id)
+                ->select('fund_requests.*');
         }
 
         return $query;
