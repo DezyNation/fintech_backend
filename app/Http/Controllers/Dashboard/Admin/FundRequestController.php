@@ -70,6 +70,7 @@ class FundRequestController extends Controller
             }
 
             $user = User::findOrFail($fund->user_id)->first();
+            return $user;
             if ($request->status == 'approved') {
                 TransactionController::store($user, $fund->transaction_id, 'fund-request', 'Fund Request approved.', $fund->amount, 0);
             }
