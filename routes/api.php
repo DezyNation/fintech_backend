@@ -38,6 +38,7 @@ Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
 Route::get('verify/{id}', [UserController::class, 'verifyUser']);
 Route::put('credentials', [UserController::class, 'updateCredential'])->middleware('auth:api');
+Route::get('banks', [BankController::class, 'index']);
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
