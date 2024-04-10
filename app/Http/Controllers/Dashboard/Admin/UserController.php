@@ -68,7 +68,7 @@ class UserController extends Controller
             $role->select('name', 'id');
         }, 'permissions' => function ($permission) {
             $permission->select('id', 'name');
-        }])->findOrFail($id);
+        }])->findOrFail($id)->getRawOriginal(['pan_number', 'aadhaar_number']);
         return new GeneralResource($user);
     }
 
@@ -88,7 +88,8 @@ class UserController extends Controller
             'plan_id' => $request->plan_id ?? $user->plan_id,
             'capped_balance' => $request->capped_balance ?? $user->capped_balance,
             'active' => $request->active ?? $user->active,
-            'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth
+            'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth,
+            'pan_number' => $request->pan_number ?? $user->getRawOriginal('pan_number')
         ]);
 
         return new GeneralResource($user);
