@@ -199,7 +199,7 @@ class UserController extends Controller
 
     public function getAddress(Request $request, string $user_id)
     {
-        $data = Address::where('user_id', $user_id)->first();
+        $data = Address::where('user_id', $user_id)->get();
 
         return new GeneralResource($data);
     }
