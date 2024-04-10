@@ -86,7 +86,7 @@ class UserController extends Controller
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
             'plan_id' => $request->plan_id ?? $user->plan_id,
-            'capped_balance' => $request->capped_balance,
+            'capped_balance' => $request->capped_balance ?? $user->capped_balance,
             'active' => $request->active ?? $user->active,
             'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth
         ]);
