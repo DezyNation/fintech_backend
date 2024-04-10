@@ -22,9 +22,9 @@ class FundRequestController extends Controller
     public function index(Request $request)
     {
         $data = Fund::with(['user' => function ($q) {
-            $q->select('id', 'name', 'wallet_id');
+            $q->select('id', 'name');
         }, 'reviewer' => function ($q) {
-            $q->select('id', 'name', 'wallet_id');
+            $q->select('id', 'name');
         }])->where('status', $request->status)->paginate(20);
         return GeneralResource::collection($data);
     }
