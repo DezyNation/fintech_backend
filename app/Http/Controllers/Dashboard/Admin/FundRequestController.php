@@ -62,7 +62,7 @@ class FundRequestController extends Controller
             abort(423, "Can't lock the fund request at the moment.");
         }
 
-        DB::transaction(function () use ($request, $fund, $fund_lock) {
+        $data = DB::transaction(function () use ($request, $fund, $fund_lock) {
             $user_lock = $this->lockRecords($fund->user_id);
 
             if (!$user_lock->get()) {
@@ -82,7 +82,7 @@ class FundRequestController extends Controller
             $fund_lock->release();
         }, 2);
 
-        return new GeneralResource($fund);
+        return new GeneralResource($data);
     }
 
     /**
