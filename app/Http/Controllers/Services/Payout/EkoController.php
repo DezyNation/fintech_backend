@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Log;
 
 class EkoController extends Controller
 {
+    public function __construct() {
+        $this->middleware('eko_onboard');
+    }
 
     public function processResponse(Response $response, int $status): array
     {

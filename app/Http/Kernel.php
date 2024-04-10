@@ -71,5 +71,7 @@ class Kernel extends HttpKernel
         'balance' => \App\Http\Middleware\WalletBalance::class,
         'profile' => \App\Http\Middleware\ProfileComplete::class,
         'onboard_active' => \App\Http\Middleware\OnboardUser::class,
+        'eko_onboard' => \App\Http\Middleware\EkoOnboard::class,
+        'pin' => \App\Http\Middleware\PinCheck::class,
     ];
 }
