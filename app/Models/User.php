@@ -76,19 +76,19 @@ class User extends Authenticatable implements JWTSubject
         'pin' => 'hashed',
     ];
 
-    protected function aadhaarNumber(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string | null $value) => Str::mask($value, '*', 0, 8),
-        );
-    }
+    // protected function aadhaarNumber(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn (string | null $value) => Str::mask($value, '*', 0, 8),
+    //     );
+    // }
 
-    protected function panNumber(): Attribute
-    {
-        return Attribute::make(
-            get: fn (string | null $value) => Str::mask($value, '*', 2, -4),
-        );
-    }
+    // protected function panNumber(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn (string | null $value) => Str::mask($value, '*', 2, -4),
+    //     );
+    // }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
