@@ -69,7 +69,7 @@ class FundRequestController extends Controller
                 abort(423, "Can't lock the user at the moment.");
             }
 
-            $user = User::where('user_id', $fund->user_id)->findOrFail($fund->user_id);
+            $user = User::where('id', $fund->user_id)->findOrFail($fund->user_id);
             return $user;
             if ($request->status == 'approved') {
                 TransactionController::store($user, $fund->transaction_id, 'fund-request', 'Fund Request approved.', $fund->amount, 0);
