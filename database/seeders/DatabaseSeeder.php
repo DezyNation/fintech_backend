@@ -15,11 +15,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // \App\Models\Plan::factory(10)->create();
-        // $this->call([
-            // RoleSeeder::class,
+        $this->call([
+            RoleSeeder::class,
             // CommissionSeeder::class,
             // UserSeeder::class
-        // ]);
+        ]);
         // \App\Models\User::factory(10)->create();
     }
 }
