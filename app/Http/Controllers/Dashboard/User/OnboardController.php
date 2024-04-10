@@ -27,7 +27,7 @@ class OnboardController extends Controller
             'email' => $user->email,
             'residence_address' => json_encode($user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at'])),
             'dob' => Carbon::parse($user->dob)->format('yyy-mm-dd'),
-            'shop_name' => $user->shop_name
+            'shop_name' => $user->address->shop_name
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
