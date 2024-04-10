@@ -78,10 +78,10 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $user->update([
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
-            'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
+            'first_name' => $request->first_name ?? $user->first_name,
+            'middle_name' => $request->middle_name ?? $user->middle_name,
+            'last_name' => $request->last_name ?? $user->last_name,
+            'name' => Str::squish($request->first_name ?? $user->first_name . ' ' . $request->middle_name ?? $user->middle_name . ' ' . $request->last_name ?? $user->last_name),
             'phone_number' => $request->phone_number,
             'email' => $request->email ?? $user->email,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
