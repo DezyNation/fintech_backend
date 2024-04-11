@@ -122,7 +122,7 @@ class ReportController extends Controller
                 $q->select('id', 'name');
             }, 'admin' => function ($q) {
                 $q->select('id', 'name');
-            }])->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
+            }])->whereBetween('fund_transfers.created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 
         return GeneralResource::collection($data);
