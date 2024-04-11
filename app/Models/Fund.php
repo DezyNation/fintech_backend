@@ -36,7 +36,7 @@ class Fund extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeFiterByRequest($query, Request $request)
+    public function scopeFilterByRequest($query, Request $request)
     {
         if (!empty($request['transaction_id'])) {
             $query->where('transaction_id', 'like', "%" . $request->transaction_id . "%");
