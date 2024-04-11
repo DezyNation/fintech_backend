@@ -34,9 +34,9 @@ class FundTransfer extends Model
     public function scopeAdminFilterByRequest($query, Request $request)
     {
         if (!empty($request['user_id'])) {
-            $query->join('users', 'users.id', '=', 'fund_requests.user_id')
+            $query->join('users', 'users.id', '=', 'fund_transfers.user_id')
                 ->where('users.phone_number', $request->user_id)
-                ->select('fund_requests.*');
+                ->select('fund_transfers.*');
         }
     }
 }
