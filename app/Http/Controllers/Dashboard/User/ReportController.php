@@ -92,7 +92,7 @@ class ReportController extends Controller
 
     public function walletTransfers(Request $request): JsonResource
     {
-        $data = WalletTransfer::where('user_id', $request->user()->id)
+        $data = WalletTransfer::where('from', $request->user()->id)
             ->with('receiver')
             ->filterByRequest($request)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
