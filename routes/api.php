@@ -93,7 +93,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::get('payout', [ReportController::class, 'payoutReports']);
         Route::get('wallet-transfer', [ReportController::class, 'walletTransferReport']);
         Route::get('fund-requests', [ReportController::class, 'fundRequestReport']);
-        Route::post('export', [UserReportController::class, 'export']);
+        Route::post('export', [ReportController::class, 'export']);
     });
 
     Route::group(['prefix' => 'manage-user'], function () {
