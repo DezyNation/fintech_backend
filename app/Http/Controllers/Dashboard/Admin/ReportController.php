@@ -117,7 +117,7 @@ class ReportController extends Controller
     public function export(Request $request)
     {
         $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
+            // 'user_id' => ['required', 'exists:users,id'],
             'format' => ['required', 'in:xlsx,pdf']
         ]);
         switch ($request['report']) {
