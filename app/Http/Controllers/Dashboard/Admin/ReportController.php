@@ -89,7 +89,7 @@ class ReportController extends Controller
     {
         $data = WalletTransfer::adminFiterByRequest($request)
             ->with(['sender', 'receiver'])
-            ->whereBetween('wallet_transfers.created_at', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])
+            ->whereBetween('wallet_transfers.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
         return GeneralResource::collection($data);
     }
