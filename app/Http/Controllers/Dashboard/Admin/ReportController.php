@@ -130,7 +130,7 @@ class ReportController extends Controller
                 break;
 
             case 'fund-requests':
-                return Excel::download(new FundRequestExport($request->from, $request->to, $request->user_id), "fund_requests.{$request->format}");
+                return Excel::download(new FundRequestExport($request->from, $request->to, $request), "fund_requests.{$request->format}");
                 break;
 
             default:

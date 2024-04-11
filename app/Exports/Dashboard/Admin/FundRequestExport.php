@@ -14,13 +14,13 @@ class FundRequestExport implements FromCollection, WithStyles, WithHeadings, Sho
 {
     protected $from;
     protected $to;
-    protected $user_id;
+    protected $request;
 
-    public function __construct($from, $to, $user_id)
+    public function __construct($from, $to, $request)
     {
         $this->from = $from;
         $this->to = $to;
-        $this->user_id = $user_id;
+        $this->request = $request;
     }
 
     /**
@@ -28,11 +28,11 @@ class FundRequestExport implements FromCollection, WithStyles, WithHeadings, Sho
      */
     public function collection()
     {
-        return Fund::where('user_id', $this->user_id)
+        return Fund::adminFilterExport($this->request)
             ->join('users as reviewer', 'reviewer.id', '=', 'funds.updated_by')
-            ->join('users as reviewer', 'reviewer.id', '=', 'funds.updated_by')
+            ->join('users', 'users.id', '=', 'funds.uuser_id')
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->select('fund_requsts.id', 'fund_requsts.transaction_id', 'reviewer.name', 'fund_requsts.status', 'fund_requsts.bank', 'fund_requsts.amount', 'fund_requsts.transaction_date', 'fund_requsts.user_remarks', 'fund_requsts.admin_remarks', 'fund_requsts.created_at', 'fund_requsts.updated_at')
+            ->select('fund_requsts.id', 'fund_requsts.transaction_id', 'users.name', 'reviewer.name', 'fund_requsts.status', 'fund_requsts.bank', 'fund_requsts.amount', 'fund_requsts.transaction_date', 'fund_requsts.user_remarks', 'fund_requsts.admin_remarks', 'fund_requsts.created_at', 'fund_requsts.updated_at')
             ->get();
     }
 
@@ -45,6 +45,6 @@ class FundRequestExport implements FromCollection, WithStyles, WithHeadings, Sho
 
     public function headings(): array
     {
-        return ["ID", "Transaction ID", "Reviewer", "Status", "Bank", "Amount", "Transaction Date", "User Remarks", "Admin Remarks", "Created At", "Upadated At"];
+        return ["ID", "Transaction ID", "User Name", "Reviewer", "Status", "Bank", "Amount", "Transaction Date", "User Remarks", "Admin Remarks", "Created At", "Upadated At"];
     }
 }
