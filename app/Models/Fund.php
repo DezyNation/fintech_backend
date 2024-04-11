@@ -51,6 +51,14 @@ class Fund extends Model
 
     public function scopeAdminFiterByRequest($query, Request $request)
     {
+        if (!empty($request['transaction_id'])) {
+            $query->where('transaction_id', 'like', "%" . $request->transaction_id . "%");
+        }
+
+        if (!empty($request['status'])) {
+            $query->where('status', $request->status);
+        }
+
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'fund_requests.user_id')
                 ->where('users.phone_number', $request->user_id)
