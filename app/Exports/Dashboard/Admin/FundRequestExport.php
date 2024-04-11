@@ -32,7 +32,7 @@ class FundRequestExport implements FromCollection, WithStyles, WithHeadings, Sho
             ->join('users as reviewer', 'reviewer.id', '=', 'funds.updated_by')
             ->join('users', 'users.id', '=', 'funds.uuser_id')
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->select('fund_requsts.id', 'fund_requsts.transaction_id', 'users.name', 'reviewer.name', 'fund_requsts.status', 'fund_requsts.bank', 'fund_requsts.amount', 'fund_requsts.transaction_date', 'fund_requsts.user_remarks', 'fund_requsts.admin_remarks', 'fund_requsts.created_at', 'fund_requsts.updated_at')
+            ->select('fund_requests.id', 'fund_requests.transaction_id', 'users.name', 'reviewer.name', 'fund_requests.status', 'fund_requests.bank', 'fund_requests.amount', 'fund_requests.transaction_date', 'fund_requests.user_remarks', 'fund_requests.admin_remarks', 'fund_requests.created_at', 'fund_requests.updated_at')
             ->get();
     }
 
