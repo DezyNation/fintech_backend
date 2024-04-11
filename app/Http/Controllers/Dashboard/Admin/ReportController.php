@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard\Admin;
 
+use App\Exports\Dashboard\Admin\FundRequestExport;
 use Carbon\Carbon;
 use App\Models\Payout;
 use App\Models\Transaction;
@@ -96,7 +97,7 @@ class ReportController extends Controller
 
     public function fundRequestReport(Request $request): JsonResource
     {
-        $data = Fund::adminFiterByRequest($request)->with('reviewer', function($q){
+        $data = Fund::adminFiterByRequest($request)->with('reviewer', function ($q) {
             $q->select('id', 'name');
         })->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])->paginate(30);
         return GeneralResource::collection($data);
@@ -124,6 +125,10 @@ class ReportController extends Controller
 
             case 'transactions':
                 return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
+                break;
+
+            case 'fund-requests':
+                return Excel::download(new FundRequestExport($request->from, $request->to, $request->user_id), "fund_requests.{$request->format}");
                 break;
 
             default:

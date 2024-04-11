@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard\User;
 
+use App\Exports\Dashboard\Admin\FundRequestExport;
 use App\Exports\Dashboard\User\PayoutExport;
 use App\Exports\Dashboard\User\TransactionExport;
 use App\Http\Controllers\Controller;
