@@ -49,7 +49,7 @@ class WalletTransfer extends Model
         return $query;
     }
 
-    public function scopeFiterByRequest($query, Request $request)
+    public function scopeFilterByRequest($query, Request $request)
     {
 
         if (!empty($request['receiver_id'])) {
