@@ -37,13 +37,13 @@ class WalletTransfer extends Model
     {
 
         if (!empty($request['sender_id'])) {
-            $query->join('users', 'users.id', '=', 'payouts.user_id')
-                ->where('users.phone_number', $request->user_id);
+            $query->join('users', 'users.id', '=', 'wallet_transfers.from')
+                ->where('users.phone_number', $request->user_id)->select('wallet_transfers.*');
         }
 
         if (!empty($request['receiver_id'])) {
-            $query->join('users', 'users.id', '=', 'payouts.user_id')
-                ->where('users.phone_number', $request->user_id);
+            $query->join('users', 'users.id', '=', 'wallet_transfers.to')
+                ->where('users.phone_number', $request->user_id)->select('wallet_transfers.*');
         }
 
         return $query;
