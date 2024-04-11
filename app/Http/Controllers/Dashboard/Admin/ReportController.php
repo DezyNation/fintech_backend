@@ -117,7 +117,7 @@ class ReportController extends Controller
 
     public function fundTransferReport(Request $request)
     {
-        $data = FundTransfer::filterByRequest($request)
+        $data = FundTransfer::adminFilterByRequest($request)
             ->with(['user' => function ($q) {
                 $q->select('id', 'name');
             }, 'admin' => function ($q) {
