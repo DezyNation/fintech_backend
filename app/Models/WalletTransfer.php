@@ -20,7 +20,7 @@ class WalletTransfer extends Model
      */
     public function sender(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'sender_id')->select('id', 'name');
+        return $this->belongsTo(User::class, 'from')->select('id', 'name');
     }
 
     /**
@@ -30,7 +30,7 @@ class WalletTransfer extends Model
      */
     public function receiver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'receiver_id')->select('id', 'name');
+        return $this->belongsTo(User::class, 'to')->select('id', 'name');
     }
 
     public function scopeAdminFiterByRequest($query, Request $request)
