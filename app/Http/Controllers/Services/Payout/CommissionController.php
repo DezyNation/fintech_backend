@@ -18,7 +18,7 @@ class CommissionController extends Controller
         ];
     }
 
-    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model| array
+    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model | array | bool
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
 
