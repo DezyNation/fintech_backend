@@ -31,12 +31,16 @@ class DocumentController extends Controller
 
         $user = User::findOrFail($request->user()->id);
         if ($response['status'] == 0) {
-            $user->first_name = $response['data']['first_name'];
-            $user->middle_name = $response['data']['middle_name'];
-            $user->last_name = $response['data']['last_name'];
-            $user->name = $response['data']['pan_returned_name'];
-            $user->pan_number = $response['data']['pan_number'];
-            $user->save();
+            if (strtoupper($response['data']['pan_returned_name']) == strtoupper($user->name)) {
+                $user->first_name = $response['data']['first_name'];
+                $user->middle_name = $response['data']['middle_name'];
+                $user->last_name = $response['data']['last_name'];
+                $user->name = $response['data']['pan_returned_name'];
+                $user->pan_number = $response['data']['pan_number'];
+                $user->save();
+            } else {
+                abort(403, "PAN name doesn't match with the user name");
+            }
         }
 
         return new GeneralResource($user);
