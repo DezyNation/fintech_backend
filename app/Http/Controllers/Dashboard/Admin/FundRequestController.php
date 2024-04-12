@@ -113,13 +113,16 @@ class FundRequestController extends Controller
         return new GeneralResource($fund);
     }
 
-    public function fundTransfer(Request $request, User $user): JsonResource
+    public function fundTransfer(Request $request): JsonResource
     {
         $request->validate([
             'activity' => ['required', 'in:transfer,reversal'],
             'amount' => ['required', 'numeric', 'min:1'],
-            'remarks' => ['required', 'string']
+            'remarks' => ['required', 'string'],
+            'receiver_id' => ['required']
         ]);
+
+        $user = User::findOrFail($request->receiver_id);
 
         $transfer = DB::transaction(function () use ($request, $user) {
 
