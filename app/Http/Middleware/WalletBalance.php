@@ -33,7 +33,7 @@ class WalletBalance
         }
 
         $balance_left = $user->wallet - $debit;
-        abort(402, $balance_left);
+        abort(402, $balance_left." ".$user->capped_balance);
         if ($user->capped_balance <= $balance_left) {
         }
 
