@@ -77,7 +77,7 @@ class ReportController extends Controller
 
     public function dailySales(Request $request): JsonResource
     {
-        $transaction = Transaction::dailySales()->whereBetween('transactions.creatd_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        $transaction = Transaction::dailySales()->whereBetween('transactions.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
         ->get()->groupBy('user_id');
         return GeneralResource::collection($transaction);
     }
