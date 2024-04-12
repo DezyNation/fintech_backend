@@ -25,13 +25,13 @@ class UserController extends Controller
     {
         $user = User::find($request->user()->id);
         $user->update([
-            'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
-            'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
+            // 'first_name' => $request->first_name,
+            // 'middle_name' => $request->middle_name,
+            // 'last_name' => $request->last_name,
+            // 'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
             'phone_number' => $request->phone_number ?? $user->phone_number,
             'aadhaar_number' => $request->aadhaar_number ?? $user->aadhaar_number,
-            'pan_number' => $request->pan_number ?? $user->getOriginal('pan_number'),
+            // 'pan_number' => $request->pan_number ?? $user->getOriginal('pan_number'),
             'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth
         ]);
 
