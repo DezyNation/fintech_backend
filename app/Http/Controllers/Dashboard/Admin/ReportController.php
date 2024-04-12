@@ -134,7 +134,7 @@ class ReportController extends Controller
                 return Excel::download(new PayoutExport($request->from, $request->to, $request->user_id), "payouts.{$request->format}");
                 break;
 
-            case 'transactions':
+            case 'ledger':
                 return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
                 break;
 

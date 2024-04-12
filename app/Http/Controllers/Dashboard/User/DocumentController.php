@@ -14,7 +14,7 @@ class DocumentController extends Controller
     public function panVerification(Request $request)
     {
         $request->validate([
-            'pan_number' => ['required', 'regex:[A-Z]{5}[0-9]{4}[A-Z]{1}']
+            'pan_number' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}?$/']
         ]);
 
         $data = [
@@ -43,7 +43,7 @@ class DocumentController extends Controller
     public function getPanDetails(Request $request)
     {
         $request->validate([
-            'pan_number' => ['required', 'regex:[A-Z]{5}[0-9]{4}[A-Z]{1}']
+            'pan_number' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}?$/']
         ]);
 
         $data = [
