@@ -8,6 +8,7 @@ use App\Exports\Dashboard\User\TransactionExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResource;
 use App\Models\Fund;
+use App\Models\FundTransfer;
 use App\Models\Payout;
 use App\Models\Transaction;
 use App\Models\WalletTransfer;
@@ -96,6 +97,18 @@ class ReportController extends Controller
         $data = WalletTransfer::where('from', $request->user()->id)
             ->with('receiver')
             ->filterByRequest($request)
+            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->paginate(30);
+
+        return GeneralResource::collection($data);
+    }
+
+    public function fundTransfers(Request $request): JsonResource
+    {
+        $data = FundTransfer::where('user_id', $request->user()->id)
+            ->with('admin', function ($q) {
+                $q->select(['id', 'name']);
+            })
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->paginate(30);
 
