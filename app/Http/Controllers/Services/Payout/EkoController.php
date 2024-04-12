@@ -42,7 +42,7 @@ class EkoController extends Controller
                 ];
                 break;
         }
-
+        Log::info($data);
         return ['data' =>  $data, 'response' => $response->body()];
     }
 
