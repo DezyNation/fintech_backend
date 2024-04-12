@@ -61,6 +61,8 @@ class DocumentController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->post(config('services.eko.base_url') . '/v1/pan/verify', $data);
 
+        Log::info(['request' => $data, 'response' => $response->body()]);
+
         if ($response['status'] == 0) {
             return new GeneralResource($response['data']);
         } else {
