@@ -26,7 +26,7 @@ class OnboardController extends Controller
             'last_name' => $user->last_name,
             'email' => $user->email,
             'residence_address' => json_encode($user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at', 'shop_name'])),
-            'dob' => $user->dob,
+            'dob' => $user->date_of_birth,
             'shop_name' => $user->address->shop_name
         ];
 
