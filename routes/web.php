@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -23,8 +24,8 @@ Route::get('/', function () {
         'user_code' => config('services.eko.key'),
         'service_code' => $service_code = 4
     ];
-
-    $response = Http::withHeaders($this->ekoHeaders())->asForm()
+    $controller = new Controller;
+    $response = Http::withHeaders($controller->ekoHeaders())->asForm()
         ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
 
     return $response;
