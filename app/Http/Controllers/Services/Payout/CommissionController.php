@@ -23,7 +23,7 @@ class CommissionController extends Controller
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->first();
 
         if (empty($instance)) {
-            [
+            return [
                 'debit_amount' => $fixed_charge = 0,
                 'credit_amount' => $credit = 0
             ];
