@@ -266,6 +266,26 @@ class CommissionController extends Controller
         return new GeneralResource($commission);
     }
 
+
+    public function deleteCommission(Request $request, string $id)
+    {
+        $request->validate([
+            'service' => ['required', 'in:payout']
+        ]);
+        $service = $request->service;
+        switch ($service) {
+            case 'payout':
+                PayoutCommission::findOrFail($id)->delete();
+                break;
+
+            default:
+                $commission = 'no data sent';
+                break;
+        }
+
+        return response()->noContent();
+    }
+
     public function getCommission(Request $request, $id): JsonResource
     {
         $request->validate([

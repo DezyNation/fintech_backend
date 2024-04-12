@@ -123,6 +123,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::get('get-commission/{id}', [CommissionController::class, 'getCommission']);
         Route::post('create-commission', [CommissionController::class, 'createCommission']);
         Route::put('update-commission/{id}', [CommissionController::class, 'updateCommission']);
+        Route::delete('delete-commission/{id}', [CommissionController::class, 'updateCommission']);
     });
 
     Route::prefix('transactions')->group(function () {
