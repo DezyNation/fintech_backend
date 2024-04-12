@@ -82,6 +82,6 @@ class Transaction extends Model
                 'users.name as user_name',
                 DB::raw('SUM(credit_amount) as total_credit_amount'),
                 DB::raw('SUM(debit_amount) as total_debit_amount')
-            )->groupBy(['user_id', 'service']);
+            )->groupBy(['user_id', 'service', 'user_name']);
     }
 }
