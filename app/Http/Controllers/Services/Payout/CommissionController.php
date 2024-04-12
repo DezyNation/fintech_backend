@@ -22,10 +22,11 @@ class CommissionController extends Controller
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->first();
 
-        if (!$instance) {[
-            'debit_amount' => $fixed_charge = 0,
-            'credit_amount' => $credit = 0
-        ];
+        if (empty($instance)) {
+            [
+                'debit_amount' => $fixed_charge = 0,
+                'credit_amount' => $credit = 0
+            ];
         }
 
         $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
