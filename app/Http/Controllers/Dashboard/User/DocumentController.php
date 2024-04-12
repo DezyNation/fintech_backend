@@ -7,6 +7,7 @@ use App\Http\Resources\GeneralResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DocumentController extends Controller
 {
@@ -55,6 +56,8 @@ class DocumentController extends Controller
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->post(config('services.eko.base_url') . '/v1/pan/verify', $data);
+
+            Log::info($response);
 
         if ($response['status'] == 0) {
             return new GeneralResource($response['data']);
