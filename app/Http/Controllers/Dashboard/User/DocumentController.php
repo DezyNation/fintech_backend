@@ -38,12 +38,13 @@ class DocumentController extends Controller
                 $user->name = $response['data']['pan_returned_name'];
                 $user->pan_number = $response['data']['pan_number'];
                 $user->save();
+                return new GeneralResource($user);
             } else {
                 abort(403, "PAN name doesn't match with the user name");
             }
+        } else {
+            abort(502, $response['message']);
         }
-
-        return new GeneralResource($user);
     }
 
     public function getPanDetails(Request $request)
