@@ -118,7 +118,7 @@ class FundRequestController extends Controller
         $request->validate([
             'activity_type' => ['required', 'in:transfer,reversal'],
             'amount' => ['required', 'numeric', 'min:1'],
-            'remarks' => ['required', 'string'],
+            'remarks' => ['required_if:activity_type,reversal', 'string'],
             'receiver_id' => ['required']
         ]);
 
