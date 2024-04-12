@@ -48,9 +48,6 @@ class DocumentController extends Controller
             'pan_number' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}?$/']
         ]);
 
-        $class = new EkoController;
-        $class->activateService(4);
-        
         $data = [
             'pan_number' => $request->pan_number,
             'purpose' => 1,
