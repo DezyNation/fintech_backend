@@ -19,7 +19,7 @@ class EkoController extends Controller
     {
         switch ($status) {
             case 0:
-                if ($response['data']['tx_status'] == (0 || 1 || 5)) {
+                if (in_array($response['data']['tx_status'], [0, 1, 5])) {
                     $data = [
                         'status' => 'success',
                         'message' => $response['message'],
