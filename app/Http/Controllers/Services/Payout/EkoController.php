@@ -87,6 +87,8 @@ class EkoController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
 
+        Log::info($response);
+
         if ($response->failed()) {
             $this->releaseLock(auth()->user()->id);
             abort(403, $response['message'] ?? "Failed.");
