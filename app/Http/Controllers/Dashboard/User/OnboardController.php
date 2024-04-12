@@ -25,8 +25,8 @@ class OnboardController extends Controller
             'middle_name' => $user->middle_name,
             'last_name' => $user->last_name,
             'email' => $user->email,
-            'residence_address' => json_encode($user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at'])),
-            'dob' => Carbon::parse($user->dob)->format('yyy-mm-dd'),
+            'residence_address' => json_encode($user->address->makeHidden(['id', 'user_id', 'created_at', 'updated_at', 'shop_name'])),
+            'dob' => $user->dob,
             'shop_name' => $user->address->shop_name
         ];
 

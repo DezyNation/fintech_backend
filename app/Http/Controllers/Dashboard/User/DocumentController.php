@@ -40,6 +40,27 @@ class DocumentController extends Controller
         return new GeneralResource($user);
     }
 
+    public function getPanDetails(Request $request)
+    {
+        $request->validate([
+            'pan_number' => ['required', 'regex:[A-Z]{5}[0-9]{4}[A-Z]{1}']
+        ]);
+
+        $data = [
+            'pan_number' => $request->pan_number,
+            'purpose' => 1,
+            'purpose_desc' => 'verification',
+            'initiator_id' => config('services.eko.initiator_id')
+        ];
+
+        $response = Http::withHeaders($this->ekoHeaders())->asForm()
+            ->post(config('services.eko.base_url') . '/v1/pan/verify', $data);
+
+        if ($response['status'] == 0) {
+            return new GeneralResource($response['data']);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */

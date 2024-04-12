@@ -54,7 +54,8 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     });
 
     Route::prefix('verify')->controller(DocumentController::class)->group(function () {
-        Route::get('pan', 'panVerification');
+        Route::put('pan', 'panVerification');
+        Route::get('pan', 'getPanDetails');
     });
 
     Route::apiResource('fund-requests', FundRequestController::class);
