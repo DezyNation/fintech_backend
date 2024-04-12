@@ -40,7 +40,7 @@ class Payout extends Model
         return $query;
     }
 
-    public function scopeAdminFiterByRequest($query, Request $request)
+    public function scopeAdminFiLterByRequest($query, Request $request)
     {
         if (!empty($request['transaction_id'])) {
             $query->where('reference_id', 'like', "%{$request->transaction_id}%");
