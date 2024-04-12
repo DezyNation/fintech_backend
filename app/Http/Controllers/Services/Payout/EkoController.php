@@ -80,7 +80,7 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'user_code' => auth()->user()->eko_user_code ?? config('services.eko.key'),
+            'user_code' => config('services.eko.key'),
             'service_code' => $service_code
         ];
 
