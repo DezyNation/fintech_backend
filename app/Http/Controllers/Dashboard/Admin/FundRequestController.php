@@ -116,7 +116,7 @@ class FundRequestController extends Controller
     public function fundTransfer(Request $request): JsonResource
     {
         $request->validate([
-            'activity' => ['required', 'in:transfer,reversal'],
+            'activity_type' => ['required', 'in:transfer,reversal'],
             'amount' => ['required', 'numeric', 'min:1'],
             'remarks' => ['required', 'string'],
             'receiver_id' => ['required']
@@ -131,7 +131,7 @@ class FundRequestController extends Controller
                 abort(423, "Can't lock the user at the moment.");
             }
 
-            if ($request->activity == 'transfer') {
+            if ($request->activity_type == 'transfer') {
                 $opening_balance = $user->wallet;
                 $closing_balance = $user->wallet + $request->amount;
                 $reference_id = Str::random(8);
@@ -146,7 +146,7 @@ class FundRequestController extends Controller
             $data = FundTransfer::create([
                 'user_id' => $user->id,
                 'admin_id' => $request->user()->id,
-                'activity' => $request->activity,
+                'activity' => $request->activity_type,
                 'reference_id' => $reference_id,
                 'amount' => $request->amount,
                 'opening_balance' => $opening_balance,
