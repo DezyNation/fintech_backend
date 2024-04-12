@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class Transaction extends Model
 {
@@ -57,40 +58,6 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'triggered_by')->select(['id', 'name', 'phone_number']);
     }
 
-    public static function dailySales($query)
-    {
-        $result = $query->join('users', 'transactions.user_id', '=', 'users.id')
-            ->select(
-                'user_id',
-                'service'
-            )
-            ->selectRaw('SUM(credit_amount) as credit')
-            ->selectRaw('SUM(debit_amount) as debit')
-            ->groupBy('user_id', 'service')
-            ->get();
-
-        $formattedResult = [];
-
-        foreach ($result as $item) {
-            $user_id = $item->user_id;
-
-            if (!isset($formattedResult[$user_id])) {
-                $formattedResult[$user_id] = [
-                    'user_id' => $user_id,
-                    'services' => [],
-                ];
-            }
-
-            $formattedResult[$user_id]['services'][] = [
-                'service_type' => $item->service_type,
-                'total_credit_amount' => $item->total_credit_amount,
-                'total_debit_amount' => $item->total_debit_amount,
-            ];
-        }
-
-        return GeneralResource::collection($formattedResult);
-    }
-
     public function scopeAdminFiterByRequest($query, Request $request)
     {
         if (!empty($request['transaction_id'])) {
@@ -104,5 +71,17 @@ class Transaction extends Model
         }
 
         return $query;
+    }
+
+    public function scopeDailySales($query)
+    {
+        return $query->join('users', 'users.id', '=', 'transactions.user_id')
+            ->select(
+                'user_id',
+                'service',
+                'users.name as user_name',
+                DB::raw('SUM(credit_amount) as total_credit_amount'),
+                DB::raw('SUM(debit_amount) as total_debit_amount')
+            )->groupBy(['user_id', 'service']);
     }
 }
