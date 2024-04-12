@@ -13,6 +13,7 @@ use App\Http\Resources\GeneralResource;
 use App\Exports\Dashboard\Admin\PayoutExport;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Exports\Dashboard\Admin\TransactionExport;
+use App\Exports\Dashboard\Admin\WalletTransferExport;
 use App\Models\Fund;
 use App\Models\FundTransfer;
 use App\Models\WalletTransfer;
@@ -145,6 +146,10 @@ class ReportController extends Controller
 
             case 'fund-requests':
                 return Excel::download(new FundRequestExport($request->from, $request->to, $request), "fund_requests.{$request->format}");
+                break;
+
+            case 'wallet-transfers':
+                return Excel::download(new WalletTransferExport($request->from, $request->to, $request), "fund_requests.{$request->format}");
                 break;
 
             default:
