@@ -24,7 +24,7 @@ class WalletBalance
             case 'payout':
                 $commission = new CommissionController;
                 $commission = $commission->distributeCommission($user, $request->amount, "calcs", false, true);
-                $debit = $request->amount - $commission['debit_amount'] + $commission['credit_amount'];
+                $debit = $request->amount - $commission['debit_amount'] +  $commission['credit_amount'];
                 break;
 
             default:
@@ -33,8 +33,9 @@ class WalletBalance
         }
 
         $balance_left = $user->wallet - $debit;
-        abort(402, $balance_left." ".$user->capped_balance);
-        if ($user->capped_balance <= $balance_left) {
+
+        if ($user->capped_balance >= $balance_left) {
+            abort(402, "Insufficient balance.  Please top up your wallet.");
         }
 
         return $next($request);
