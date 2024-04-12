@@ -24,7 +24,7 @@ class WalletBalance
             case 'payout':
                 $commission = new CommissionController;
                 $commission = $commission->distributeCommission($user, $request->amount, "calcs", false, true);
-                $debit = $request->amount - $commission['debit'] ?? 0 +  $commission['credit'] ?? 0;
+                $debit = $request->amount - $commission['debit_amount'] ?? 0 +  $commission['credit_amount'] ?? 0;
                 break;
 
             default:
