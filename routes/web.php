@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Resources\GeneralResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,8 +17,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $data = Transaction::dailySales()->get()->groupBy('user_id');
-    return $data;
     return [config('app.name') => 'Dezynation'];
 });
 

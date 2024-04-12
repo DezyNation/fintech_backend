@@ -77,14 +77,8 @@ class ReportController extends Controller
 
     public function dailySales(Request $request): JsonResource
     {
-        $data = Transaction::whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])->get();
-
-        $transaction = $data->groupBy(['user_id', 'service'])->map(function ($item) {
-            return $item->map(function ($key) {
-                return ['debit_amount' => $key->sum('debit_amount'), 'credit_amount' => $key->sum('credit_amount')];
-            });
-        });
-
+        $transaction = Transaction::dailySales()->whereBetween('transactions.creatd_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        ->get()->groupBy('user_id');
         return GeneralResource::collection($transaction);
     }
 
