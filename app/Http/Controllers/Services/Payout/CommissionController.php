@@ -18,12 +18,14 @@ class CommissionController extends Controller
         ];
     }
 
-    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model | array | bool
+    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model | array 
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
 
-        if (!$instance) {
-            return false;
+        if (!$instance) {[
+            'debit_amount' => $fixed_charge = 0,
+            'credit_amount' => $credit = 0
+        ];
         }
 
         $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
