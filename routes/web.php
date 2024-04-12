@@ -3,6 +3,7 @@
 use App\Http\Resources\GeneralResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    $data = [
+        'initiator_id' => config('services.eko.initiator_id'),
+        'user_code' => config('services.eko.key'),
+        'service_code' => $service_code = 4
+    ];
+
+    $response = Http::withHeaders($this->ekoHeaders())->asForm()
+        ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
+
+    return $response;
     return [config('app.name') => 'Dezynation'];
 });
 

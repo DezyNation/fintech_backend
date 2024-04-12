@@ -80,14 +80,12 @@ class EkoController extends Controller
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'user_code' => config('services.eko.key'),
+            'user_code' => auth()->user()->eko_user_code,
             'service_code' => $service_code
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
-
-        Log::info($response);
 
         if ($response->failed()) {
             $this->releaseLock(auth()->user()->id);
