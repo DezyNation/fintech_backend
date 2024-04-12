@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class EkoController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('eko_onboard');
     }
 
@@ -48,7 +49,7 @@ class EkoController extends Controller
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id): array
     {
-        $this->activateService($request, $service_code = 45);
+        $this->activateService($service_code = 45);
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
             'client_ref_id' => $reference_id,
@@ -75,11 +76,11 @@ class EkoController extends Controller
         return $this->processResponse($response, $response['status']);
     }
 
-    public function activateService(PayoutRequest $request, int $service_code)
+    public function activateService(int $service_code)
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'user_code' => $request->user()->eko_user_code,
+            'user_code' => auth()->user()->eko_user_code ?? config('services.eko.key'),
             'service_code' => $service_code
         ];
 
@@ -87,14 +88,14 @@ class EkoController extends Controller
             ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
 
         if ($response->failed()) {
-            $this->releaseLock($request->user()->id);
+            $this->releaseLock(auth()->user()->id);
             abort(403, $response['message'] ?? "Failed.");
         }
 
         if (($response['status'] == 0 || $response['status'] == 1295) && $response['data']['service_status'] == 1) {
             return true;
         } else {
-            $this->releaseLock($request->user()->id);
+            $this->releaseLock(auth()->user()->id);
             abort(403, $response['message'] ?? "Failed to Activate Service");
         }
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Services\Payout\EkoController;
 use App\Http\Resources\GeneralResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -43,6 +44,8 @@ class DocumentController extends Controller
 
     public function getPanDetails(Request $request)
     {
+        $class = new EkoController;
+        $class->activateService(4);
         $request->validate([
             'pan_number' => ['required', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}?$/']
         ]);
@@ -57,10 +60,10 @@ class DocumentController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->post(config('services.eko.base_url') . '/v1/pan/verify', $data);
 
-            Log::info($response);
-
         if ($response['status'] == 0) {
             return new GeneralResource($response['data']);
+        } else {
+            abort(400, $response['message']);
         }
     }
 
