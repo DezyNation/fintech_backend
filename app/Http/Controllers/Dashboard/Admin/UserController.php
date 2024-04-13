@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         return GeneralResource::collection(User::role($request->role)->with(['plan' => function ($q) {
             $q->select(['id', 'name']);
-        }, 'documents'])->withTrashed()->paginate(10));
+        }, 'documents'])->withTrashed()->paginate(30));
     }
 
     /**
@@ -39,7 +39,9 @@ class UserController extends Controller
             'middle_name' => ['nullable', 'string', 'max:20'],
             'last_name' => ['nullable', 'string', 'max:20'],
             'phone_number' => ['nullable', 'digits:10'],
-            'role'  => ['required', 'exists:roles,name']
+            'role'  => ['required', 'exists:roles,name'],
+            'pan_number' => ['nullable', 'regex:/^([A-Z]){5}([0-9]){4}([A-Z]){1}?$/'],
+            'aadhaar_number' => ['nullable', 'digits:12']
         ]);
 
         $password = Str::random(8);
@@ -52,7 +54,9 @@ class UserController extends Controller
             'last_name' => $request->last_name,
             'phone_number' => $request->phone_number,
             'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
-            'capped_balance' => $request->minimum_balance
+            'capped_balance' => $request->minimum_balance ?? 0,
+            'pan_number' => $request->pan_number,
+            'aadhaar_number' => $request->aadhaar_number
         ])->assignRole($request->role);
 
         Mail::to($request->email)
@@ -93,6 +97,8 @@ class UserController extends Controller
             'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth,
             'pan_number' => $request->pan_number ?? $user->getRawOriginal('pan_number')
         ]);
+
+        $user->assignRole($request->role);
 
         return new GeneralResource($user);
     }

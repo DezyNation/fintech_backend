@@ -22,7 +22,7 @@ class AdminController extends Controller
 
     public function updateUserPermission(Request $request, User $user): JsonResource
     {
-        $user->syncPermissions($request->permissions);
+        $user->syncPermissions($request->all());
         return new GeneralResource($user);
     }
 
