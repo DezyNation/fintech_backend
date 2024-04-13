@@ -51,8 +51,14 @@
                                         <p
                                             style="color:#455056; font-size:18px;line-height:20px; margin:0; font-weight: 500;">
                                             <strong
-                                                style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">{{$credential_type}}</strong>{{$password}}
+                                                style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">PASSWORD</strong>{{$password}}
                                         </p>
+                                        <br>
+                                        <p
+                                        style="color:#455056; font-size:18px;line-height:20px; margin:0; font-weight: 500;">
+                                        <strong
+                                            style="display: block; font-size: 13px; margin: 24px 0 4px 0; font-weight:normal; color:rgba(0,0,0,.64);">PIN</strong>{{$pin}}
+                                    </p>
 
                                         <a href="{{env('FRONTEND_URL')}}/login"
                                             style="background:#20e277;text-decoration:none !important; display:inline-block; font-weight:500; margin-top:24px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;">Login

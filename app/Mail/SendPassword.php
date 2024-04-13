@@ -16,14 +16,16 @@ class SendPassword extends Mailable
 
     public $password;
     public $credential_type;
+    public $pin;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($password, $credential_type)
+    public function __construct($password, $credential_type, $pin)
     {
         $this->password = $password;
         $this->credential_type = $credential_type;
+        $this->pin = $pin;
     }
 
     /**

@@ -9,12 +9,14 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Mail\SendPassword;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
@@ -27,26 +29,32 @@ class RegisteredUserController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            // 'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
             // 'phone_number' => ['required', 'digits:10'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             // 'mpin' => ['required', 'confirmed'],
             // 'terms' => ['accepted']
         ]);
 
         $role = Role::where('default', true)->first();
-
+        $password = Str::random(8);
+        $pin = rand(1001, 9999);
         $user = User::create([
-            // 'name' => $request->name,
+            'first_name' => $request->first_name,
+            'name' => Str::squish($request->first_name . ' ' . $request->last_name),
+            'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            // 'mpin' => Hash::make($request->mpin)
+            'capped_balance' => 0,
+            'password' => Hash::make($password),
+            'pin' => Hash::make($pin)
         ])->assignRole($role->name);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        Mail::to($request->email)
+        ->send(new SendPassword($password, 'password', $pin));
+        // Auth::login($user);
 
         return response()->json(['data' => 'registered sucessfully']);
     }

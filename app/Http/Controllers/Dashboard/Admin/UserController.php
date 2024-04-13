@@ -45,10 +45,12 @@ class UserController extends Controller
         ]);
 
         $password = Str::random(8);
+        $pin = rand(1001, 9999);
 
         $user = User::create([
             'email' => $request->email,
             'password' => Hash::make($password),
+            'pin' => Hash::make($pin),
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
@@ -60,7 +62,7 @@ class UserController extends Controller
         ])->assignRole($request->role);
 
         Mail::to($request->email)
-            ->send(new SendPassword($password, 'password'));
+            ->send(new SendPassword($password, 'password', $pin));
 
         return new GeneralResource($user);
     }
@@ -171,7 +173,7 @@ class UserController extends Controller
         ]);
 
         Mail::to($user->email)
-            ->send(new SendPassword($password, $request->credential_type));
+            ->send(new SendPassword($password, $request->credential_type, "####"));
 
         return new GeneralResource($user);
     }
