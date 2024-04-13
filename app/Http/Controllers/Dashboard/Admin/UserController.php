@@ -35,28 +35,30 @@ class UserController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email', 'unique:users'],
-            'first_name' => ['nullable', 'string', 'max:20'],
+            'first_name' => ['required', 'string', 'max:20'],
             'middle_name' => ['nullable', 'string', 'max:20'],
             'last_name' => ['nullable', 'string', 'max:20'],
-            'phone_nmber' => ['nullable', 'digits:10'],
-            'email' => ['required', 'email', 'unique:users']
+            'phone_number' => ['nullable', 'digits:10'],
+            'role'  => ['required', 'exists:roles,name']
         ]);
 
         $password = Str::random(8);
 
-        User::create([
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($password),
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
-            'name' => $request->first_name . $request->middle_name . $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($password)
-        ]);
+            'phone_number' => $request->phone_number,
+            'name' => Str::squish($request->first_name . ' ' . $request->middle_name . ' ' . $request->last_name),
+            'capped_balance' => $request->minimum_balance
+        ])->assignRole($request->role);
 
         Mail::to($request->email)
             ->send(new SendPassword($password, 'password'));
 
-        return response()->json(['data' => 'credentials sent.']);
+        return new GeneralResource($user);
     }
 
     /**
