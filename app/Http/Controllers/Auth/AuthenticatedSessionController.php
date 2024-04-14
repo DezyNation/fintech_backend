@@ -73,7 +73,8 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         auth()->logout();
-        return response()->json(['message' => 'log out successfully.'])->withCookie(Cookie::forget('token'));
+        $cookie = cookie("token", null, -1, '/', 'janpay.online', true, true);
+        return response()->json(['message' => 'log out successfully.'])->withCookie($cookie);
     }
 
     /**
