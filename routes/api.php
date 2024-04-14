@@ -42,7 +42,7 @@ Route::put('credentials', [UserController::class, 'updateCredential'])->middlewa
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
-    Route::prefix('transaction')->middleware(['onboard_active', 'balance'])->group(function () {
+    Route::prefix('transaction')->middleware(['pin', 'onboard_active', 'balance'])->group(function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
         Route::post('bbps', [BbpsFlowController::class, 'store']);
         Route::post('wallet-transfer', [FundRequestController::class, 'walletTransfer']);
