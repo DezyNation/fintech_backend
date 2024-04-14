@@ -73,7 +73,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         auth()->logout();
-        return response()->noContent()->withCookie(Cookie::forget('token'));
+        return response()->json(['message' => 'log out successfully.'])->withCookie(Cookie::forget('token'));
     }
 
     /**
