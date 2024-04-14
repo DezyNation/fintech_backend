@@ -29,7 +29,7 @@ class DocumentController extends Controller
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->post(config('services.eko.base_url') . '/v1/pan/verify', $data);
-        Log::info($response);
+            
         $user = User::findOrFail($request->user()->id);
         if ($response['status'] == 0) {
             if (strtoupper(Str::squish($response['data']['first_name'] . ' ' . $response['data']['middle_name'] . ' ' . $response['data']['last_name'])) == strtoupper($user->name)) {
