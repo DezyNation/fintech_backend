@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
         }
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
-        $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', null, true, true);
+        $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', 'janpay.online', true, true);
         return response()->json($this->respondWithToken(['user' => $user]))->withCookie($cookie);
     }
 
