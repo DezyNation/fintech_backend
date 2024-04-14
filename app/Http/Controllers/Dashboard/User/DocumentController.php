@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Dashboard\User;
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\Services\Payout\EkoController;
-use App\Http\Resources\GeneralResource;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use App\Http\Resources\GeneralResource;
+use App\Http\Controllers\Services\Payout\EkoController;
 
 class DocumentController extends Controller
 {
@@ -31,7 +32,7 @@ class DocumentController extends Controller
         Log::info($response);
         $user = User::findOrFail($request->user()->id);
         if ($response['status'] == 0) {
-            if (strtoupper($response['data']['pan_returned_name']) == strtoupper($user->name)) {
+            if (strtoupper(Str::squish($response['data']['first_name'] . ' ' . $response['data']['middle_name'] . ' ' . $response['data']['last_name'])) == strtoupper($user->name)) {
                 $user->first_name = $response['data']['first_name'];
                 $user->middle_name = $response['data']['middle_name'];
                 $user->last_name = $response['data']['last_name'];
