@@ -73,8 +73,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): JsonResponse
     {
         auth()->logout();
-        Cookie::queue(Cookie::forget('token'));
-        return response()->noContent();
+        return response()->noContent()->withCookie(Cookie::forget('token'));
     }
 
     /**
