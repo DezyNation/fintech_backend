@@ -64,8 +64,8 @@ class ReportController extends Controller
         $payouts = Payout::where(['user_id' => $user->id, 'status' => 'success'])->sum('amount');
 
         $data = [
-            'approved_funds' => $approved_fund_requests,
-            'pending_funds' => $pending_fund_requests,
+            'approved_fund_requests' => $approved_fund_requests,
+            'pending_fund_requests' => $pending_fund_requests,
             'total_payouts' => $payouts,
             'fund_transfers'  => $fund_transfers
         ];

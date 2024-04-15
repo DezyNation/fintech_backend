@@ -51,8 +51,8 @@ class ReportController extends Controller
 
         $data = [
             'volume' => $volume,
-            'approved_funds' => $approved_fund_requests,
-            'pending_funds' => $pending_fund_requests,
+            'approved_fund_requests' => $approved_fund_requests,
+            'pending_fund_requests' => $pending_fund_requests,
             'total_payouts' => $payouts,
             'retailers' => $retailers,
             'admins' => $admins,
