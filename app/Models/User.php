@@ -73,7 +73,7 @@ class User extends Authenticatable implements JWTSubject
         'otp_generated_at' => 'datetime',
         'password' => 'hashed',
         'otp' => 'hashed',
-        'pin' => 'hashed',
+        // 'pin' => 'hashed',
     ];
 
     // protected function aadhaarNumber(): Attribute
