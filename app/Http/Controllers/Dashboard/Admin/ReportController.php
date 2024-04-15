@@ -42,8 +42,8 @@ class ReportController extends Controller
     public function overview(Request $request)
     {
         $volume = DB::table('users')->sum('wallet');
-        $approved_funds = DB::table('fund_requests')->where('status', 'approved')->sum('amount');
-        $pending_funds = DB::table('fund_requests')->where('status', 'pending')->sum('amount');
+        $approved_fund_requests = DB::table('fund_requests')->where('status', 'approved')->sum('amount');
+        $pending_fund_requests = DB::table('fund_requests')->where('status', 'pending')->sum('amount');
         $fund_transfers = DB::table('fund_transfers')->where('activity', 'transfer')->sum('amount');
         $payouts = Payout::where('status', 'success')->sum('amount');
         $retailers = User::role('retailer')->count();
@@ -51,8 +51,8 @@ class ReportController extends Controller
 
         $data = [
             'volume' => $volume,
-            'approved_funds' => $approved_funds,
-            'pending_funds' => $pending_funds,
+            'approved_funds' => $approved_fund_requests,
+            'pending_funds' => $pending_fund_requests,
             'total_payouts' => $payouts,
             'retailers' => $retailers,
             'admins' => $admins,

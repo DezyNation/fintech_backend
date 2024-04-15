@@ -58,14 +58,14 @@ class ReportController extends Controller
     public function overview(Request $request)
     {
         $user = $request->user();
-        $approved_funds = DB::table('funds')->where(['user_id' => $user->id, 'status' => 'approved'])->sum('amount');
-        $pending_funds = DB::table('fund_requests')->where(['user_id' => $user->id, 'status' => 'pending'])->sum('amount');
+        $approved_fund_requests = DB::table('funds')->where(['user_id' => $user->id, 'status' => 'approved'])->sum('amount');
+        $pending_fund_requests = DB::table('fund_requests')->where(['user_id' => $user->id, 'status' => 'pending'])->sum('amount');
         $fund_transfers = DB::table('fund_transfers')->where(['user_id' => $user->id, 'activity' => 'transfer'])->sum('amount');
         $payouts = Payout::where(['user_id' => $user->id, 'status' => 'success'])->sum('amount');
 
         $data = [
-            'approved_funds' => $approved_funds,
-            'pending_funds' => $pending_funds,
+            'approved_funds' => $approved_fund_requests,
+            'pending_funds' => $pending_fund_requests,
             'total_payouts' => $payouts,
             'fund_transfers'  => $fund_transfers
         ];
