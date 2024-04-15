@@ -166,7 +166,7 @@ class UserController extends Controller
         if ($request->credential_type == 'password') {
             $password = Str::random(8);
         } else {
-            $password = rand(100001, 999999);
+            $password = rand(1001, 9999);
         }
         $user->update([
             $request->credential_type => Hash::make($password)
