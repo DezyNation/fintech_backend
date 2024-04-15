@@ -90,7 +90,10 @@ class UserController extends Controller
 
     public function verifyUser(string $id)
     {
-        $user = User::where('phone_number', $id)->select('id', 'name', 'phone_number')->firstOrFail();
+        $user = User::where('phone_number', $id)->select('id', 'name', 'phone_number')->first();
+        if (!$user) {
+            abort(404, "User not found.");
+        }
         return new GeneralResource($user);
     }
 }
