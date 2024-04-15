@@ -17,7 +17,7 @@ class PinCheck
     public function handle(Request $request, Closure $next): Response
     {
         if (!Hash::check($request->pin, $request->user()->pin)) {
-            abort(403, $request->user()->pin);
+            abort(403, "Wrong PIN entered! Please try again.");
         }
         return $next($request);
     }
