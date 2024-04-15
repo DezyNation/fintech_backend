@@ -90,7 +90,7 @@ class UserController extends Controller
 
     public function verifyUser(string $id)
     {
-        $user = User::where('phone_number', $id)->select('id', 'name')->firstOrFail();
+        $user = User::where('phone_number', $id)->select('id', 'name', 'phone_number')->firstOrFail();
         return new GeneralResource($user);
     }
 }
