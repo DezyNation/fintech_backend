@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401)->withCookie(cookie("token", null, -1, '/', 'janpay.online', true, true));
         }
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
