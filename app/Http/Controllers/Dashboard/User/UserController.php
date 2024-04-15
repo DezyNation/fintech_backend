@@ -48,9 +48,7 @@ class UserController extends Controller
 
         $user = User::findOrFail($request->user()->id);
         if (!Hash::check($request->old_credential, $user->{$request->credential_type})) {
-            throw ValidationException::withMessages([
-                'error' => ['Credentials do not match our records.']
-            ]);
+            abort(422, "Credentials do not match our records.");
         }
 
         $user->update([
