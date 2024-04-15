@@ -16,7 +16,9 @@ use App\Exports\Dashboard\Admin\TransactionExport;
 use App\Exports\Dashboard\Admin\WalletTransferExport;
 use App\Models\Fund;
 use App\Models\FundTransfer;
+use App\Models\User;
 use App\Models\WalletTransfer;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -37,9 +39,28 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function overview(Request $request)
     {
-        //
+        $volume = DB::table('users')->sum('wallet');
+        $approved_funds = DB::table('funds')->where('status', 'approved')->sum('amount');
+        $pending_funds = DB::table('fund_requests')->where('status', 'pending')->sum('amount');
+        $pending_funds = DB::table('fund_requests')->where('status', 'pending')->sum('amount');
+        $fund_transfers = DB::table('fund_transfers')->where('status', 'pending')->sum('amount');
+        $payouts = Payout::where('status', 'success')->sum('amount');
+        $retailers = User::role('retailer')->count();
+        $admins = User::role('admin')->count();
+
+        $data = [
+            'volume' => $volume,
+            'approved_funds' => $approved_funds,
+            'pending_funds' => $pending_funds,
+            'total_payouts' => $payouts,
+            'retailers' => $retailers,
+            'admins' => $admins,
+            'fund_transfers'  => $fund_transfers
+        ];
+
+        return new GeneralResource($data);
     }
 
     /**
@@ -78,7 +99,7 @@ class ReportController extends Controller
     public function dailySales(Request $request): JsonResource
     {
         $transaction = Transaction::dailySales()->whereBetween('transactions.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-        ->get()->groupBy('user_id');
+            ->get()->groupBy('user_id');
         return GeneralResource::collection($transaction);
     }
 

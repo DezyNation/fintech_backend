@@ -97,6 +97,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
 
     Route::group(['prefix' => 'report'], function () {
         Route::apiResource('ledger', ReportController::class);
+        Route::get('overview', [ReportController::class, 'overview']);
         Route::get('daily-sales', [ReportController::class, 'dailySales']);
         Route::get('payout', [ReportController::class, 'payoutReports']);
         Route::get('wallet-transfer', [ReportController::class, 'walletTransferReport']);
