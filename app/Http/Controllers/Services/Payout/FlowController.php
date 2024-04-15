@@ -66,7 +66,7 @@ class FlowController extends Controller
             $lock->release();
             abort(400, $transaction_request['data']['message']);
         }
-        
+
         if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated'])) {
             $status = "pending";
         } else {
@@ -122,18 +122,22 @@ class FlowController extends Controller
                 abort(400, $transaction_request['data']['message']);
             }
 
-            if ($transaction_request['data']['transaction_status'] == ('failed' || 'refunded')) {
+            if (in_array($transaction_request['data']['transaction_status'], ['failed', 'refunded'])) {
 
                 $lock = $this->lockRecords($payout->user_id);
                 if (!$lock->get()) {
                     abort(423, "Can't lock user account");
                 }
-
                 $payout->status = 'failed';
                 $payout->save();
                 TransactionController::reverseTransaction($payout->reference_id);
                 $lock->release();
+            } elseif ($transaction_request['data']['status'] == 'success') {
+                $payout->status = 'success';
+                $payout->utr = $transaction_request['data']['utr'];
+                $payout->save();
             }
+            
             return new GeneralResource($payout);
         }, 2);
 
