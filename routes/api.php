@@ -67,6 +67,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
 
     Route::prefix('report')->group(function () {
         Route::apiResource('ledger', UserReportController::class);
+        Route::get('overview', [UserReportController::class, 'overview']);
         Route::get('payout', [PayoutFlowController::class, 'index']);
         Route::get('wallet-transfer', [UserReportController::class, 'walletTransfers']);
         Route::get('fund-transfer', [UserReportController::class, 'fundTransfers']);
