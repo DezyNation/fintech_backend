@@ -23,11 +23,17 @@ class CallbackController extends Controller
             }
 
             if ($request['tx_status'] == 1) {
+                TransactionController::reverseTransaction($transaction->reference_id);
                 Payout::where('reference_id', $transaction->reference_id)->update([
                     'status' => 'failed'
                 ]);
-                TransactionController::reverseTransaction($transaction->reference_id);
+            } elseif ($request['tx_status'] == 0) {
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'success',
+                    'utr' => $request['bank_ref_num']
+                ]);
             }
+
 
             $lock->release();
             return response("Success", 200);
