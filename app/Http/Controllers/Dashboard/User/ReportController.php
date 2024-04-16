@@ -101,6 +101,7 @@ class ReportController extends Controller
     {
         $data = Fund::where('user_id', $request->user()->id)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('created_at')
             ->paginate(30);
 
         return GeneralResource::collection($data);
@@ -112,6 +113,7 @@ class ReportController extends Controller
             ->with('receiver')
             ->filterByRequest($request)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('wallet_transfers.created_at')
             ->paginate(30);
 
         return GeneralResource::collection($data);
@@ -124,6 +126,7 @@ class ReportController extends Controller
                 $q->select(['id', 'name']);
             })
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('created_at')
             ->paginate(30);
 
         return GeneralResource::collection($data);
@@ -133,6 +136,7 @@ class ReportController extends Controller
     {
         $data = $fund->where('user_id', $request->user()->id)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('created_at')
             ->with('reviewer')
             ->paginate(30);
 
