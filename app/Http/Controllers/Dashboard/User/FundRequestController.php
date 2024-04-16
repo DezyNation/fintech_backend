@@ -32,7 +32,7 @@ class FundRequestController extends Controller
     public function store(FundRequest $request)
     {
 
-        $path = $request->file('receipt')->store('fund_requests');
+        $path = $request->file('receipt')->store('receipt');
         $data = Fund::create([
             'user_id' => $request->user()->id,
             'transaction_id' => $request->transaction_id,
