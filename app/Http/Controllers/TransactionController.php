@@ -27,11 +27,10 @@ class TransactionController extends Controller
             'closing_balance' => $closing_balance,
         ]);
 
-        DB::transaction(function () use ($user, $closing_balance) {
+
             $user->lockForUpdate();
             $user->wallet = $closing_balance;
             $user->save();
-        }, 3);
     }
 
     public static function reverseTransaction(string $reference_id)
