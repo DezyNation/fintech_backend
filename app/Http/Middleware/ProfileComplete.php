@@ -17,8 +17,21 @@ class ProfileComplete
     {
         $user = $request->user();
         if (is_null($user->phone_number) || is_null($user->date_of_birth) || is_null($user->pan_number) || empty($user->address)) {
-            return response()->json(['message' => 'Please complete your profile.'], 400);
+            return response()->json(['message' => 'Add phone number.'], 400);
         }
+
+        if (is_null($user->date_of_birth) || is_null($user->pan_number) || empty($user->address)) {
+            return response()->json(['message' => 'Add Date of Birth.'], 400);
+        }
+
+        if (is_null($user->pan_number) || empty($user->address)) {
+            return response()->json(['message' => 'Add PAN Number.'], 400);
+        }
+
+        if (empty($user->address)) {
+            return response()->json(['message' => 'Add your address.'], 400);
+        }
+        
         return $next($request);
     }
 }
