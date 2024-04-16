@@ -28,7 +28,7 @@ class CommissionRequest extends FormRequest
             'service_type' => ['required_if:service,aeps', 'string', 'in:CW,MS,AP,BE'],
             'operator_id' => ['required_if:service,bbps', 'exists:operators,id'],
             'plan_id' => ['required', 'exists:plans,id'],
-            'role_id' => ['required', 'exists:roles,id'],
+            'role_id' => ['required', 'exists:roles,name'],
             'fixed_charge' => ['required', 'numeric', 'min:0'],
             'is_flat' => ['required', 'boolean'],
             'commission' => ['required', 'numeric', 'min:0'],
