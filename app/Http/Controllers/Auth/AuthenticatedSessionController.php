@@ -27,6 +27,8 @@ class AuthenticatedSessionController extends Controller
                 'error' => ['Credentials do not match our records.']
             ]);
         }
+
+        return $user->email;
     }
 
     /**
@@ -34,11 +36,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $this->checkCredentials($request);
+        $email = $this->checkCredentials($request);
 
-        $credentials = $request->only(['email', 'password']);
+        // $credentials = $request->only(['email', 'password']);
 
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt(['email' => $email, 'password' => $request->password])) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user = auth()->user();
