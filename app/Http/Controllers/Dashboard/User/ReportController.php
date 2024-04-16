@@ -29,10 +29,12 @@ class ReportController extends Controller
         if (!is_null($search) || !empty($search)) {
             $data = Transaction::where('user_id', $request->user()->id)
                 ->whereAny(['refernce_id', 'id'], 'LIKE', "%$search%")
+                ->latest('created_at')
                 ->paginate(30);
         } else {
             $data = Transaction::where('user_id', $request->user()->id)
                 ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+                ->latest('created_at')
                 ->paginate(30);
         }
 
