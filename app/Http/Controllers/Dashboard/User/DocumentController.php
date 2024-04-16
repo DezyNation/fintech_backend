@@ -33,7 +33,7 @@ class DocumentController extends Controller
         Log::info($response);
         $user = User::findOrFail($request->user()->id);
         if ($response['status'] == 0) {
-            if (strtoupper(Str::squish($response['data']['first_name'] . ' ' . $response['data']['middle_name'] . ' ' . $response['data']['last_name'])) == strtoupper($user->name)) {
+            if (strtoupper(Str::squish($response['data']['first_name'] . ' ' . $response['data']['middle_name'] . ' ' . $response['data']['last_name'])) == strtoupper(Str::squish($user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name))) {
                 $user->pan_number = $response['data']['pan_number'];
                 $user->save();
                 return new GeneralResource($user);
