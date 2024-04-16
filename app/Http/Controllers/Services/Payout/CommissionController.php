@@ -30,7 +30,11 @@ class CommissionController extends Controller
         }
 
         $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
-        $credit = $instance->is_flat ? $instance->commission : $amount * $instance->commission / 100;
+        if ($parent == 0) {
+            $credit = 0;
+        } else {
+            $credit = $instance->is_flat ? $instance->commission : $amount * $instance->commission / 100;
+        }
         if ($calculation == true) {
             return [
                 'debit_amount' => $fixed_charge,
