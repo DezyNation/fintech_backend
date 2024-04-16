@@ -29,7 +29,7 @@ class CommissionController extends Controller
             ];
         }
 
-        $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge_flat : $amount * $instance->fixed_charge_flat / 100);
+        $fixed_charge = $parent ? 0 : ($instance->fixed_charge_flat ? $instance->fixed_charge : $amount * $instance->fixed_charge_flat / 100);
         if ($parent == 0) {
             $credit = 0;
         } else {
