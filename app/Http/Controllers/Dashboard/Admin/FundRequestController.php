@@ -59,8 +59,8 @@ class FundRequestController extends Controller
         if (!$fund) {
             abort(404, 'Invalid fund request.');
         }
-        $fund_lock = $this->lockRecords($fund->token);
         $user_lock = $this->lockRecords($fund->user_id);
+        $fund_lock = $this->lockRecords($fund->token);
 
         if (!$user_lock->get()) {
             abort(423, "Can't lock the user at the moment.");
