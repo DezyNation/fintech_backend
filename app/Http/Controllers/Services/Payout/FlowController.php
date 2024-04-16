@@ -54,7 +54,7 @@ class FlowController extends Controller
         $reference_id = uniqid('PAY-');
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
-        if ($transaction_request['data']['status'] != 'success') {
+        if ($transaction_request['data']['status'] == 'success') {
             $lock->release();
             abort(400, $transaction_request['data']['message']);
         }
@@ -111,17 +111,17 @@ class FlowController extends Controller
 
             $transaction_request = $instance->updateTransaction($payout->reference_id);
 
-            if ($transaction_request['data']['status'] != 'success') {
+            if (in_array($transaction_request['data']['status'], ['failed', 'success'])) {
                 abort(400, $transaction_request['data']['message']);
             }
 
-            if (in_array($transaction_request['data']['transaction_status'], ['failed', 'refunded'])) {
+            if (in_array($transaction_request['data']['transaction_status'], ['failed', 'reversed'])) {
 
                 $lock = $this->lockRecords($payout->user_id);
                 if (!$lock->get()) {
                     abort(423, "Can't lock user account");
                 }
-                $payout->status = 'failed';
+                $payout->status = $transaction_request['data']['transaction_status'];
                 $payout->save();
                 TransactionController::reverseTransaction($payout->reference_id);
                 $lock->release();

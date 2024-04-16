@@ -29,9 +29,9 @@ class EkoController extends Controller
                     ];
                 } else {
                     $data = [
-                        'status' => 'error',
+                        'status' => 'failed',
                         'message' => $response['message'],
-                        'transaction_status' => $response['data']['txstatus_desc']
+                        'transaction_status' => strtolower($response['data']['txstatus_desc'])
                     ];
                 }
                 break;
