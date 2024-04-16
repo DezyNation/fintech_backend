@@ -42,8 +42,8 @@ class UserController extends Controller
     {
         $request->validate([
             'credential_type' => ['required', 'in:password,pin'],
-            'old_credential' => ['required', 'max:8'],
-            'new_credential' => ['required', 'max:8', 'confirmed']
+            'old_credential' => ['required', 'min:8'],
+            'new_credential' => ['required', 'min:8', 'confirmed']
         ]);
 
         $user = User::findOrFail($request->user()->id);
