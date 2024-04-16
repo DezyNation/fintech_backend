@@ -56,19 +56,21 @@ class FundRequestController extends Controller
         ]);
 
         $fund = Fund::where(['id' => $id, 'status' => 'pending'])->lockForUpdate()->first();
+        if (!$fund) {
+            abort(404, 'Invalid fund request.');
+        }
         $fund_lock = $this->lockRecords($fund->token);
+        $user_lock = $this->lockRecords($fund->user_id);
+
+        if (!$user_lock->get()) {
+            abort(423, "Can't lock the user at the moment.");
+        }
 
         if (!$fund_lock->get()) {
             abort(423, "Can't lock the fund request at the moment.");
         }
 
         DB::transaction(function () use ($request, $fund, $fund_lock) {
-            $user_lock = $this->lockRecords($fund->user_id);
-
-            if (!$user_lock->get()) {
-                abort(423, "Can't lock the user at the moment.");
-            }
-
             $user = User::where('id', $fund->user_id)->findOrFail($fund->user_id);
             if ($request->status == 'approved') {
                 TransactionController::store($user, $fund->transaction_id, 'fund_request', 'Fund Request approved.', $fund->amount, 0);
@@ -77,9 +79,9 @@ class FundRequestController extends Controller
             $fund->admin_remarks = $request->admin_remarks;
             $fund->updated_by = $request->user()->id;
             $fund->save();
-            $user_lock->release();
             $fund_lock->release();
         }, 2);
+        $user_lock->release();
 
         return new GeneralResource($fund);
     }
@@ -100,7 +102,7 @@ class FundRequestController extends Controller
         ]);
 
         $fund = Fund::where(['id' => $id, 'token' => $request->token, 'status' => 'pending'])->first();
-        
+
         if (!$fund) {
             abort(404, 'Invalid fund request.');
         }
