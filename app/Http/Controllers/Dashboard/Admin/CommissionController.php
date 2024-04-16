@@ -306,24 +306,25 @@ class CommissionController extends Controller
         $service = $request->service;
         switch ($service) {
             case 'payout':
-                $data = PayoutCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
+                $role = Role::where(['name' => $request->role_id, 'guard_name' => 'api'])->first();
+                $data = PayoutCommission::where(['plan_id' => $id, 'role_id' => $role->id])->paginate(10);
                 break;
 
-            case 'aeps':
-                $data = AepsCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
-                break;
+            // case 'aeps':
+            //     $data = AepsCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
+            //     break;
 
-            case 'bbps':
-                $data = BbpsCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
-                break;
+            // case 'bbps':
+            //     $data = BbpsCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
+            //     break;
 
-            case 'dmt':
-                $data = DmtCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
-                break;
+            // case 'dmt':
+            //     $data = DmtCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
+            //     break;
 
-            case 'lic':
-                $data = LicCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
-                break;
+            // case 'lic':
+            //     $data = LicCommission::where(['plan_id' => $id, 'role_id' => $request->role_id])->paginate(10);
+            //     break;
 
             default:
                 $data = 'Inappropriate Data';
