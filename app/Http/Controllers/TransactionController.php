@@ -14,7 +14,7 @@ class TransactionController extends Controller
     {
         $auth_user = auth()->user() ?? $user;
         $last_transaction = Transaction::where('user_id', $user->id)->latest()->first();
-        $closing_balance = $last_transaction->closing_balance ?? 0 + $credit_amount - $debit_amount;
+        $closing_balance = ($last_transaction->closing_balance ?? 0) + $credit_amount - $debit_amount;
         Transaction::create([
             'user_id' => $user->id,
             'updated_by' => $auth_user->id,
