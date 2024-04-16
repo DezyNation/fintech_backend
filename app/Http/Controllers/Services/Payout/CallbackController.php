@@ -9,11 +9,13 @@ use App\Models\Transaction;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CallbackController extends Controller
 {
     public function eko(Request $request)
     {
+        Log::info(['callback-eko' => $request->all()]);
         $response = DB::transaction(function () use ($request) {
             $transaction = Transaction::where('reference_id', $request->client_ref_id)->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
