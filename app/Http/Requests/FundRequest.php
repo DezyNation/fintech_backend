@@ -26,7 +26,8 @@ class FundRequest extends FormRequest
             'transaction_date' => ['required', 'date', 'before:tomorrow'],
             'amount' => ['required', 'numeric', 'min:1'],
             'user_remarks' => ['nullable', 'string'],
-            'bank' => ['required', 'string']
+            'bank' => ['required', 'string'],
+            'receipt' => ['required', 'file', 'mimes:png,jpg,jpeg'],
         ];
     }
 }

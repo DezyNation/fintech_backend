@@ -31,12 +31,15 @@ class FundRequestController extends Controller
      */
     public function store(FundRequest $request)
     {
+
+        $path = $request->file('receipt')->store('fund_requests');
         $data = Fund::create([
             'user_id' => $request->user()->id,
             'transaction_id' => $request->transaction_id,
             'transaction_date' => $request->transaction_date,
             'amount' => $request->amount,
             'bank' => $request->bank,
+            'receipt' => $path,
             'opening_balance' => $request->user()->wallet,
             'closing_balance' => $request->user()->wallet,
             'user_remarks' => $request->user_remarks
