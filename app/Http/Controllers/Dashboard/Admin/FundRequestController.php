@@ -100,6 +100,11 @@ class FundRequestController extends Controller
         ]);
 
         $fund = Fund::where(['id' => $id, 'token' => $request->token, 'status' => 'pending'])->first();
+        
+        if (!$fund) {
+            abort(404, 'Invalid fund request.');
+        }
+
         $fund_lock = $this->lockRecords($fund->token);
         if (!$fund_lock->get()) {
             throw new HttpResponseException(response()->json(['message' => "Failed to acquire lock"], 423));
