@@ -13,7 +13,7 @@ class TransactionController extends Controller
     public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response = null)
     {
         $auth_user = auth()->user() ?? $user;
-        $last_transaction = Transaction::where('user_id', $user->id)->latest()->first();
+        $last_transaction = Transaction::where('user_id', $user->id)->latest()->last();
         $closing_balance = ($last_transaction->closing_balance ?? 0) + $credit_amount - $debit_amount;
         Transaction::create([
             'user_id' => $user->id,
