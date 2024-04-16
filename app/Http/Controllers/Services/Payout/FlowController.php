@@ -111,7 +111,7 @@ class FlowController extends Controller
 
             $transaction_request = $instance->updateTransaction($payout->reference_id);
 
-            if (in_array($transaction_request['data']['status'], ['failed', 'success'])) {
+            if (!in_array($transaction_request['data']['status'], ['failed', 'success'])) {
                 abort(400, $transaction_request['data']['message']);
             }
 
