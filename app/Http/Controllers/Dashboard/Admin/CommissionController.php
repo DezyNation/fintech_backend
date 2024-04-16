@@ -307,6 +307,9 @@ class CommissionController extends Controller
         switch ($service) {
             case 'payout':
                 $role = Role::where(['name' => $request->role_id, 'guard_name' => 'api'])->first();
+                if (!$role) {
+                    abort(404, "Role not found");
+                }
                 $data = PayoutCommission::where(['plan_id' => $id, 'role_id' => $role->id])->paginate(10);
                 break;
 
