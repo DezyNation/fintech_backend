@@ -50,6 +50,7 @@ class PlanController extends Controller
      */
     public function update(Request $request, Plan $plan)
     {
+        Plan::where('default', 1)->update(['default' => 0]);
         $plan->update([
             'name' => $request->name ?? $plan->name,
             'default' => $request->default ?? $plan->default
