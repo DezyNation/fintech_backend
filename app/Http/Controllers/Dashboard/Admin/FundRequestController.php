@@ -13,6 +13,7 @@ use App\Http\Controllers\TransactionController;
 use App\Models\FundTransfer;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 
 class FundRequestController extends Controller
 {
@@ -59,18 +60,17 @@ class FundRequestController extends Controller
         if (!$fund) {
             abort(404, 'Invalid fund request.');
         }
-        $user_lock = $this->lockRecords($fund->user_id);
         $fund_lock = $this->lockRecords($fund->token);
-
-        if (!$user_lock->get()) {
-            abort(423, "Can't lock the user at the moment.");
-        }
-
-        if (!$fund_lock->get()) {
-            abort(423, "Can't lock the fund request at the moment.");
-        }
-
         DB::transaction(function () use ($request, $fund, $fund_lock) {
+            $user_lock = Cache::lock($fund->user_id, 30);
+            if (!$user_lock->get()) {
+                abort(423, "Can't lock the user at the moment.");
+            }
+
+            if (!$fund_lock->get()) {
+                abort(423, "Can't lock the fund request at the moment.");
+            }
+
             $user = User::where('id', $fund->user_id)->findOrFail($fund->user_id);
             if ($request->status == 'approved') {
                 TransactionController::store($user, $fund->transaction_id, 'fund_request', 'Fund Request approved.', $fund->amount, 0);
@@ -80,8 +80,8 @@ class FundRequestController extends Controller
             $fund->updated_by = $request->user()->id;
             $fund->save();
             $fund_lock->release();
+            $user_lock->release();
         }, 2);
-        $user_lock->release();
 
         return new GeneralResource($fund);
     }

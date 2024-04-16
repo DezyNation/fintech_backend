@@ -12,6 +12,7 @@ use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
 use App\Models\Service;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FlowController extends Controller
@@ -36,7 +37,7 @@ class FlowController extends Controller
     public function store(PayoutRequest $request): JsonResource
     {
 
-        $lock = $this->lockRecords($request->user()->id);
+        $lock = Cache::lock($request->user()->id, 30);
         if (!$lock->get()) {
             abort(423, "Can't lock user account");
         }
@@ -84,7 +85,7 @@ class FlowController extends Controller
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount, $reference_id);
 
-        $this->releaseLock($request->user()->id);
+        $lock->release();
 
         return new GeneralResource($payout);
     }
