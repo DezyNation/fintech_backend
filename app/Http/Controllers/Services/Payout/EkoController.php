@@ -31,7 +31,8 @@ class EkoController extends Controller
                     $data = [
                         'status' => 'failed',
                         'message' => $response['message'],
-                        'transaction_status' => strtolower($response['data']['txstatus_desc'])
+                        'transaction_status' => strtolower($response['data']['txstatus_desc']),
+                        'utr' => $response['data']['bank_ref_num'] ?? null
                     ];
                 }
                 break;
@@ -43,7 +44,7 @@ class EkoController extends Controller
                 ];
                 break;
         }
-        
+
         return ['data' =>  $data, 'response' => $response->body()];
     }
 

@@ -122,6 +122,7 @@ class FlowController extends Controller
                     abort(423, "Can't lock user account");
                 }
                 $payout->status = $transaction_request['data']['transaction_status'];
+                $payout->utr = $transaction_request['data']['utr'];
                 $payout->save();
                 TransactionController::reverseTransaction($payout->reference_id);
                 $lock->release();

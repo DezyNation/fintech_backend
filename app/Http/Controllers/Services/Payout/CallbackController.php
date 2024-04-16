@@ -24,10 +24,11 @@ class CallbackController extends Controller
                 throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
             }
 
-            if ($request['tx_status'] == 1) {
+            if (in_array($request['tx_status'], [1, 4])) {
                 TransactionController::reverseTransaction($transaction->reference_id);
                 Payout::where('reference_id', $transaction->reference_id)->update([
-                    'status' => 'failed'
+                    'status' => 'failed',
+                    'utr' => $request['bank_ref_num']
                 ]);
             } elseif ($request['tx_status'] == 0) {
                 Payout::where('reference_id', $transaction->reference_id)->update([
