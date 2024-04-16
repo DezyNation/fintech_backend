@@ -13,6 +13,7 @@ use App\Models\PayoutCommission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\Permission\Models\Role;
 
 class CommissionController extends Controller
 {
@@ -20,9 +21,14 @@ class CommissionController extends Controller
     /***********************************Payout***********************************/
     public function createPayoutCommission(CommissionRequest $request): Model
     {
+        $role = Role::where(['name' => $request->role_id, 'guard_name' => 'api'])->first();
+        if (!$role) {
+            abort(404, "Invalid role");
+        }
+
         $data = PayoutCommission::create([
             'plan_id' => $request->plan_id,
-            'role_id' => $request->role_id,
+            'role_id' => $role->role_id,
             'from' => $request->from,
             'to' => $request->to,
             'fixed_charge' => $request->fixed_charge,
@@ -36,9 +42,15 @@ class CommissionController extends Controller
 
     public function updatePayoutCommission(Request $request, PayoutCommission $payout): Model
     {
+        $role = Role::where(['name' => $request->role_id, 'guard_name' => 'api'])->first();
+        if (!$role) {
+            $role_id = $payout->role_id;
+        } else {
+            $role_id = $role->role_id;
+        }
         $payout->update([
             'plan_id' => $request->plan_id ?? $payout->plan_id,
-            'role_id' => $request->role_id ?? $payout->role_id,
+            'role_id' => $role_id,
             'from' => $request->from ?? $payout->from,
             'to' => $request->to ?? $payout->to,
             'fixed_charge' => $request->fixed_charge ?? $payout->fixed_charge,
@@ -202,21 +214,21 @@ class CommissionController extends Controller
                 $data = $this->createPayoutCommission($request);
                 break;
 
-            case 'aeps':
-                $data = $this->createAepsCommission($request);
-                break;
+            // case 'aeps':
+            //     $data = $this->createAepsCommission($request);
+            //     break;
 
-            case 'bbps':
-                $data = $this->createBbpsCommission($request);
-                break;
+            // case 'bbps':
+            //     $data = $this->createBbpsCommission($request);
+            //     break;
 
-            case 'dmt':
-                $data = $this->createDmtCommission($request);
-                break;
+            // case 'dmt':
+            //     $data = $this->createDmtCommission($request);
+            //     break;
 
-            case 'lic':
-                $data = $this->createLicCommission($request);
-                break;
+            // case 'lic':
+            //     $data = $this->createLicCommission($request);
+            //     break;
 
             default:
                 $data = 'Inappropriate data.';
