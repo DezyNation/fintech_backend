@@ -21,20 +21,11 @@ class FlowController extends Controller
      */
     public function index(Request $request)
     {
-        $reference_id = $request['transaction_id'];
-        $utr = $request['utr'];
-        $account_number = $request['account_number'];
-
-        if (!empty($reference_id) || !empty($utr) || !empty($account_number)) {
-            $data = Payout::where(['user_id' => $request->user()->id])
-                ->fiterByRequest($request)
-                ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-                ->paginate(30);
-        } else {
-            $data = Payout::where('user_id', $request->user()->id)
-                ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-                ->paginate(30);
-        }
+        $data = Payout::where(['user_id' => $request->user()->id])
+            ->fiterByRequest($request)
+            ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('created_at')
+            ->paginate(30);
 
         return GeneralResource::collection($data);
     }
@@ -137,7 +128,7 @@ class FlowController extends Controller
                 $payout->utr = $transaction_request['data']['utr'];
                 $payout->save();
             }
-            
+
             return new GeneralResource($payout);
         }, 2);
 
