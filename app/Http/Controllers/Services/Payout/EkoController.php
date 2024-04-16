@@ -43,7 +43,7 @@ class EkoController extends Controller
                 ];
                 break;
         }
-        Log::info($data);
+        
         return ['data' =>  $data, 'response' => $response->body()];
     }
 
@@ -105,7 +105,6 @@ class EkoController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())
             ->get(config('services.eko.base_url') . "/v1/transactions/client_ref_id:$transaction_id", ['initiator_id' => config('services.eko.initiator_id')]);
 
-            Log::info($response);
         if ($response->failed()) {
             abort($response->status(), "Failed to fetch data. Please try again later.");
         }
