@@ -58,7 +58,7 @@ class EkoController extends Controller
             'payment_mode' => $request->mode,
             'recipient_name' => $request->beneficiary_name,
             'account' => $request->account_number,
-            'ifsc' => $request->ifsc_code,
+            'ifsc' => strtoupper($request->ifsc_code),
             'sender_name' => $request->user()->name,
             'amount' => $request->amount
         ];
