@@ -34,7 +34,7 @@ class FundRequestController extends Controller
     {
 
         $path = $request->file('receipt')->store('receipt');
-        $amount_check = DB::table('services')->where('service', 'allow_fund_request')->first();
+        $amount_check = DB::table('services')->where('name', 'allow_fund_request')->first();
         if ($amount_check->limit < $request->amount) {
             abort(400, "You can request maximum of {$amount_check->limit} INR");
         }
