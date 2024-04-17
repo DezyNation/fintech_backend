@@ -36,6 +36,11 @@ class Fund extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function bank(): BelongsTo
+    {
+        return $this->belongsTo(Bank::class);
+    }
+
     public function scopeFilterByRequest($query, Request $request)
     {
         if (!empty($request['transaction_id'])) {

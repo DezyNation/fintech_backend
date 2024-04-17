@@ -45,6 +45,7 @@ class FundRequestController extends Controller
             'transaction_date' => $request->transaction_date,
             'amount' => $request->amount,
             'bank' => $request->bank,
+            'bank_id' => $request->bank,
             'receipt' => $path,
             'opening_balance' => $request->user()->wallet,
             'closing_balance' => $request->user()->wallet,
