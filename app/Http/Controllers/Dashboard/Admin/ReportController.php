@@ -109,6 +109,7 @@ class ReportController extends Controller
         $data = WalletTransfer::adminFiterByRequest($request)
             ->with(['sender', 'receiver'])
             ->whereBetween('wallet_transfers.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('wallet_transfers.created_at')
             ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'sender_id' => $request['sender_id'], 'receiver_id' => $request['receiver_id']]);
         return GeneralResource::collection($data);
     }
@@ -120,6 +121,7 @@ class ReportController extends Controller
         }, 'user' => function ($q) {
             $q->select('id', 'name', 'phone_number');
         }])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        ->latest('fund_requests.created_at')
         ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id'], 'status' => $request['status'], 'user_id' => $request['user_id']]);
         return GeneralResource::collection($data);
     }
@@ -142,6 +144,7 @@ class ReportController extends Controller
             }, 'admin' => function ($q) {
                 $q->select('id', 'name', 'phone_number');
             }])->whereBetween('fund_transfers.created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
+            ->latest('fund_transfers.created_at')
             ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'user_id' => $request['user_id']]);
 
         return GeneralResource::collection($data);
