@@ -70,6 +70,10 @@ class Transaction extends Model
                 ->where('users.phone_number', $request->user_id)->select('transactions.*');
         }
 
+        if (!empty($request['account_number'])) {
+            $query->where('description', 'like', "%{$request->account_number}%");
+        }
+
         return $query;
     }
 
