@@ -54,7 +54,7 @@ class FlowController extends Controller
         $reference_id = uniqid('PAY-');
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
-        if ($transaction_request['data']['status'] == 'success') {
+        if ($transaction_request['data']['status'] != 'success') {
             $lock->release();
             abort(400, $transaction_request['data']['message']);
         }
