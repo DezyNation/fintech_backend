@@ -120,7 +120,7 @@ class ReportController extends Controller
             $q->select('id', 'name', 'phone_number');
         }, 'user' => function ($q) {
             $q->select('id', 'name', 'phone_number');
-        }])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        }, 'bank'])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
         ->latest('fund_requests.created_at')
         ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id'], 'status' => $request['status'], 'user_id' => $request['user_id']]);
         return GeneralResource::collection($data);
