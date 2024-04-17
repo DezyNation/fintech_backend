@@ -32,6 +32,7 @@ class ReportController extends Controller
             ->adminFiterByRequest($request)
             ->whereBetween('transactions.created_at', [$request->from, $request->to])
             ->latest('transactions.created_at')
+            ->orderByDesc('transactions.id')
             ->paginate(30);
 
         return GeneralResource::collection($data);
