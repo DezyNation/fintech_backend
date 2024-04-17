@@ -33,7 +33,7 @@ class ReportController extends Controller
             ->whereBetween('transactions.created_at', [$request->from, $request->to])
             ->latest('transactions.created_at')
             ->orderByDesc('transactions.id')
-            ->paginate(30);
+            ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'account_number' => $request['account_number'], 'user_id' => $request['user_id']]);
 
         return GeneralResource::collection($data);
     }

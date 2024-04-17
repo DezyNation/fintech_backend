@@ -28,16 +28,16 @@ class ReportController extends Controller
         $search = $request->transaction_id;
         if (!is_null($search) || !empty($search)) {
             $data = Transaction::where('user_id', $request->user()->id)
-                ->whereAny(['refernce_id', 'id'], 'LIKE', "%$search%")
+                ->whereAny(['refernce_id', 'id', 'description'], 'LIKE', "%$search%")
                 ->latest('created_at')
                 ->orderByDesc('id')
-                ->paginate(30);
+                ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id']]);
         } else {
             $data = Transaction::where('user_id', $request->user()->id)
                 ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
                 ->latest('created_at')
                 ->orderByDesc('id')
-                ->paginate(30);
+                ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id']]);
         }
 
         return GeneralResource::collection($data);
