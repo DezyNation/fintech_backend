@@ -109,17 +109,18 @@ class ReportController extends Controller
         $data = WalletTransfer::adminFiterByRequest($request)
             ->with(['sender', 'receiver'])
             ->whereBetween('wallet_transfers.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-            ->paginate(30);
+            ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'sender_id' => $request['sender_id'], 'receiver_id' => $request['receiver_id']]);
         return GeneralResource::collection($data);
     }
 
     public function fundRequestReport(Request $request): JsonResource
     {
         $data = Fund::adminFiterByRequest($request)->with(['reviewer' => function ($q) {
-            $q->select('id', 'name');
+            $q->select('id', 'name', 'phone_number');
         }, 'user' => function ($q) {
-            $q->select('id', 'name');
-        }])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])->paginate(30);
+            $q->select('id', 'name', 'phone_number');
+        }])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id'], 'status' => $request['status'], 'user_id' => $request['user_id']]);
         return GeneralResource::collection($data);
     }
 
@@ -128,7 +129,7 @@ class ReportController extends Controller
         $data = Payout::with('user')
             ->adminFilterByRequest($request)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
-            ->paginate(30);
+            ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'account_number' => $request['account_number'], 'utr' => $request['utr'], 'transaction_id' => $request['transaction_id'], 'user_id' => $request['user_id']]);
         return GeneralResource::collection($data);
     }
 
@@ -136,11 +137,11 @@ class ReportController extends Controller
     {
         $data = FundTransfer::adminFilterByRequest($request)
             ->with(['user' => function ($q) {
-                $q->select('id', 'name');
+                $q->select('id', 'name', 'phone_number');
             }, 'admin' => function ($q) {
-                $q->select('id', 'name');
+                $q->select('id', 'name', 'phone_number');
             }])->whereBetween('fund_transfers.created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
-            ->paginate(30);
+            ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'user_id' => $request['user_id']]);
 
         return GeneralResource::collection($data);
     }
