@@ -28,7 +28,7 @@ class CommissionController extends Controller
 
         $data = PayoutCommission::create([
             'plan_id' => $request->plan_id,
-            'role_id' => $role->role_id,
+            'role_id' => $role->id,
             'from' => $request->from,
             'to' => $request->to,
             'fixed_charge' => $request->fixed_charge,
