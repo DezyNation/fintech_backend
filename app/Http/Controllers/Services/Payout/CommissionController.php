@@ -18,7 +18,7 @@ class CommissionController extends Controller
         ];
     }
 
-    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false): Model | array
+    public function distributeCommission(User $user, float $amount, string $reference_id, bool $parent = false, bool $calculation = false, $account_number = null): Model | array
     {
         $instance = PayoutCommission::where($this->findCommission($user))->where('from', '<', $amount)->where('to', '>=', $amount)->first();
 
@@ -42,17 +42,17 @@ class CommissionController extends Controller
                 'credit_amount' => $credit
             ];
         }
-        TransactionController::store($user, $reference_id, 'payout_commission', "Payout Commission", $credit, $fixed_charge);
-        $this->checkParent($user, $amount);
+        TransactionController::store($user, $reference_id, 'payout_commission', "Payout Commission for $account_number", $credit, $fixed_charge);
+        $this->checkParent($user, $amount, $reference_id, $account_number);
         return $instance;
     }
 
-    public function checkParent(User $user, float $amount)
+    public function checkParent(User $user, float $amount, $reference_id, $account_number)
     {
         if (!is_null($user->parent_id)) {
             $parent = User::find($user->parent_id);
             $lock = $this->lockRecords($user->parent_id);
-            $this->distributeCommission($parent, $amount, true);
+            $this->distributeCommission($parent, $amount, $reference_id, true, false, $account_number);
             $lock->release();
         }
     }
