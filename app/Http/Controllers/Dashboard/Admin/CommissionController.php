@@ -46,7 +46,7 @@ class CommissionController extends Controller
         if (!$role) {
             $role_id = $payout->role_id;
         } else {
-            $role_id = $role->role_id;
+            $role_id = $role->id;
         }
         $payout->update([
             'plan_id' => $request->plan_id ?? $payout->plan_id,
