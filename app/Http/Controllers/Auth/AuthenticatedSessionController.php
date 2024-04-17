@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Login;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +47,7 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
         $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', env('COOKIE_DOMAIN'), true, true);
+        $this->loginRecord($request);
         return response()->json($this->respondWithToken(['user' => $user]))->withCookie($cookie);
     }
 
@@ -57,6 +59,15 @@ class AuthenticatedSessionController extends Controller
     public function me(): JsonResponse
     {
         return response()->json(['user' => auth()->user(), 'role' => auth()->user()->getRoleNames()->first()]);
+    }
+
+    public function loginRecord(Request $request)
+    {
+        Login::create([
+            'user_id' => $request->user()->id,
+            'ip_address' => $request->ip(),
+            'latlong' => $request->latlong
+        ]);
     }
 
     /**
