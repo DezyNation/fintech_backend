@@ -12,6 +12,7 @@ use App\Http\Resources\GeneralResource;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class FundRequestController extends Controller
 {
@@ -33,6 +34,11 @@ class FundRequestController extends Controller
     {
 
         $path = $request->file('receipt')->store('receipt');
+        $amount_check = DB::table('services')->where('service', 'allow_fund_request')->first();
+        if ($amount_check->limit < $request->amount) {
+            abort(400, "You can request maximum of {$amount_check->limit} INR");
+        }
+
         $data = Fund::create([
             'user_id' => $request->user()->id,
             'transaction_id' => $request->transaction_id,

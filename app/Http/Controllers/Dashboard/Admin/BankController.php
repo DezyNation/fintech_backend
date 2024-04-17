@@ -27,6 +27,7 @@ class BankController extends Controller
             'account_number' => ['required', 'digits_between:9,17'],
             'ifsc_code' => ['required', 'string', 'regex:/^[A-Za-z]{4}\d{7}$/'],
             'beneficiary_name' => ['required', 'string'],
+            'upi_id' => ['nullable', 'string']
         ]);
 
         $bank = Bank::create([
@@ -34,7 +35,8 @@ class BankController extends Controller
             'account_number' => $request->account_number,
             'ifsc_code' => $request->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name,
-            'status' => $request->status ?? 1
+            'status' => $request->status ?? 1,
+            'upi_id' => $request->upi_id
         ]);
 
         return new GeneralResource($bank);
@@ -58,7 +60,8 @@ class BankController extends Controller
             'account_number' => $request->account_number ?? $bank->account_number,
             'ifsc_code' => $request->ifsc_code ?? $bank->ifsc_code,
             'beneficiary_name' => $request->beneficiary_name ?? $bank->beneficiary_name,
-            'status' => $request->status ?? $bank->status
+            'status' => $request->status ?? $bank->status,
+            'upi_id' => $request->upi_id ?? $bank->upi_id
         ]);
 
         return new GeneralResource($bank);

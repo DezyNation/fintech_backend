@@ -93,6 +93,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
     Route::group(['prefix' => 'controls'], function () {
         Route::put('services/{service}', [WebsiteController::class, 'updateService']);
         Route::post('services', [WebsiteController::class, 'storeService']);
+        Route::put('fund-request-limit', [WebsiteController::class, 'addLimit']);
         Route::apiResource('bank', BankController::class);
     });
 

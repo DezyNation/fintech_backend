@@ -27,6 +27,13 @@ class WebsiteController extends Controller
         return new GeneralResource($service);
     }
 
+    public function addLimit(Request $request)
+    {
+        $request->validate(['limit'=> ['required', 'numeric', 'min:1']]);
+        Service::where('name', 'allow_fund_request')->update(['limit' => $request->limit]);
+        return true;
+    }
+
     public function storeService(Request $request): JsonResource
     {
         $request->validate([
