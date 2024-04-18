@@ -60,16 +60,17 @@ class FundRequestController extends Controller
         if (!$fund) {
             abort(404, 'Invalid fund request.');
         }
-        $fund_lock = $this->lockRecords($fund->token);
+        $fund_lock = $this->lockRecords($fund->id);
+        if (!$fund_lock->get()) {
+            abort(423, "Can't lock the fund request at the moment.");
+        }
         DB::transaction(function () use ($request, $fund, $fund_lock) {
             $user_lock = Cache::lock($fund->user_id, 30);
             if (!$user_lock->get()) {
                 abort(423, "Can't lock the user at the moment.");
             }
 
-            if (!$fund_lock->get()) {
-                abort(423, "Can't lock the fund request at the moment.");
-            }
+
 
             $user = User::where('id', $fund->user_id)->findOrFail($fund->user_id);
             if ($request->status == 'approved') {
@@ -79,10 +80,10 @@ class FundRequestController extends Controller
             $fund->admin_remarks = $request->admin_remarks;
             $fund->updated_by = $request->user()->id;
             $fund->save();
-            $fund_lock->release();
             $user_lock->release();
         }, 2);
 
+        $fund_lock->release();
         return new GeneralResource($fund);
     }
 
