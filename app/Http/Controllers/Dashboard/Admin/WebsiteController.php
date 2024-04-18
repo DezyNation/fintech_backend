@@ -21,7 +21,8 @@ class WebsiteController extends Controller
     {
         $service->update([
             'active' => $request->active ?? $service->active,
-            'api' => $request->api ?? $service->api
+            'api' => $request->api ?? $service->api,
+            'limit' => $request->limit ?? $service->limit,
         ]);
 
         return new GeneralResource($service);
