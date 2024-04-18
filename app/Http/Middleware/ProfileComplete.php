@@ -16,15 +16,15 @@ class ProfileComplete
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (is_null($user->phone_number) || is_null($user->date_of_birth) || is_null($user->pan_number) || empty($user->address)) {
+        if (is_null($user->phone_number)) {
             return response()->json(['message' => 'Add phone number.'], 400);
         }
 
-        if (is_null($user->date_of_birth) || is_null($user->pan_number) || empty($user->address)) {
+        if (is_null($user->date_of_birth)) {
             return response()->json(['message' => 'Add Date of Birth.'], 400);
         }
 
-        if (is_null($user->pan_number) || empty($user->address)) {
+        if (is_null($user->pan_number)) {
             return response()->json(['message' => 'Add PAN Number.'], 400);
         }
 
