@@ -10,6 +10,7 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Mail\SendPassword;
+use App\Models\Plan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,7 @@ class RegisteredUserController extends Controller
 
         $role = Role::where('default', true)->first();
         $password = Str::random(8);
+        $plan = Plan::where('default', 1)->first();
         $pin = rand(1001, 9999);
         $user = User::create([
             'first_name' => $request->first_name,
@@ -47,7 +49,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'capped_balance' => 0,
             'password' => Hash::make($password),
-            'pin' => Hash::make($pin)
+            'pin' => Hash::make($pin),
+            'plan_id' => $plan->id ?? null
         ])->assignRole($role->name);
 
         event(new Registered($user));
