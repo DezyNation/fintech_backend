@@ -38,6 +38,7 @@ class OnboardController extends Controller
         }
 
         if ($response['status'] == 0) {
+            Log::channel(['onboard' => $response->body()]);
             $user = User::findOrFail($user->id);
             $user->eko_user_code = $response['data']['user_code'];
             $user->save();
