@@ -34,11 +34,11 @@ class OnboardController extends Controller
             ->put(config('services.eko.base_url') . '/v1/user/onboard', $data);
 
         Log::info(['onboard' => $response->body()]);
-        if ($response->failed()) {
+        if ($response->failed() || !array_key_exists('data', $response->json())) {
             abort(400, $response['message'] ?? "Failed to onboard");
         }
 
-        if ($response['status'] == 0 && array_key_exists('data', $response->json())) {
+        if ($response['status'] == 0) {
             $user = User::findOrFail($user->id);
             $user->eko_user_code = $response['data']['user_code'];
             $user->save();
