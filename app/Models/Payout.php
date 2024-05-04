@@ -54,6 +54,10 @@ class Payout extends Model
             $query->where('account_number', 'like', "%{$request->account_number}%");
         }
 
+        if (!empty($request['status'])) {
+            $query->where('status', $request->status);
+        }
+
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'payouts.user_id')
                 ->where('users.phone_number', $request->user_id);
