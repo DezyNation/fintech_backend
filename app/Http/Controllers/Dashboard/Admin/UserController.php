@@ -214,8 +214,8 @@ class UserController extends Controller
         return new GeneralResource($data);
     }
 
-    public function downloadDocument(string $path)
+    public function downloadDocument(Request $request)
     {
-        return Storage::download($path);
+        return Storage::download($request->path);
     }
 }
