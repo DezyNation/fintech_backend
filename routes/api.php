@@ -119,7 +119,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
         Route::post('document/{user}', [AdminUserController::class, 'uploadDocument']);
     });
 
-    Route::get('document/{path}', [AdminUserController::class, 'downloadDocument']);
+    Route::get('document', [AdminUserController::class, 'downloadDocument']);
 
     Route::apiResource('plans', PlanController::class);
 
