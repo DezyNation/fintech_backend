@@ -50,4 +50,11 @@ return [
         'base_url' => 'https://api.eko.in:25002/ekoicici'
     ],
 
+    'waayupay' => [
+        'user_key' => env('WAAYUPAY_USER_KEY'),
+        'email' => env('WAAYUPAY_EMAIL'),
+        'password' => env('WAAYUPAY_PASSWORD'),
+        'base_url' => 'https://payout.waayupay.com/api'
+    ],
+
 ];

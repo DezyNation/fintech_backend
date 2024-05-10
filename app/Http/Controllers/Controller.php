@@ -88,6 +88,11 @@ class Controller extends BaseController
         return Http::post(config('services.paydeer.base_url') . '/API/public/api/v1.1/generateToken', ['clientKey' => config('services.paydeer.key'), 'clientSecret' => config('services.paydeer.secret')]);
     }
 
+    public function waayupayToken(): Response
+    {
+        return Http::asForm()->post(config('services.waayupay.base_url') . '/login', ['email' => config('services.waayupay.email'), 'password' => config('services.waayupay.password')]);
+    }
+
     public function triggerSms(Request $request, array $contents)
     {
         $user = $request->user();
