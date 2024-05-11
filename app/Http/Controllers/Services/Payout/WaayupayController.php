@@ -47,10 +47,8 @@ class WaayuPayController extends Controller
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id): array | Exception
     {
-        if (!Cache::has('waayupay-token')) {
-            $token = $this->waayupayToken();
-            Cache::put('waayupay-token', $token['token'], 600);
-        }
+        $token = $this->waayupayToken();
+        Cache::put('waayupay-token', $token['token']);
 
         $token = Cache::get('waayupay-token');
 
@@ -69,8 +67,6 @@ class WaayuPayController extends Controller
             ->withoutVerifying()
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
 
-        Cache::get('waayupay-token');
-        
         return $this->processResponse($response, $response['status']);
     }
 }
