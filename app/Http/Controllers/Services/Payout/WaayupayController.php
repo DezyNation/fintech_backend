@@ -124,7 +124,7 @@ class WaayuPayController extends Controller
         $payout = Payout::where('reference_id', $transaction_id)->first();
 
         $data = [
-            'txnid' => $payout->metadata['error']['txnid']
+            'txnid' => $payout['metadata']['error']['txnid']
         ];
 
         $response = Http::withToken($token)

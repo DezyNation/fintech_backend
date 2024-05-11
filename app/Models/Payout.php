@@ -13,6 +13,10 @@ class Payout extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'metadata' => 'array',
+    ];
+
     /**
      * Get the user that owns the Payout
      *
