@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 class WaayuPayController extends Controller
 {
 
-    public function processResponse(Response $response, int $status): array
+    public function processResponse(Response $response, bool $status): array
     {
         switch ($status) {
             case 'true':
