@@ -37,7 +37,7 @@ class WaayuPayController extends Controller
             default:
                 $data = [
                     'status' => 'error',
-                    'message' => $response['error']['message'] ?? "An error occurred while processing your request",
+                    'message' => $response['error'] ?? "An error occurred while processing your request",
                 ];
                 break;
         }
