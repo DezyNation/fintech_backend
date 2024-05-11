@@ -62,13 +62,11 @@ class WaayuPayController extends Controller
             'contactid' => $reference_id,
             'userKey' => config('services.waayupay.user_key'),
             'password' => config('services.waayupay.password'),
-            'trans_mode' => $request->mode,
             'accountNumber' => $request->account_number,
             'ifscCode' => $request->ifsc_code
         ];
-        $response = Http::withOptions(['verify' => false])
-            ->withToken($token)
-            // ->withoutVerifying()
+        $response = Http::withToken($token)
+            ->withoutVerifying()
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
 
         return $this->processResponse($response, $response['status']);
