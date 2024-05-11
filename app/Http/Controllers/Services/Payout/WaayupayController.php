@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Log;
 class WaayuPayController extends Controller
 {
 
-    public function processResponse(Response $response, bool $status): array
+    public function processResponse(Response $response): array
     {
-        switch ($status) {
+        switch ($response['status']) {
             case 'true':
                 if (in_array($response['msg'], ['processing', 'success'])) {
                     $data = [
