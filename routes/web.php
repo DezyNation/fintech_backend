@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 
 Route::get('test1', function () {
-    $payout = Payout::where('reference_id', 'PAY-663F0BBACA709');
+    $payout = Payout::where('reference_id', 'PAY-663F0BBACA709')->first();
     return $payout->metadata;
 });
 
