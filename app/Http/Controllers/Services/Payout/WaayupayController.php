@@ -17,7 +17,7 @@ class WaayuPayController extends Controller
     public function processResponse(Response $response, bool $status): array
     {
         switch ($status) {
-            case true:
+            case 'true':
                 if (in_array($response['msg'], ['processing', 'success'])) {
                     $data = [
                         'status' => 'success',
