@@ -9,6 +9,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WaayuPayController extends Controller
 {
@@ -66,6 +67,8 @@ class WaayuPayController extends Controller
         $response = Http::withToken($token)
             ->withoutVerifying()
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
+
+        Log::info($response->body());
 
         return $this->processResponse($response, $response['status']);
     }
