@@ -67,6 +67,7 @@ class WaayuPayController extends Controller
             'ifscCode' => $request->ifsc_code
         ];
         $response = Http::withToken($token)
+            ->withoutVerifying()
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
 
         return $this->processResponse($response, $response['status']);
