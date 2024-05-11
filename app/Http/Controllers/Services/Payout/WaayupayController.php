@@ -69,6 +69,8 @@ class WaayuPayController extends Controller
             ->withoutVerifying()
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
 
+        Cache::get('waayupay-token');
+        
         return $this->processResponse($response, $response['status']);
     }
 }
