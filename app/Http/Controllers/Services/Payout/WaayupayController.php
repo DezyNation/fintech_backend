@@ -68,6 +68,7 @@ class WaayuPayController extends Controller
         ];
         $response = Http::withToken($token)
             ->withoutVerifying()
+            ->withOptions(['verify' => false])
             ->post(config('services.waayupay.base_url') . '/payout/transaction', $data);
 
         return $this->processResponse($response, $response['status']);
