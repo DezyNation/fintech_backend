@@ -90,7 +90,9 @@ class Controller extends BaseController
 
     public function waayupayToken(): Response
     {
-        return Http::asForm()->withoutVerifying()->post(config('services.waayupay.base_url') . '/login', ['email' => config('services.waayupay.email'), 'password' => config('services.waayupay.password')]);
+        $response = Http::asForm()->withoutVerifying()->post(config('services.waayupay.base_url') . '/login', ['email' => config('services.waayupay.email'), 'password' => config('services.waayupay.password')]);
+        Log::info($response);
+        return $response;
     }
 
     public function triggerSms(Request $request, array $contents)
