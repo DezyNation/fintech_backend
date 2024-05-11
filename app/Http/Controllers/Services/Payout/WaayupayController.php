@@ -61,7 +61,7 @@ class WaayuPayController extends Controller
             'contactid' => $reference_id,
             'userKey' => config('services.waayupay.user_key'),
             'password' => config('services.waayupay.password'),
-            'bankName' => $request->bank_name,
+            'bankName' => $request->bank_name ?? 'Yes Bank',
             'mode' => 'imps',
             'accountNumber' => $request->account_number,
             'ifscCode' => $request->ifsc_code
