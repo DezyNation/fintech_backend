@@ -23,7 +23,7 @@ Route::get('/', function () {
 
 Route::get('test1', function () {
     $payout = Payout::find('PAY-663F0BBACA709');
-    return $payout->metadata['error']['txnid'];
+    return $payout->metadata;
 });
 
 require __DIR__ . '/auth.php';
