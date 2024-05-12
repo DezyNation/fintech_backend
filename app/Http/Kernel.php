@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'onboard_active' => \App\Http\Middleware\OnboardUser::class,
         'eko_onboard' => \App\Http\Middleware\EkoOnboard::class,
         'pin' => \App\Http\Middleware\PinCheck::class,
+        'freeze' => \App\Http\Middleware\FreezeAccount::class,
     ];
 }

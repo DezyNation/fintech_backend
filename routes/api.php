@@ -42,12 +42,11 @@ Route::put('credentials', [UserController::class, 'updateCredential'])->middlewa
 
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
-    Route::prefix('transaction')->middleware(['pin', 'onboard_active', 'balance', 'throttle:1,0.167'])->group(function () {
+    Route::prefix('transaction')->middleware(['freeze', 'pin', 'onboard_active', 'balance', 'throttle:1,0.167'])->group(function () {
         Route::post('payout', [PayoutFlowController::class, 'store']);
         Route::post('bbps', [BbpsFlowController::class, 'store']);
         Route::post('wallet-transfer', [FundRequestController::class, 'walletTransfer']);
     });
-
 
     Route::prefix('onboard')->controller(OnboardController::class)->group(function () {
         Route::get('eko', 'ekoOnboard')->middleware('profile');
