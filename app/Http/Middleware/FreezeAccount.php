@@ -16,7 +16,7 @@ class FreezeAccount
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->user()->active == 0) {
-            return response()->json(["Invalid activity, contact admins."], 403);
+            abort(403, "Invalid activity, contact admins.");
         }
         return $next($request);
     }
