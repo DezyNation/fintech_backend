@@ -27,7 +27,7 @@ class OtpController extends Controller
         if (!DB::table('services')->where(['name' => 'otp', 'active' => 1, 'provider' => 'portal'])->exists()) {
             abort(400, "OTP not required.");
         }
-        $request->validate(['email' => ['required', 'email']]);
+        $request->validate(['email' => ['required', 'email', 'exists:users,email']]);
 
         $otp = rand(100001, 999999);
         $user = User::where('email', $request->email)->firstOrFail();
