@@ -10,8 +10,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Login;
+use App\Models\Otp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
@@ -19,7 +22,7 @@ class AuthenticatedSessionController extends Controller
 
     public function checkCredentials(Request $request)
     {
-        $request->only(['email', 'password']);
+        $request->only(['email', 'password', 'otp']);
 
         $user = User::whereAny(['email', 'phone_number'], '=', $request->email)->first();
 
@@ -27,6 +30,10 @@ class AuthenticatedSessionController extends Controller
             throw ValidationException::withMessages([
                 'error' => ['Credentials do not match our records.']
             ]);
+        }
+
+        if (DB::table('services')->where(['name' => 'otp', 'active' => 1, 'provider' => 'portal'])->exists()) {
+            $this->validateOtp($user->id, $request->otp);
         }
 
         return $user->email;
@@ -38,8 +45,6 @@ class AuthenticatedSessionController extends Controller
     public function store(Request $request): JsonResponse
     {
         $email = $this->checkCredentials($request);
-
-        // $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt(['email' => $email, 'password' => $request->password])) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -68,6 +73,18 @@ class AuthenticatedSessionController extends Controller
             'ip_address' => $request->ip(),
             'latlong' => $request->latlong
         ]);
+    }
+
+    public function validateOtp($user_id, $password)
+    {
+        $otp = Otp::where(['user_id' => $user_id, 'intent' => 'login', 'used' => 0])->latest()->first();
+        if (!$otp || !Hash::check($password, $otp->password) || $otp->expiry_at < now()) {
+            abort(400, "Invalid OTP.");
+        }
+        $otp->used = 1;
+        $otp->save();
+
+        return true;
     }
 
     /**

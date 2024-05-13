@@ -8,23 +8,17 @@ use App\Http\Requests\PayoutRequest;
 use Carbon\Carbon;
 use App\Models\Otp;
 use Firebase\JWT\JWT;
-use App\Models\Payout;
 use Illuminate\Cache\Lock;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Ramsey\Uuid\UuidInterface;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\GeneralResource;
-use App\Models\Service;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -95,16 +89,15 @@ class Controller extends BaseController
         return $response;
     }
 
-    public function triggerSms(Request $request, array $contents)
-    {
-        $user = $request->user();
-        $link = env('FRONTEND_URL');
-        $phone = $user->phone_number;
-        $password = Str::random(8);
-        $this->storeOtp($password, 'phone_login');
-        $text = `Hello {$user->name}, Welcome to . Visit {$link}/login to start your transaction use Login Id : {$user->email} and Password : $password. -From PESA24 TECHNOLOGY PRIVATE LIMITED`;
-        $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
-    }
+    // public function triggerSms(Request $request, array $contents)
+    // {
+    //     $user = $request->user();
+    //     $link = env('FRONTEND_URL');
+    //     $phone = $user->phone_number;
+    //     $password = Str::random(8);
+    //     $text = `Hello {$user->name}, Welcome to . Visit {$link}/login to start your transaction use Login Id : {$user->email} and Password : $password. -From PESA24 TECHNOLOGY PRIVATE LIMITED`;
+    //     $otp =  Http::post("http://alerts.prioritysms.com/api/web2sms.php?workingkey=Ab6a47904876c763b307982047f84bb80&to=$phone&sender=PTECHP&message=$text", []);
+    // }
 
     public function lockRecords($key): Lock
     {
@@ -116,36 +109,10 @@ class Controller extends BaseController
         return Cache::lock($key)->release();
     }
 
-    public function storeOtp(string $password, string $intent): JsonResource
-    {
-        $data = Otp::create([
-            'user_id' => auth()->user()->id,
-            'password' => Hash::make($password),
-            'intent' => $intent,
-            'expiry_at' => Carbon::now()->addMinutes(5)
-        ]);
-
-        return new GeneralResource($data);
-    }
-
     public function generateIdempotentKey(): string
     {
         return once(function () {
             return (string) Str::uuid();
         });
-    }
-
-    /**
-     * Initiate transactions of all services.
-     *
-     * @param  Request $request
-     * @param string $prefix
-     * @param array $additional_data
-     */
-    public function initiateRequests(AepsTransactionRequest | PayoutRequest | BbpsTransactionRequest $request, string $reference_id, array $additional_data = null)
-    {
-
-
-        // return $transaction;
     }
 }

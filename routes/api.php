@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\OtpController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Services\Bbps\FlowController as BbpsFlowController;
@@ -40,6 +41,8 @@ Route::get('banks', [BankController::class, 'activeBanks']);
 Route::get('verify/{id}', [UserController::class, 'verifyUser'])->middleware('auth:api');
 Route::put('credentials', [UserController::class, 'updateCredential'])->middleware('auth:api');
 
+Route::post('otp', [OtpController::class, 'mailOtp']);
+
 /**************** User Routes ****************/
 Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::prefix('transaction')->middleware(['freeze', 'pin', 'onboard_active', 'balance', 'throttle:1,0.167'])->group(function () {
@@ -57,7 +60,7 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         // Route::get('pan', 'getPanDetails');
     });
 
-    Route::apiResource('fund-requests', FundRequestController::class);
+    Route::apiResource('fund-requests', FundRequestController::class)->names(['users.fund_requests.index']);
     Route::apiResource('address', AddressController::class);
     Route::get('wallet', [UserController::class, 'wallet']);
     Route::get('permissions', [UserController::class, 'permissions']);

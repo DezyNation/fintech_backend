@@ -1,9 +1,5 @@
 <?php
 
-use App\Http\Controllers\Controller;
-use App\Models\Payout;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,11 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return [config('app.name') => 'Dezynation'];
-});
-
-Route::get('test1', function () {
-    $payout = Payout::where('reference_id', 'PAY-663F0BBACA709')->first();
-    return $payout->metadata->error->txnid;
 });
 
 require __DIR__ . '/auth.php';
