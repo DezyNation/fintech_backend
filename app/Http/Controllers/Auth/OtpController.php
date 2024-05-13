@@ -32,7 +32,7 @@ class OtpController extends Controller
         $otp = rand(100001, 999999);
         $user = User::where('email', $request->email)->firstOrFail();
         Mail::to($user->email)->send(new SendOtp($otp));
-        $this->storeOtp($otp, 'login', $user->id);
+        $this->store($otp, 'login', $user->id);
 
         return response()->json(['message' => "OTP sent"]);
     }
