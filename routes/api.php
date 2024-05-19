@@ -51,6 +51,13 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
         Route::post('wallet-transfer', [FundRequestController::class, 'walletTransfer']);
     });
 
+    Route::prefix('services')->group(function () {
+        Route::prefix('bbps')->controller(BbpsFlowController::class)->group(function () {
+            Route::get('categories', 'categories');
+            Route::get('operators', 'operators');
+        });
+    });
+
     Route::prefix('onboard')->controller(OnboardController::class)->group(function () {
         Route::get('eko', 'ekoOnboard')->middleware('profile');
     });

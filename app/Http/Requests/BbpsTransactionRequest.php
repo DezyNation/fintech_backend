@@ -23,7 +23,7 @@ class BbpsTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider' => ['required', Rule::exists('services', 'provider')->where('active', true)],
+            'service_id' => ['required', Rule::exists('services', 'id')->where('name', 'bbps')],
             'operator_id' => ['required', 'exists:operators,id'],
             'amount'      => ['required', 'numeric', 'min:1'],
             'utility_number' => ['required', 'string', 'max:30'],

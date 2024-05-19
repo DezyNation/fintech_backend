@@ -4,18 +4,50 @@ namespace App\Http\Controllers\Services\BBPS;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BbpsTransactionRequest;
+use App\Http\Resources\GeneralResource;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class PaysprintController extends Controller
 {
-    public function operatorList(Request $request): Response
+    public function categoryList()
     {
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/getoperator', ['mode' => $request->mode]);
+            ->post(config('services.paysprint.base_url') . '/bill-payment/bill/getoperator', ['mode' => 'online']);
 
-        return $response;
+        $data = json_decode($response->body());
+        $array = $data->data;
+        $final =  array_map(function ($data) {
+            return [
+                'category_id' => $data->category,
+                'category_name' => $data->category
+            ];
+        }, $array);
+
+        $unique = collect($final)->unique('category_name')->values();
+
+        return $unique;
+    }
+
+    public function operatorList(Request $request)
+    {
+        $response = Http::withHeaders($this->paysprintHeaders())->asJson()
+            ->post(config('services.paysprint.base_url') . '/bill-payment/bill/getoperator', ['mode' => 'online']);
+
+        $data = json_decode($response->body());
+        $array = $data->data;
+        $final =  array_map(function ($data) {
+            return [
+                'operator_id' => $data->id,
+                'category' => $data->category,
+                'name' => $data->name
+            ];
+        }, $array);
+
+        $unique = collect($final)->where('category', $request->category)->values();
+
+        return $unique;
     }
 
     public function fetchBill(Request $request): Response
@@ -27,7 +59,7 @@ class PaysprintController extends Controller
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/fetchbill', $data);
+            ->post(config('services.paysprint.base_url') . '/bill-payment/bill/fetchbill', $data);
 
         return $response;
     }
@@ -46,7 +78,7 @@ class PaysprintController extends Controller
         ];
 
         $response = Http::withHeaders($this->paysprintHeaders())->asJson()
-            ->post('https://paysprint.in/service-api/api/v1/service/bill-payment/bill/paybill', $data);
+            ->post(config('services.paysprint.base_url') . '/bill-payment/bill/paybill', $data);
 
         return $response;
     }

@@ -57,4 +57,13 @@ return [
         'base_url' => 'https://payout.waayupay.com/api'
     ],
 
+    'paysprint' => [
+        'jwt' => env('PAYSPRINT_JWT'),
+        'partner_id' => env('PAYSPRINT_PARTNERID'),
+        'authorised_key' => env('PAYSPRINT_AUTHORISED_KEY'),
+        'encryption_key' => env('PAYSPRINT_ENCRYPTION_KEY'),
+        'encryption_iv' => env('PAYSPRINT_ENCRYPTION_IV'),
+        'base_url' => 'https://sit.paysprint.in/service-api/api/v1/service'
+    ]
+
 ];

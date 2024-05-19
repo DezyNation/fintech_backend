@@ -63,17 +63,18 @@ class Controller extends BaseController
      */
     public function paysprintHeaders(): array
     {
-        $key = env('PAYSPRINT_JWT');
+        $key = config('services.paysprint.jwt');
+        Log::info($key);
         $payload = [
             'timestamp' => time(),
-            'partnerId' => env('PAYSPRINT_PARTNERID'),
+            'partnerId' => config('services.paysprint.partner_id'),
             'reqid' => abs(crc32(uniqid()))
         ];
 
         $jwt = JWT::encode($payload, $key, 'HS256');
         return [
             'Token' => $jwt,
-            'Authorisedkey' => env('AUTHORISED_KEY')
+            'Authorisedkey' => config('services.paysprint.authorised_key')
         ];
     }
 

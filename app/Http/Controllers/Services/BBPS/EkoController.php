@@ -10,12 +10,21 @@ use Illuminate\Support\Facades\Http;
 
 class EkoController extends Controller
 {
-    public function categoryList(): Response
+    public function categoryList()
     {
         $response = Http::asJson()
             ->get('https://staging.eko.in/ekoapi/v2/billpayments/operators_category');
 
-        return $response;
+        $data = json_decode($response->body());
+        $array = $data->data;
+        $final =  array_map(function ($data) {
+            return [
+                'category_id' => $data->operator_category_id,
+                'category_name' => $data->operator_category_name
+            ];
+        }, $array);
+
+        return $final;
     }
 
     public function locationList(): Response
