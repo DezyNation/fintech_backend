@@ -25,6 +25,9 @@ class CallbackController extends Controller
             }
 
             if (in_array($request['tx_status'], [1, 4])) {
+                if ($transaction->status == 'failed') {
+                    return response("Success", 200);
+                }
                 TransactionController::reverseTransaction($transaction->reference_id);
                 Payout::where('reference_id', $transaction->reference_id)->update([
                     'status' => 'failed',
