@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard\Admin\AdminController;
 use App\Http\Controllers\Dashboard\Admin\ReportController;
 use App\Http\Controllers\Dashboard\Admin\WebsiteController;
 use App\Http\Controllers\Dashboard\Admin\CommissionController;
+use App\Http\Controllers\Dashboard\Admin\CustomizationController;
 use App\Http\Controllers\Dashboard\User\FundRequestController;
 use App\Http\Controllers\Dashboard\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Services\Payout\FlowController as PayoutFlowController;
@@ -38,6 +39,8 @@ Route::get('/user', function (Request $request) {
 
 Route::get('services', [WebsiteController::class, 'services']);
 Route::get('banks', [BankController::class, 'activeBanks']);
+Route::apiResource('cutomizations', CustomizationController::class);
+
 Route::get('verify/{id}', [UserController::class, 'verifyUser'])->middleware('auth:api');
 Route::put('credentials', [UserController::class, 'updateCredential'])->middleware('auth:api');
 
