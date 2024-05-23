@@ -19,10 +19,10 @@ return new class extends Migration
             $table->string('reference_id');
             $table->string('service');
             $table->text('description');
-            $table->decimal('credit_amount', 16, 4);
-            $table->decimal('debit_amount', 16, 4);
-            $table->decimal('opening_balance', 16, 4);
-            $table->decimal('closing_balance', 16, 4);
+            $table->decimal('credit_amount', 16, 2);
+            $table->decimal('debit_amount', 16, 2);
+            $table->decimal('opening_balance', 16, 2);
+            $table->decimal('closing_balance', 16, 2);
             $table->json('metadata')->nullable();
             $table->timestamps();
         });

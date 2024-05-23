@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('plan_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('role_id')->constrained()->cascadeOnUpdate();
-            $table->decimal('from', 16, 4);
-            $table->decimal('to', 16, 4);
+            $table->decimal('from', 16, 2);
+            $table->decimal('to', 16, 2);
             $table->string('service');
-            $table->decimal('commission', 16, 4);
+            $table->decimal('commission', 16, 2);
             $table->boolean('is_flat')->default(0);
             $table->timestamps();
         });

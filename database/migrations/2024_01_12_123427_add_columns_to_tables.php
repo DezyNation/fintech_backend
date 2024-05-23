@@ -20,20 +20,20 @@ return new class extends Migration
         });
 
         Schema::table('aeps_commissions', function (Blueprint $table) {
-            $table->decimal('fixed_charge', 16, 4)->default(0)->after('service');
+            $table->decimal('fixed_charge', 16, 2)->default(0)->after('service');
         });
         Schema::table('bbps_commissions', function (Blueprint $table) {
-            $table->decimal('from', 16, 4)->default(0)->after('operator_id');
-            $table->decimal('to', 16, 4)->default(0)->after('from');
-            $table->decimal('fixed_charge', 16, 4)->default(0)->after('service');
+            $table->decimal('from', 16, 2)->default(0)->after('operator_id');
+            $table->decimal('to', 16, 2)->default(0)->after('from');
+            $table->decimal('fixed_charge', 16, 2)->default(0)->after('service');
         });
         Schema::table('recharge_commissions', function (Blueprint $table) {
-            $table->decimal('from', 16, 4)->default(0)->after('operator_id');
-            $table->decimal('to', 16, 4)->default(0)->after('from');
-            $table->decimal('fixed_charge', 16, 4)->default(0)->after('service');
+            $table->decimal('from', 16, 2)->default(0)->after('operator_id');
+            $table->decimal('to', 16, 2)->default(0)->after('from');
+            $table->decimal('fixed_charge', 16, 2)->default(0)->after('service');
         });
         Schema::table('dmt_commissions', function (Blueprint $table) {
-            $table->decimal('fixed_charge', 16, 4)->default(0)->after('service');
+            $table->decimal('fixed_charge', 16, 2)->default(0)->after('service');
         });
     }
 

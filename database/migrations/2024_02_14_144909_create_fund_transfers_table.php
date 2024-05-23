@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('activity');
             $table->string('reference_id');
             $table->decimal('amount');
-            $table->decimal('opening_balance');
-            $table->decimal('closing_balance');
+            $table->decimal('opening_balance', 16, 2);
+            $table->decimal('closing_balance', 16, 2);
             $table->string('remarks');
             $table->timestamps();
         });

@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('services', function (Blueprint $table) {
-            $table->decimal('limit', 8, 2)->after('provider')->default(100000);
+            $table->decimal('limit', 16, 2)->after('provider')->default(200000);
         });
     }
 

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('role_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('operator_id')->constrained()->cascadeOnUpdate();
             $table->string('service')->nullable();
-            $table->decimal('commission', 16, 4);
+            $table->decimal('commission', 16, 2);
             $table->boolean('is_flat')->default(0);
             $table->timestamps();
         });

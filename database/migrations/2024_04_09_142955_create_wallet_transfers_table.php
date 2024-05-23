@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('from')->nullable()->constrained('users', 'id')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUuid('to')->nullable()->constrained('users', 'id')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUuid('approved_by')->nullable()->constrained('users', 'id')->cascadeOnUpdate()->nullOnDelete();
-            $table->decimal('amount')->nullable();
+            $table->decimal('amount', 16, 2)->nullable();
             $table->string('status')->default('success')->nullable();
             $table->string('reference_id');
             $table->string('user_remarks')->nullable();

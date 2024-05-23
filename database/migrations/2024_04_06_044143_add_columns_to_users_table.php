@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->date('date_of_birth')->nullable()->after('pin');
             $table->boolean('active')->default(0)->after('remember_token');
-            $table->string('shop_name')->nullable()->after('date_of_birth');
         });
     }
 
