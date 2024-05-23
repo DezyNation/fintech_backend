@@ -14,10 +14,6 @@ return new class extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             $table->string('shop_name')->nullable()->after('pincode');
         });
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('shop_name');
-        });
     }
 
     /**

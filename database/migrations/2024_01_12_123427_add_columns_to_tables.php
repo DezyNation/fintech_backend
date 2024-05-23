@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('plan_id')->after('parent_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->string('eko_user_code')->after('phone_number')->nullable();
             $table->string('paysprint_merchant_id')->after('eko_user_code')->nullable();
-            $table->json('address')->after('phone_number')->nullable();
         });
 
         Schema::table('aeps_commissions', function (Blueprint $table) {
