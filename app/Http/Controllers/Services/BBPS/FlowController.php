@@ -71,7 +71,7 @@ class FlowController extends Controller
 
         $reference_id = uniqid('BBPS-');
 
-        $transaction_request = $instance->initiateTransaction($request, $reference_id);
+        $transaction_request = $instance->paybill($request, $reference_id);
         if ($transaction_request['data']['status'] != 'success') {
             $lock->release();
             abort(400, $transaction_request['data']['message']);
@@ -89,8 +89,7 @@ class FlowController extends Controller
 
         TransactionController::store($request->user(), $reference_id, 'bbps', "Bill Payment for {$request->utility_number}", 0, $request->amount);
         $commission_class = new CommissionController;
-        $commission_class->distributeCommission($request->user(), $request->operator_id, 'bbps', $request->amount);
-
+        $commission_class->distributeCommission($request->user(), $request->operator_id, 'bbps', $request->amount, $reference_id, $request->utility_number);
         $this->releaseLock($request->user()->id);
 
         return new GeneralResource($bbps);

@@ -65,7 +65,7 @@ class EkoController extends Controller
             'sender_name' => $user->name ?? 'Kaushik',
             'operator_id' => $request->operator_id,
             'utility_acc_no' => $request->utility_number,
-            'confirmation_mobile_no' => $request->confirmationMobileNo,
+            'confirmation_mobile_no' => $request->confirmation_mobile_no,
             'source_ip' => $request->ip(),
             'Latlong' => $request->latlong,
             //dob7

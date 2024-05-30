@@ -53,8 +53,8 @@ class PaysprintController extends Controller
     public function fetchBill(Request $request): Response
     {
         $data = [
-            'operator' => $request->operatorId,
-            'canumber' => $request->utilityAccNo,
+            'operator' => $request->operator_id,
+            'canumber' => $request->utility_number,
             'mode' => 'online'
         ];
 
