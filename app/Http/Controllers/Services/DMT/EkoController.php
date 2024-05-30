@@ -3,31 +3,43 @@
 namespace App\Http\Controllers\Services\DMT;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GeneralResource;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class EkoController extends Controller
 {
-    public function customerInfo(Request $request): Response
+    public function customerInfo(Request $request)
     {
-        $customer_id = $request->customerId;
+        $customer_id = $request->customer_id;
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code ?? 20810200
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())
             ->get("https://staging.eko.in/ekoapi/v2/customers/mobile_number:$customer_id", $data);
 
-        return $response;
+        $data = json_decode($response->body());
+        ($data->response_status_id == 0) ?
+            $array = [
+                'customer_id' => $data->data->customer_id,
+                'used_limit' => $data->data->used_limit,
+                'available_limit' => $data->data->available_limit,
+                'mobile' => $data->data->mobile
+            ] :
+            abort(400, $data->message);
+
+        return new GeneralResource($array);
     }
 
     public function createCustomer(Request $request)
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => $request->user()->user_eko_code ?? 20810200,
+            'initiator_id' => config('services.eko.initiator_id'),
+            'user_code' => $request->user()->user_eko_code,
             'name' => $request->name,
             'dob' => $request->dob,
             'residence_address' => json_encode($request->address),
@@ -35,7 +47,7 @@ class EkoController extends Controller
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phoneNumber}", $data);
+            ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phone_number}", $data);
 
         return $response;
     }
@@ -43,10 +55,10 @@ class EkoController extends Controller
     public function verifyCustomer(Request $request): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code ?? 20810200,
             'customer_id_type' => 'mobile_number',
-            'customer_id' => $request->phoneNumber
+            'customer_id' => $request->phone_number
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
@@ -58,17 +70,17 @@ class EkoController extends Controller
     public function addRecipient(Request $request): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
-            'user_code' => $request->user()->user_eko_code ?? 20810200,
-            'bank_id' => $request->bankId,
-            'recipient_name' => $request->recipientName,
-            'recipient_mobile' => $request->recipientMobile,
+            'initiator_id' => config('services.eko.initiator_id'),
+            'user_code' => $request->user()->user_eko_code,
+            'bank_id' => $request->bank_id,
+            'recipient_name' => $request->recipient_name,
+            'recipient_mobile' => $request->recipient_mobile,
             'recipient_type' => 3,
         ];
-        $acc_ifsc = $request->accountNumber . '_' . $request->ifsc;
+        $acc_ifsc = $request->account_number . '_' . $request->ifsc;
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phoneNumber}/recipients/{$request->recipient_id_type}:$acc_ifsc", $data);
+            ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phone_number}/recipients/acc_ifsc:$acc_ifsc", $data);
 
         return $response;
     }
@@ -76,7 +88,7 @@ class EkoController extends Controller
     public function recipientList(int $customer_id): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => auth()->user()->user_eko_code ?? 20810200
         ];
 
@@ -89,12 +101,12 @@ class EkoController extends Controller
     public function reipientDetails(Request $request): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code ?? 20810200
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())
-            ->get("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phoneNumber}/recipients/recipient_id:{$request->recipintId}", $data);
+            ->get("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phone_number}/recipients/recipient_id:{$request->recipint_id}", $data);
 
         return $response;
     }
@@ -102,7 +114,7 @@ class EkoController extends Controller
     public function initiateTransaction(Request $request): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code ?? 20810200,
             'client_ref_id' => uniqid('DMT-MT'), //change it
             'timestamp' => now(),
@@ -124,7 +136,7 @@ class EkoController extends Controller
     public function transactionInquiry(Request $request): Response
     {
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code
         ];
         $transaction_id = $request->transactionId;
@@ -140,14 +152,14 @@ class EkoController extends Controller
     {
 
         $data = [
-            'initiator_id' => env('INITIATOR_ID'),
+            'initiator_id' => config('services.eko.initiator_id'),
             'user_code' => $request->user()->user_eko_code,
             'state' => 1,
             'otp' => $request->otp
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())
-            ->post("https://staging.eko.in/ekoapi/v2/transactions/{$request->transactionId}/refund", $data);
+            ->post("https://staging.eko.in/ekoapi/v2/transactions/{$request->transaction_id}/refund", $data);
 
         return $response;
     }
@@ -155,7 +167,7 @@ class EkoController extends Controller
     public function resendRefundOtp(string $transaction_id)
     {
         $response = Http::withHeaders($this->ekoHeaders())
-            ->post("https://staging.eko.in/ekoapi/transactions/{$transaction_id}/refund/otp", ['initiator_id' => env('INITIATOR_ID')]);
+            ->post("https://staging.eko.in/ekoapi/transactions/{$transaction_id}/refund/otp", ['initiator_id' => config('services.eko.initiator_id')]);
 
         return $response;
     }
