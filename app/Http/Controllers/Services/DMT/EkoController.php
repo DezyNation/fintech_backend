@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Services\DMT;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResource;
+use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class EkoController extends Controller
 {
-    public function customerInfo(Request $request)
+    public function customerInfo(Request $request): JsonResource | Exception
     {
         $customer_id = $request->customer_id;
         $data = [
@@ -35,24 +37,38 @@ class EkoController extends Controller
         return new GeneralResource($array);
     }
 
-    public function createCustomer(Request $request)
+    public function createCustomer(Request $request): JsonResource | Exception
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'user_code' => $request->user()->user_eko_code,
+            'user_code' => $request->user()->user_eko_code ?? 20810200,
             'name' => $request->name,
             'dob' => $request->dob,
             'residence_address' => json_encode($request->address),
-            'skip_verification' => $request->verification
+            'skip_verification' => 1
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phone_number}", $data);
 
-        return $response;
+        if ($response['status'] == 0) {
+            ($response['response_type_id'] == 327) ?
+                $data = [
+                    'message' => $response['message'],
+                    'status' => 'pending'
+                ] :
+                $data = [
+                    'message' => $response['message'],
+                    'status' => 'verified'
+                ];
+        } else {
+            abort(400, $response['message']);
+        }
+
+        return new GeneralResource($data);
     }
 
-    public function verifyCustomer(Request $request): Response
+    public function verifyCustomer(Request $request): JsonResource | Exception
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
@@ -64,14 +80,23 @@ class EkoController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put("https://staging.eko.in/ekoapi/v2/customers/verification/otp:{$request->otp}", $data);
 
-        return $response;
+        if ($response['status'] == 0) {
+            $data = [
+                'message' => $response['message'],
+                'status' => 'verified'
+            ];
+        } else {
+            abort(400, $response['message']);
+        }
+
+        return new GeneralResource($data);
     }
 
-    public function addRecipient(Request $request): Response
+    public function addRecipient(Request $request): JsonResource | Exception
     {
         $data = [
             'initiator_id' => config('services.eko.initiator_id'),
-            'user_code' => $request->user()->user_eko_code,
+            'user_code' => $request->user()->user_eko_code ?? 20810200,
             'bank_id' => $request->bank_id,
             'recipient_name' => $request->recipient_name,
             'recipient_mobile' => $request->recipient_mobile,
@@ -82,7 +107,14 @@ class EkoController extends Controller
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
             ->put("https://staging.eko.in/ekoapi/v2/customers/mobile_number:{$request->phone_number}/recipients/acc_ifsc:$acc_ifsc", $data);
 
-        return $response;
+        ($response['status'] == 0) ?
+            $data = [
+                'recepient_id' => $response['recipient_id'],
+                'message' => $response['message']
+            ] :
+            abort(400, $response['message']);
+
+        return new GeneralResource($data);
     }
 
     public function recipientList(int $customer_id): Response
