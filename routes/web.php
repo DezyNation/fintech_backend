@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Services\DMT\EkoController;
+use App\Http\Controllers\Services\Payout\RblController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,6 @@ Route::get('/', function () {
     return [config('app.name') => 'Dezynation'];
 });
 
-Route::post('add-recipient', [EkoController::class, 'addRecipient']);
+Route::get('test', [RblController::class, 'initiateTransaction']);
 
 require __DIR__ . '/auth.php';

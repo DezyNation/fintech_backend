@@ -64,6 +64,14 @@ return [
         'encryption_key' => env('PAYSPRINT_ENCRYPTION_KEY'),
         'encryption_iv' => env('PAYSPRINT_ENCRYPTION_IV'),
         'base_url' => 'https://sit.paysprint.in/service-api/api/v1/service'
+    ],
+
+    'rbl' => [
+        'key' => env('RBL_KEY'),
+        'secret' => env('RBL_SECRET'),
+        'client_id' => env('RBL_CLIENT_ID'),
+        'client_secret' => env('RBL_CLIENT_SECRET'),
+        'base_url' => 'https://apideveloper.rblbank.com/test/qa/rbl'
     ]
 
 ];
