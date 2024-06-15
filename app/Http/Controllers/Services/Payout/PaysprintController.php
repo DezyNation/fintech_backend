@@ -50,9 +50,6 @@ class PaysprintController extends Controller
             "amount" => "1",
             "purpose" => "TESTING",
             "addressLine" => "dummy ",
-            "benePartTrnRmks" => "",
-            "mode" => "neft",
-            "type" => 1,
             "name" => "Paysprint",
             "mobile" => "9934464262",
             "ifsc" => "KKBK0000958",
@@ -66,13 +63,13 @@ class PaysprintController extends Controller
         $response = Http::withHeaders($encrypted_data['headers'])
             ->post(config('services.paysprint.base_url') . '/api/v1/payout/PAYOUT', ['body' => $encrypted_data['body']]);
         ($response['code'] == 200) ? $decrypted_data =  $this->decrypt($response->header('key'), $response['body']) : abort(400, $response['message']);
-        return $decrypted_data;
+        return $this->processResponse($decrypted_data, $response['code']);
     }
 
     public function processResponse(object $response, string $status)
     {
         switch ($status) {
-            case 'value':
+            case 200:
 
                 break;
 
@@ -80,5 +77,21 @@ class PaysprintController extends Controller
                 # code...
                 break;
         }
+    }
+
+    public function updateStatus()
+    {
+        $data =  [
+            "apiId" => "30013",
+            "bankId" => "5",
+            "acctNumber" => "409002136531",
+            "transferId" => uniqid('PYT-')
+        ];
+
+        $encrypted_data = $this->encrypt($data);
+        $response = Http::withHeaders($encrypted_data['headers'])
+            ->post(config('services.paysprint.base_url') . '/api/v1/payout/PAYOUT', ['body' => $encrypted_data['body']]);
+        ($response['code'] == 200) ? $decrypted_data =  $this->decrypt($response->header('key'), $response['body']) : abort(400, $response['message']);
+        return $decrypted_data;
     }
 }
