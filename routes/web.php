@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Services\DMT\EkoController;
-use App\Http\Controllers\Services\Payout\RblController;
+use App\Http\Controllers\Services\Payout\PaysprintController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    return $request->ip();
     return [config('app.name') => 'Dezynation'];
 });
 
-Route::get('test', [RblController::class, 'initiateTransaction']);
+Route::get('test', [PaysprintController::class, 'initiateTransaction']);
 
 require __DIR__ . '/auth.php';

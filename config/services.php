@@ -63,7 +63,7 @@ return [
         'authorised_key' => env('PAYSPRINT_AUTHORISED_KEY'),
         'encryption_key' => env('PAYSPRINT_ENCRYPTION_KEY'),
         'encryption_iv' => env('PAYSPRINT_ENCRYPTION_IV'),
-        'base_url' => 'https://sit.paysprint.in/service-api/api/v1/service'
+        'base_url' => 'https://uatnxtgen.sprintnxt.in'
     ],
 
     'rbl' => [
