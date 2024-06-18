@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Services\Payout;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 class PaysprintController extends Controller
@@ -40,6 +41,31 @@ class PaysprintController extends Controller
         return json_decode($decrypted_data);
     }
 
+    public function processResponse(Response $response)
+    {
+        $decrypt = json_decode($this->decrypt($response->header('key'), $response['body']));
+
+        switch ($decrypt->status_code) {
+            case 200:
+                    $data = [
+                    'status' => 'success',
+                    'message' => $decrypt->message,
+                    'utr' => $decrypt->data->utr ?? null,
+                    'transaction_status' => strtolower($decrypt->status)
+                ];
+                break;
+
+            default:
+                $data = [
+                    'status' => 'error',
+                    'message' => $decrypt->message ?? "An error occurred while processing your request",
+                ];
+                break;
+        }
+
+        return ['data' => $data, 'response' => $decrypt];
+    }
+
     public function initiateTransaction()
     {
         $data =  [
@@ -47,39 +73,28 @@ class PaysprintController extends Controller
             "bankId" => "5",
             "acctNumber" => "409002136531",
             "beneAcctNumber" => "4166451441216238",
-            "amount" => "1",
-            "purpose" => "TESTING",
-            "addressLine" => "dummy ",
+            "amount" => "100",
+            "purpose" => "payout",
+            "type" => 1,
             "name" => "Paysprint",
             "mobile" => "9934464262",
             "ifsc" => "KKBK0000958",
             "bankname" => "Kotak",
             "branchname" => "Delhi",
             "beneaddress" => "Delhi",
+            'mode' => 'imps',
             "transferId" => uniqid('PYT-')
         ];
 
         $encrypted_data = $this->encrypt($data);
         $response = Http::withHeaders($encrypted_data['headers'])
             ->post(config('services.paysprint.base_url') . '/api/v1/payout/PAYOUT', ['body' => $encrypted_data['body']]);
-        ($response['code'] == 200) ? $decrypted_data =  $this->decrypt($response->header('key'), $response['body']) : abort(400, $response['message']);
-        return $this->processResponse($decrypted_data, $response['code']);
+        ($response['code'] == 200) ? $decrypted_data =  $this->processResponse($response, $response['code']) : abort(400, $response['message']);
+
+        return $decrypted_data;
     }
 
-    public function processResponse(object $response, string $status)
-    {
-        switch ($status) {
-            case 200:
-
-                break;
-
-            default:
-                # code...
-                break;
-        }
-    }
-
-    public function updateStatus()
+    public function update()
     {
         $data =  [
             "apiId" => "30013",
@@ -91,7 +106,7 @@ class PaysprintController extends Controller
         $encrypted_data = $this->encrypt($data);
         $response = Http::withHeaders($encrypted_data['headers'])
             ->post(config('services.paysprint.base_url') . '/api/v1/payout/PAYOUT', ['body' => $encrypted_data['body']]);
-        ($response['code'] == 200) ? $decrypted_data =  $this->decrypt($response->header('key'), $response['body']) : abort(400, $response['message']);
+        ($response['code'] == 200) ? $decrypted_data =  $this->processResponse($response, $response['code']) : abort(400, $response['message']);
         return $decrypted_data;
     }
 }

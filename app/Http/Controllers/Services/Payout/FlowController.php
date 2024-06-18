@@ -81,7 +81,7 @@ class FlowController extends Controller
             'metadata' => $transaction_request['response']
         ]);
 
-        TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated for {$request->account_number}", 0, $request->amount);
+        TransactionController::store($request->user(), $reference_id, 'payout', "Payout {$request->account_number}", 0, $request->amount);
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount, $reference_id, false, false, $request->account_number);
 
