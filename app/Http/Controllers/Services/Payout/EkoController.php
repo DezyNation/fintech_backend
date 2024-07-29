@@ -65,7 +65,7 @@ class EkoController extends Controller
 
         $response = Http::withHeaders($this->ekoHeaders())
             ->asForm()
-            ->post(config('services.eko.base_url') . "/ekoapi/v1/agent/user_code:{$request->user()->eko_user_code}/settlement", $data);
+            ->post(config('services.eko.base_url') . "/v1/agent/user_code:{$request->user()->eko_user_code}/settlement", $data);
 
         Log::info(['response' => $response->body(), 'request' => $data]);
 
@@ -86,7 +86,7 @@ class EkoController extends Controller
         ];
 
         $response = Http::withHeaders($this->ekoHeaders())->asForm()
-            ->put(config('services.eko.base_url') . '/ekoapi/v1/user/service/activate', $data);
+            ->put(config('services.eko.base_url') . '/v1/user/service/activate', $data);
 
         Log::info(['response' => $response->body(), 'request' => $data]);
 
@@ -106,7 +106,7 @@ class EkoController extends Controller
     public function updateTransaction(string $transaction_id)
     {
         $response = Http::withHeaders($this->ekoHeaders())
-            ->get(config('services.eko.base_url') . "/ekoapi/v1/transactions/client_ref_id:$transaction_id", ['initiator_id' => config('services.eko.initiator_id')]);
+            ->get(config('services.eko.base_url') . "/v1/transactions/client_ref_id:$transaction_id", ['initiator_id' => config('services.eko.initiator_id')]);
 
         if ($response->failed()) {
             abort($response->status(), "Failed to fetch data. Please try again later.");
