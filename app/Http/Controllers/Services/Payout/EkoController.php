@@ -95,7 +95,7 @@ class EkoController extends Controller
             abort(403, $response['message'] ?? "Failed.");
         }
 
-        if (($response['status'] == 0 || $response['status'] == 1295) && $response['data']['service_status'] == 1) {
+        if (in_array($response['status'], [1295, 0]) && $response['data']['service_status'] == 1) {
             return true;
         } else {
             $this->releaseLock(auth()->user()->id);
