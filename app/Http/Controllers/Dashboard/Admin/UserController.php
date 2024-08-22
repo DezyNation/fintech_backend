@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         return GeneralResource::collection(User::role($request->role)->with(['plan' => function ($q) {
             $q->select(['id', 'name']);
-        }, 'documents'])->withTrashed()->paginate(30));
+        }, 'documents'])->withTrashed()->paginate(30)->appends($request->all()));
     }
 
     /**
