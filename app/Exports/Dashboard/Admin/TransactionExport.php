@@ -3,6 +3,7 @@
 namespace App\Exports\Dashboard\Admin;
 
 use App\Models\Transaction;
+use App\Models\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -28,7 +29,8 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
      */
     public function collection()
     {
-        return Transaction::where('user_id', $this->user_id)
+        $user = User::where('phone_number', $this->user_id)->firstOrFail();
+        return Transaction::where('user_id', $user->id)
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
             ->get(['id', 'reference_id', 'service', 'credit_amount',  'debit_amount', 'opening_balance', 'closing_balance', 'created_at', 'updated_at']);
     }
