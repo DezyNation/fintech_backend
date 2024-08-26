@@ -99,7 +99,7 @@ class ReportController extends Controller
 
     public function dailySales(Request $request): JsonResource
     {
-        $transaction = Transaction::dailySales()->whereBetween('transactions.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
+        $transaction = Transaction::dailySales()->whereBetween('transactions.created_at', [Carbon::createFromDate($request->from ?? today())->startOfDay(),  Carbon::createFromDate($request->to ?? today())->endOfDay()])
             ->get()->groupBy('user_id');
         return GeneralResource::collection($transaction);
     }
@@ -121,8 +121,8 @@ class ReportController extends Controller
         }, 'user' => function ($q) {
             $q->select('id', 'name', 'phone_number');
         }, 'bank'])->whereBetween('fund_requests.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
-        ->latest('fund_requests.created_at')
-        ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id'], 'status' => $request['status'], 'user_id' => $request['user_id']]);
+            ->latest('fund_requests.created_at')
+            ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'transaction_id' => $request['transaction_id'], 'status' => $request['status'], 'user_id' => $request['user_id']]);
         return GeneralResource::collection($data);
     }
 
