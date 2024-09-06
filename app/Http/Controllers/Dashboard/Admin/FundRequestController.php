@@ -121,7 +121,7 @@ class FundRequestController extends Controller
         return new GeneralResource($fund);
     }
 
-    public function fundTransfer(Request $request): JsonResource
+    public function fundTransfer(Request $request)
     {
         $request->validate([
             'activity_type' => ['required', 'in:transfer,reversal'],
@@ -165,6 +165,6 @@ class FundRequestController extends Controller
             return new GeneralResource($data);
         });
 
-        return $transfer;
+        return response($transfer);
     }
 }
