@@ -161,6 +161,7 @@ class FundRequestController extends Controller
                 'closing_balance' => $closing_balance,
                 'remarks' => $request->remarks,
             ]);
+            $data->status = "success";
             $lock->release();
             return new GeneralResource($data);
         });
