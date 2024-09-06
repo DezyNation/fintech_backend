@@ -144,7 +144,7 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
 
     Route::prefix('transactions')->group(function () {
         Route::put('payout/{id}', [PayoutFlowController::class, 'update']);
-        Route::post('fund-transfer', [AdminFundRequestController::class, 'fundTransfer']);
+        Route::post('fund-transfer', [AdminFundRequestController::class, 'fundTransfer'])->middleware(['pin']);
     });
 });
 
