@@ -52,18 +52,6 @@ class FlowController extends Controller
         }
 
         $reference_id = uniqid('PAY-');
-        $transaction_request = $instance->initiateTransaction($request, $reference_id);
-
-        if ($transaction_request['data']['status'] != 'success') {
-            $lock->release();
-            abort(400, $transaction_request['data']['message']);
-        }
-
-        if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated', 'processing'])) {
-            $status = "pending";
-        } else {
-            $status = $transaction_request['data']['transaction_status'];
-        }
 
         $payout = Payout::create([
             'user_id' => $request->user()->id,
@@ -74,16 +62,38 @@ class FlowController extends Controller
             'beneficiary_name' => $request->beneficiary_name,
             'mode' => $request->mode,
             'amount' => $request->amount,
-            'utr' => $transaction_request['data']['utr'],
-            'status' => $status,
-            'description' => $transaction_request['data']['message'],
+            'status' => 'pending',
             'remarks' => $request->remarks,
-            'metadata' => $transaction_request['response']
         ]);
 
         TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated for {$request->account_number}", 0, $request->amount);
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount, $reference_id, false, false, $request->account_number);
+
+        $transaction_request = $instance->initiateTransaction($request, $reference_id);
+
+        if ($transaction_request['data']['status'] != 'success') {
+            TransactionController::reverseTransaction($reference_id);
+            $lock->release();
+            abort(400, $transaction_request['data']['message']);
+        }
+
+        if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated', 'processing'])) {
+            $status = "pending";
+        } else {
+            $status = $transaction_request['data']['transaction_status'];
+        }
+
+        $payout->update([
+            'status' => $status,
+            'description' => $transaction_request['data']['message'],
+            'utr' => $transaction_request['data']['utr'],
+            'metadata' => $transaction_request['response']
+        ]);
+
+        if ($status == 'failed' || $status == 'reversed') {
+            TransactionController::reverseTransaction($reference_id);
+        }
 
         $lock->release();
 
