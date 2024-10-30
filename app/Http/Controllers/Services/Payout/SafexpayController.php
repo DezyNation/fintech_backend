@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Services\Payout;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SafexpayController extends Controller
 {
@@ -113,6 +114,8 @@ class SafexpayController extends Controller
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
         $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
+
+        Log::info(['response' => $decrypt, 'request' => $data]);
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
