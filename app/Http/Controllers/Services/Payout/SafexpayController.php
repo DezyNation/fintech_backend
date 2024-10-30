@@ -9,36 +9,28 @@ use Illuminate\Support\Facades\Http;
 class SafexpayController extends Controller
 {
 
-    public function processResponse($response, int $status): array
+    public function processResponse($response): array
     {
-        switch ($status) {
-            case 0:
-                if (in_array($response['data']['tx_status'], [0, 1, 5, 2])) {
-                    $data = [
-                        'status' => 'success',
-                        'message' => $response['message'],
-                        'utr' => $response['data']['bank_ref_num'] ?? null,
-                        'transaction_status' => strtolower($response['data']['txstatus_desc'])
-                    ];
-                } else {
-                    $data = [
-                        'status' => 'failed',
-                        'message' => $response['message'],
-                        'transaction_status' => strtolower($response['data']['txstatus_desc']),
-                        'utr' => $response['data']['bank_ref_num'] ?? null
-                    ];
-                }
-                break;
 
-            default:
-                $data = [
-                    'status' => 'error',
-                    'message' => $response['message'] ?? "An error occurred while processing your request",
-                ];
-                break;
+        if (in_array($response['response']['code'], ["0001", "0000"])) {
+            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+            $data = [
+                'status' => 'success',
+                'description' => $response['response']['description'],
+                'utr' => $utr,
+                'transaction_status' => strtolower($response['payOutBean']['txnStatus'])
+            ];
+        } else {
+            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+            $data = [
+                'status' => 'failed',
+                'message' => $response['response']['description'],
+                'transaction_status' => strtolower($response['payOutBean']['txnStatus']),
+                'utr' => $utr
+            ];
         }
 
-        return ['data' =>  $data, 'response' => $response->body()];
+        return ['data' =>  $data, 'response' => $response['response']];
     }
 
 
@@ -76,7 +68,7 @@ class SafexpayController extends Controller
             $text = "Error";
             return $text;
         }
-        return $padtext;
+        return json_encode($padtext, true);
     }
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id)
@@ -104,7 +96,7 @@ class SafexpayController extends Controller
                 'accountNo' => $request->account_number,
                 'ifscCode' => strtoupper($request->ifsc_code),
                 'bankName' => $request->bank_name,
-                "txnType" => $request->mode,
+                "txnType" => strtoupper($request->mode),
                 'accountHolderName' => $request->beneficiary_name,
                 'emailId' => $request->user()->email,
                 'orderRefNo' => $reference_id,
@@ -127,6 +119,6 @@ class SafexpayController extends Controller
             abort($response->status(), "Gateway Failure!");
         }
 
-        return $this->processResponse($response, $response['status']);
+        return $this->processResponse($decrypt);
     }
 }
