@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Services\Payout\PaysprintController;
+use App\Http\Controllers\Services\Payout\SafexpayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,6 @@ Route::get('/', function (Request $request) {
     return [config('app.name') => 'Dezynation'];
 });
 
-Route::get('test', [PaysprintController::class, 'initiateTransaction']);
+Route::get('test', [SafexpayController::class, 'initiateTransaction']);
 
 require __DIR__ . '/auth.php';

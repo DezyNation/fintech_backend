@@ -9,36 +9,28 @@ use Illuminate\Support\Facades\Http;
 class SafexpayController extends Controller
 {
 
-    public function processResponse($response, int $status): array
+    public function processResponse($response): array
     {
-        switch ($status) {
-            case 0:
-                if (in_array($response['data']['tx_status'], [0, 1, 5, 2])) {
-                    $data = [
-                        'status' => 'success',
-                        'message' => $response['message'],
-                        'utr' => $response['data']['bank_ref_num'] ?? null,
-                        'transaction_status' => strtolower($response['data']['txstatus_desc'])
-                    ];
-                } else {
-                    $data = [
-                        'status' => 'failed',
-                        'message' => $response['message'],
-                        'transaction_status' => strtolower($response['data']['txstatus_desc']),
-                        'utr' => $response['data']['bank_ref_num'] ?? null
-                    ];
-                }
-                break;
 
-            default:
-                $data = [
-                    'status' => 'error',
-                    'message' => $response['message'] ?? "An error occurred while processing your request",
-                ];
-                break;
+        if (in_array($response['response']['code'], ["0001", "0000"])) {
+            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+            $data = [
+                'status' => 'success',
+                'description' => $response['response']['description'],
+                'utr' => $utr,
+                'transaction_status' => strtolower($response['payOutBean']['txnStatus'])
+            ];
+        } else {
+            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+            $data = [
+                'status' => 'failed',
+                'message' => $response['response']['description'],
+                'transaction_status' => strtolower($response['payOutBean']['txnStatus']),
+                'utr' => $utr
+            ];
         }
 
-        return ['data' =>  $data, 'response' => $response->body()];
+        return ['data' =>  $data];
     }
 
 
@@ -76,11 +68,12 @@ class SafexpayController extends Controller
             $text = "Error";
             return $text;
         }
-        return $padtext;
+        return json_decode($padtext, true);
     }
 
-    public function initiateTransaction(string $reference_id)
+    public function initiateTransaction()
     {
+        $refernce_id = uniqid('sfx-tst');
         $data = json_encode([
             'header' => [
                 'operatingSystem' => 'WEB',
@@ -101,13 +94,13 @@ class SafexpayController extends Controller
             'payOutBean' => [
                 'mobileNo' => 9999999999,
                 'txnAmount' => 10,
-                'accountNo' => 521546553621,
+                'accountNo' => 41362834643,
                 'ifscCode' => "SBIN0032284",
-                'bankName' => "SABI",
+                'bankName' => "SBI",
                 "txnType" => "IMPS",
                 'accountHolderName' => "TEST",
                 'emailId' => "john@email.com",
-                'orderRefNo' => "test21265412",
+                'orderRefNo' => $refernce_id,
                 'count' => 0
             ]
         ]);
@@ -121,13 +114,12 @@ class SafexpayController extends Controller
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
         $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
-        return $decrypt;
 
         // if ($response->failed()) {
         //     $this->releaseLock($request->user()->id);
         //     abort($response->status(), "Gateway Failure!");
         // }
 
-        return $this->processResponse($response, $response['status']);
+        return $this->processResponse($decrypt);
     }
 }

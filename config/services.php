@@ -72,6 +72,13 @@ return [
         'client_id' => env('RBL_CLIENT_ID'),
         'client_secret' => env('RBL_CLIENT_SECRET'),
         'base_url' => 'https://apideveloper.rblbank.com/test/qa/rbl'
+    ],
+
+    'safexpay' => [
+        'merchant_id' => env('SAFEXPAY_MERCHANT_ID'),
+        'merchant_key' => env('SAFEXPAY_MERCHANT_KEY'),
+        'base_url' => 'https://neodev2.safexpay.com/agWalletAPI/v2/agg',
+        'iv' => env('SAFEXPAY_IV')
     ]
 
 ];
