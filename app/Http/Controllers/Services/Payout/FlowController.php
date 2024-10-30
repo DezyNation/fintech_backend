@@ -53,6 +53,14 @@ class FlowController extends Controller
 
         $reference_id = uniqid('PAY-');
 
+        $transaction_request = $instance->initiateTransaction($request, $reference_id);
+
+        if ($transaction_request['data']['status'] != 'success') {
+            TransactionController::reverseTransaction($reference_id);
+            $lock->release();
+            abort(400, $transaction_request['data']['message']);
+        }
+
         $payout = Payout::create([
             'user_id' => $request->user()->id,
             'provider' => $service->provider,
@@ -70,14 +78,6 @@ class FlowController extends Controller
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount, $reference_id, false, false, $request->account_number);
 
-        $transaction_request = $instance->initiateTransaction($request, $reference_id);
-
-        if ($transaction_request['data']['status'] != 'success') {
-            TransactionController::reverseTransaction($reference_id);
-            $lock->release();
-            abort(400, $transaction_request['data']['message']);
-        }
-
         if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated', 'processing', 'pending'])) {
             $status = "pending";
         } else {
@@ -90,10 +90,6 @@ class FlowController extends Controller
             'utr' => $transaction_request['data']['utr'],
             'metadata' => $transaction_request['response']
         ]);
-
-        if ($status == 'failed' || $status == 'reversed') {
-            TransactionController::reverseTransaction($reference_id);
-        }
 
         $lock->release();
 
