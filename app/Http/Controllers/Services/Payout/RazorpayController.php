@@ -41,7 +41,7 @@ class RazorpayController extends Controller
         return $response;
     }
 
-    public function initiateTransaction(PayoutRequest $request, string $reference_id): Response | Exception
+    public function initiateTransaction(PayoutRequest $request, string $reference_id): array | Exception
     {
         $contact_id = $this->createContact($request);
         $fund_id = $this->createFundAccount($request, $contact_id['id']);
