@@ -56,7 +56,6 @@ class FlowController extends Controller
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
         if ($transaction_request['data']['status'] != 'success') {
-            TransactionController::reverseTransaction($reference_id);
             $lock->release();
             abort(400, $transaction_request['data']['message']);
         }
