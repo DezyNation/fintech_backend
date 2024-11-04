@@ -47,4 +47,46 @@ class CallbackController extends Controller
 
         return $response;
     }
+
+    public function safexpay(Request $request)
+    {
+        Log::info(['callback-sxpay' => $request->all()]);
+        $request->validate([
+            'payload' => ['required']
+        ]);
+
+        $response = DB::transaction(function () use ($request) {
+            $controller = new SafexpayController;
+            $decryption = $controller->decrypt($request->payload, config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
+
+            $transaction = Transaction::where('reference_id', $decryption->txnId)->firstOrFail();
+            $lock = $this->lockRecords($transaction->user_id);
+
+            if (!$lock->get()) {
+                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+            }
+
+            if (in_array(strtolower($decryption->txnStatus), ["failed", "reversed"])) {
+                if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
+                    return response("Success", 200);
+                }
+                TransactionController::reverseTransaction($transaction->reference_id);
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'failed',
+                    'utr' => $decryption->bankRefNo ?? null
+                ]);
+            } elseif (strtolower($decryption->txnStatus) == "success") {
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'success',
+                    'utr' => $decryption->bankRefNo ?? null
+                ]);
+            }
+
+
+            $lock->release();
+            return response("Success", 200);
+        }, 2);
+
+        return $response;
+    }
 }
