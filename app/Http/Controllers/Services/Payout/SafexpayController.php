@@ -114,9 +114,10 @@ class SafexpayController extends Controller
 
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
+        Log::info(['response' => $response->body()]);
         $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
 
-        Log::info(['response' => $decrypt, 'request' => $data]);
+        Log::info(['dec_response' => $decrypt, 'request' => $data]);
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
