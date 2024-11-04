@@ -113,12 +113,14 @@ class SafexpayController extends Controller
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
         Log::info(['response' => $response->body(), 'request' => $data]);
-        $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
             abort($response->status(), "Gateway Failure!");
         }
+        
+        $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
+
 
         return $this->processResponse($decrypt);
     }
@@ -151,11 +153,12 @@ class SafexpayController extends Controller
 
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
-        $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
-
         if ($response->failed()) {
             abort($response->status(), "Failed to fetch data. Please try again later.");
         }
+
+        $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
+
 
         return $this->processResponse($decrypt);
     }
