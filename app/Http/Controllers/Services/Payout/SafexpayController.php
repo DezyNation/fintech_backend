@@ -12,25 +12,25 @@ class SafexpayController extends Controller
 
     public function processResponse($response): array
     {
-        if (in_array($response['response']['code'], ["0001", "0000"])) {
-            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+        if (in_array($response->response->code, ["0001", "0000"])) {
+            $utr = ($response->payOutBean->bankRefNo == 'NA') ? null : $response->payOutBean->bankRefNo;
             $data = [
                 'status' => 'success',
-                'description' => $response['response']['description'],
+                'description' => $response->response->description,
                 'utr' => $utr,
-                'transaction_status' => strtolower($response['payOutBean']['txnStatus'])
+                'transaction_status' => strtolower($response->payOutBean->txnStatus)
             ];
         } else {
-            $utr = ($response['payOutBean']['bankRefNo'] == 'NA') ? null : $response['payOutBean']['bankRefNo'];
+            $utr = ($response->payOutBean->bankRefNo == 'NA') ? null : $response->payOutBean->bankRefNo;
             $data = [
                 'status' => 'failed',
-                'message' => $response['response']['description'],
-                'transaction_status' => strtolower($response['payOutBean']['txnStatus']),
+                'message' => $response->response->description,
+                'transaction_status' => strtolower($response->payOutBean->txnStatus),
                 'utr' => $utr
             ];
         }
 
-        return ['data' =>  $data, 'response' => $response['response']];
+        return ['data' =>  $data, 'response' => $response->response];
     }
 
 
@@ -68,7 +68,7 @@ class SafexpayController extends Controller
             $text = "Error";
             return $text;
         }
-        return $padtext;
+        return json_decode(preg_replace('/[\x00-\x1F\x7F]/', "", $padtext));
     }
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id)
