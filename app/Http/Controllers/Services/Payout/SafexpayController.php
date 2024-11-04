@@ -112,14 +112,49 @@ class SafexpayController extends Controller
 
         $response = Http::post(config('services.safexpay.base_url'), $payload);
 
-        Log::info(['response' => $response->body()]);
+        Log::info(['response' => $response->body(), 'request' => $data]);
         $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
-
-        Log::info(['dec_response' => $decrypt, 'request' => $data]);
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
             abort($response->status(), "Gateway Failure!");
+        }
+
+        return $this->processResponse($decrypt);
+    }
+
+    public function updateTransaction(string $reference_id)
+    {
+        $data = json_encode([
+            'header' => [
+                'operatingSystem' => 'WEB',
+                'sessionId' => config('services.safexpay.merchant_id'),
+                'version' => '1.0.0'
+            ],
+            'userInfo' => "{}",
+            'transaction' => [
+                'requestType' => 'TMH',
+                'requestSubType' => 'STCHK',
+                'tranCode' => 0,
+                'txnAmt' => 0.0
+            ],
+            'payOutBean' => [
+                'payoutId' => $reference_id,
+                'orderRefNo' => uniqid("SFX_UPD"),
+            ]
+        ]);
+
+        $payload = [
+            'uId' => config('services.safexpay.merchant_id'),
+            'payload' => $data
+        ];
+
+        $response = Http::post(config('services.safexpay.base_url'), $payload);
+
+        $decrypt = $this->decrypt($response['payload'], config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
+
+        if ($response->failed()) {
+            abort($response->status(), "Failed to fetch data. Please try again later.");
         }
 
         return $this->processResponse($decrypt);
