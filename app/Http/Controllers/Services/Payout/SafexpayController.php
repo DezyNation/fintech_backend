@@ -68,7 +68,7 @@ class SafexpayController extends Controller
             $text = "Error";
             return $text;
         }
-        return json_encode($padtext, true);
+        return $padtext;
     }
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id)
