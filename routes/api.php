@@ -150,4 +150,5 @@ Route::prefix('admin')->middleware(['auth:api', 'role:admin'])->group(function (
 
 Route::prefix('callback/payout')->controller(CallbackController::class)->group(function () {
     Route::post('eko', 'eko');
+    Route::post('safexpay', 'safexpay');
 });
