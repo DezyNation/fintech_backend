@@ -16,7 +16,7 @@ class SafexpayController extends Controller
             $utr = ($response->payOutBean->bankRefNo == 'NA') ? null : $response->payOutBean->bankRefNo;
             $data = [
                 'status' => 'success',
-                'description' => $response->response->description,
+                'message' => $response->response->description,
                 'utr' => $utr,
                 'transaction_status' => strtolower($response->payOutBean->txnStatus)
             ];
