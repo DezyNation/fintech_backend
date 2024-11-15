@@ -154,7 +154,7 @@ class SafexpayController extends Controller
         ];
 
         $response = Http::post(config('services.safexpay.base_url'), $payload);
-        Log::info(['response' => $response->body()]);
+        Log::info(['requuest' => $payload, 'response' => $response->body()]);
 
         if ($response->failed()) {
             abort($response->status(), "Failed to fetch data. Please try again later.");
