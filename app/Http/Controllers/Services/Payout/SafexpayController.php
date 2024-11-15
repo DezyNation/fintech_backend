@@ -13,7 +13,7 @@ class SafexpayController extends Controller
     public function processResponse($response): array
     {
         if (in_array($response->response->code, ["0001", "0000"])) {
-            $utr = ($response->payOutBean->bankRefNo == 'NA') ? null : $response->payOutBean->bankRefNo;
+            $utr = ($response->payOutBean?->bankRefNo == 'NA') ? null : $response->payOutBean->bankRefNo;
             $data = [
                 'status' => 'success',
                 'message' => $response->response->description,
