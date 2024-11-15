@@ -146,13 +146,14 @@ class SafexpayController extends Controller
             ]
         ]);
 
+        $encryption = $this->encrypt($data, config('services.safexpay.merchant_key'));
+
         $payload = [
             'uId' => config('services.safexpay.merchant_id'),
-            'payload' => $data
+            'payload' => $encryption
         ];
 
         $response = Http::post(config('services.safexpay.base_url'), $payload);
-
         Log::info(['response' => $response->body()]);
 
         if ($response->failed()) {
