@@ -42,7 +42,7 @@ class FlowController extends Controller
             abort(423, "Can't lock user account");
         }
 
-        $service = Service::findOrFail($request->service_id);
+        $service = Service::where(['name' => 'payout', 'active' => 1])->firstOrFail();
         $class_name = Str::of($service->provider . "_" . "controller")->studly();
         $class = __NAMESPACE__ . "\\" . $class_name;
         $instance = new $class;

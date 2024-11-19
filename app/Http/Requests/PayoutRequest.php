@@ -29,7 +29,7 @@ class PayoutRequest extends FormRequest
             'beneficiary_name' => ['required', 'string'],
             'mode' => ['required', 'in:imps,neft,rtgs,5,4,13'],
             'remarks' => ['nullable'],
-            'amount' => ['required', 'numeric', 'min:1']
+            'amount' => ['required', 'numeric', 'min:100']
         ];
     }
 }
