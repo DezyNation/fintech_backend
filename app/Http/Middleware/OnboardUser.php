@@ -17,9 +17,9 @@ class OnboardUser
     public function handle(Request $request, Closure $next): Response
     {
         $service = Service::where(['id' => $request->service_id, 'active' => 1])->first();
-        // if (!$service) {
-        //     return response()->json(['message' => 'Invalid Service'], 404);
-        // }
+        if (!$service) {
+            return response()->json(['message' => 'Invalid Service'], 404);
+        }
 
         if ($service->provider == 'eko') {
             if (is_null($request->user()->eko_user_code)) {
