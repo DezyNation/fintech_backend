@@ -59,7 +59,7 @@ class CallbackController extends Controller
             $controller = new SafexpayController;
             $decryption = $controller->decrypt($request->payload, config('services.safexpay.merchant_key'), config('services.safexpay.iv'));
 
-            $transaction = Transaction::where('reference_id', $decryption->transactionDetails->txnId)->firstOrFail();
+            $transaction = Transaction::where('reference_id', $decryption->transactionDetails->orderRefNo)->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
 
             if (!$lock->get()) {
