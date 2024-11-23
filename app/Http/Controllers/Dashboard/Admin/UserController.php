@@ -13,6 +13,7 @@ use App\Models\Address;
 use App\Models\Document;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -85,6 +86,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        Log::channel('update')->info($request->user()->id, ['request' => $request->all()]);
         $user->update([
             'first_name' => $request->first_name ?? $user->first_name,
             'middle_name' => $request->middle_name ?? $user->middle_name,
