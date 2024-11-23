@@ -86,7 +86,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        Log::channel('update')->info($request->user()->id, ['request' => $request->all()]);
+        Log::channel('update')->info($request->user()->id, $request->all());
         $user->update([
             'first_name' => $request->first_name ?? $user->first_name,
             'middle_name' => $request->middle_name ?? $user->middle_name,
