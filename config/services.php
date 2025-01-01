@@ -79,6 +79,11 @@ return [
         'merchant_key' => env('SAFEXPAY_MERCHANT_KEY'),
         'base_url' => 'https://remittance.safexpay.com/agWalletAPI/v2/agg',
         'iv' => env('SAFEXPAY_IV')
+    ],
+
+    'groscope' => [
+        'base_url' => 'https://login.groscope.com/api',
+        'token' => env('GROSCOPE_TOKEN')
     ]
 
 ];
