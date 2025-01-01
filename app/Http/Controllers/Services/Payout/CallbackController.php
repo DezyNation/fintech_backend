@@ -89,4 +89,9 @@ class CallbackController extends Controller
 
         return $response;
     }
+
+    public function groscope(Request $request)
+    {
+        Log::info(['callback-gro' => $request->all()]);
+    }
 }
