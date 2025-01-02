@@ -90,7 +90,7 @@ class GroscopeController extends Controller
         $response = Http::withHeaders([
             'X-Client-IP' => $_SERVER['SERVER_ADDR'],
             'X-Auth-Token' => config('services.groscope.token')
-        ])->post(config('services.groscope.base_url' . '/payout'), $data);
+        ])->post(config('services.groscope.base_url') . '/payout', $data);
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
@@ -105,7 +105,7 @@ class GroscopeController extends Controller
         $response = Http::withHeaders([
             'X-Client-IP' => $_SERVER['SERVER_ADDR'],
             'X-Auth-Token' => config('services.groscope.token')
-        ])->post(config('services.groscope.base_url' . '/check-status'), ['transaction_id' => $transaction_id]);
+        ])->post(config('services.groscope.base_url') . '/payout', ['transaction_id' => $transaction_id]);
 
         return $this->updateResponse($response, $response['status']);
     }
