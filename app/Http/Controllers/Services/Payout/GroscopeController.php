@@ -7,6 +7,7 @@ use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GroscopeController extends Controller
 {
@@ -91,6 +92,8 @@ class GroscopeController extends Controller
             'X-Client-IP' => $_SERVER['SERVER_ADDR'],
             'X-Auth-Token' => config('services.groscope.token')
         ])->post(config('services.groscope.base_url') . '/payout', $data);
+
+        Log::info($response->body());
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
