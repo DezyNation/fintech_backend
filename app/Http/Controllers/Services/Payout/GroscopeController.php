@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Services\Payout;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
+use App\Models\Payout;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -103,12 +104,12 @@ class GroscopeController extends Controller
         return $this->processResponse($response, $response['status']);
     }
 
-    public function updateTransaction(string $transaction_id)
+    public function updateTransaction(string $transaction_id, $payout)
     {
         $response = Http::withHeaders([
             'X-Client-IP' => '10.0.1.6',
             'X-Auth-Token' => config('services.groscope.token')
-        ])->post(config('services.groscope.base_url') . '/payout', ['transaction_id' => $transaction_id]);
+        ])->post(config('services.groscope.base_url') . '/payout', ['transaction_id' => $payout->metadata->txn_id]);
 
         return $this->updateResponse($response, $response['status']);
     }

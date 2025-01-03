@@ -114,7 +114,7 @@ class FlowController extends Controller
                 abort(501, "Provider not supported.");
             }
 
-            $transaction_request = $instance->updateTransaction($payout->reference_id);
+            $transaction_request = $instance->updateTransaction($payout->reference_id, $payout);
 
             if (!in_array($transaction_request['data']['status'], ['failed', 'success'])) {
                 abort(400, $transaction_request['data']['message']);
