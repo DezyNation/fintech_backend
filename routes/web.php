@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return $_SERVER['SERVER_ADDR'];
     return [config('app.name') => 'Dezynation'];
 });
 

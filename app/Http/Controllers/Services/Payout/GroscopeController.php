@@ -82,9 +82,10 @@ class GroscopeController extends Controller
             'order_id' => $reference_id,
             'payment_mode' => $request->mode,
             'bank_name' => $request->bank_name,
+            'amount' => $request->amount,
             'account_holder_name' => $request->beneficiary_name,
             'account_number' => $request->account_number,
-            'ifsc_code' => strtoupper($request->ifsc_code),
+            'ifsc_code' => strtoupper($request->ifsc_code)
         ];
 
         $response = Http::withHeaders([
