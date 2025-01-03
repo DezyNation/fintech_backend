@@ -106,10 +106,11 @@ class GroscopeController extends Controller
 
     public function updateTransaction(string $transaction_id, $payout)
     {
+        $decode = json_decode($payout->metadata, true);
         $response = Http::withHeaders([
             'X-Client-IP' => '10.0.1.6',
             'X-Auth-Token' => config('services.groscope.token')
-        ])->post(config('services.groscope.base_url') . '/payout', ['transaction_id' => $payout->metadata->txn_id]);
+        ])->post(config('services.groscope.base_url') . '/payout', ['transaction_id' => $decode->txn_id]);
 
         return $this->updateResponse($response, $response['status']);
     }
