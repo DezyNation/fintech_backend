@@ -47,21 +47,22 @@ class GroscopeController extends Controller
 
     public function updateResponse(Response $response, int $status): array
     {
+        $response_decode = json_decode($response,true);
         switch ($status) {
             case true:
-                if (in_array(strtolower($response['data']['status']), ['pending', 'success'])) {
+                if (in_array(strtolower($response_decode['data']['status']), ['pending', 'success'])) {
                     $data = [
                         'status' => 'success',
-                        'message' => $response['msg'],
-                        'utr' => $response['data']['utr_number'],
-                        'transaction_status' => strtolower($response['data']['status'])
+                        'message' => $response_decode['msg'],
+                        'utr' => $response_decode['data']['utr_number'],
+                        'transaction_status' => strtolower($response_decode['data']['status'])
                     ];
                 } else {
                     $data = [
                         'status' => 'failed',
-                        'message' => $response['msg'],
-                        'utr' => $response['data']['utr_number'],
-                        'transaction_status' => strtolower($response['data']['status'])
+                        'message' => $response_decode['msg'],
+                        'utr' => $response_decode['data']['utr_number'],
+                        'transaction_status' => strtolower($response_decode['data']['status'])
                     ];
                 }
                 break;
@@ -69,7 +70,7 @@ class GroscopeController extends Controller
             default:
                 $data = [
                     'status' => 'error',
-                    'message' => $response['msg'] ?? "An error occurred while processing your request",
+                    'message' => $response_decode['msg'] ?? "An error occurred while processing your request",
                 ];
                 break;
         }
