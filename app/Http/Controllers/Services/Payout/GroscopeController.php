@@ -85,7 +85,6 @@ class GroscopeController extends Controller
             'account_holder_name' => $request->beneficiary_name,
             'account_number' => $request->account_number,
             'ifsc_code' => strtoupper($request->ifsc_code),
-            'ip_address' => $request->ip()
         ];
 
         $response = Http::withHeaders([
