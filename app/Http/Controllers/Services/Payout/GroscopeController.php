@@ -49,19 +49,19 @@ class GroscopeController extends Controller
     {
         switch ($status) {
             case true:
-                if (in_array(strtolower($response->data->status), ['pending', 'success'])) {
+                if (in_array(strtolower($response['data'][0]['status']), ['pending', 'success'])) {
                     $data = [
                         'status' => 'success',
-                        'message' => $response->msg,
-                        'utr' => $response->data->utr_number,
-                        'transaction_status' => strtolower($response->data->status)
+                        'message' => $response['msg'],
+                        'utr' => $response['data'][0]['utr_number'],
+                        'transaction_status' => strtolower($response['data'][0]['status'])
                     ];
                 } else {
                     $data = [
                         'status' => 'failed',
-                        'message' => $response->msg,
-                        'utr' => $response->data->utr_number,
-                        'transaction_status' => strtolower($response->data->status)
+                        'message' => $response['msg'],
+                        'utr' => $response['data']['utr_number'],
+                        'transaction_status' => strtolower($response['data'][0]['status'])
                     ];
                 }
                 break;
@@ -69,12 +69,12 @@ class GroscopeController extends Controller
             default:
                 $data = [
                     'status' => 'error',
-                    'message' => $response->msg ?? "An error occurred while processing your request",
+                    'message' => $response['msg'] ?? "An error occurred while processing your request",
                 ];
                 break;
         }
 
-        return ['data' =>  $data, 'response' => $response->body()];
+        return ['data' =>  $data, 'response' => $response];
     }
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id)
@@ -111,7 +111,7 @@ class GroscopeController extends Controller
             'X-Client-IP' => '10.0.1.6',
             'X-Auth-Token' => config('services.groscope.token')
         ])->post(config('services.groscope.base_url') . '/check-status', ['transaction_id' => $decode['txn_id']]);
-
+        $response = json_decode($response->body(), true);
         return $this->updateResponse($response, $response['status']);
     }
 }
