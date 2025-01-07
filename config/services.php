@@ -84,6 +84,13 @@ return [
     'groscope' => [
         'base_url' => 'https://login.groscope.com/api',
         'token' => env('GROSCOPE_TOKEN')
+    ],
+
+    'instantpay' => [
+        'base_url' => 'https://api.instantpay.in',
+        'client_id' => env('INSTANTPAY_CLIENT_ID'),
+        'client_secret' => env('INSTANTPAY_CLIENT_SECRET'),
+        'client_id' => env('INSTANTPAY_CLIENT_ID')
     ]
 
 ];

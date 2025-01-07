@@ -11,19 +11,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommissionController extends Controller
 {
-    public function findCommission(User $user, int $operator_id, string $service): array
+    public function findCommission(User $user, int $operator_id): array
     {
         return [
             'plan_id' => $user->plan_id ?? 1,
             'role_id' => $user->getRoleId(),
             'operator_id' => $operator_id,
-            'service' => $service
         ];
     }
 
-    public function distributeCommission(User $user, int $operator_id, string $service, float $amount, string $reference_id, string $utility_number, bool $parent = false, bool $calculation = false): Model
+    public function distributeCommission(User $user, int $operator_id, float $amount, string $reference_id, string $utility_number, bool $parent = false, bool $calculation = false): Model
     {
-        $instance = BbpsCommission::where($this->findCommission($user, $operator_id, $service))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
+        $instance = BbpsCommission::where($this->findCommission($user, $operator_id))->where('from', '<', $amount)->where('to', '>=', $amount)->get()->first();
         if (empty($instance)) {
             return [
                 'debit_amount' => $fixed_charge = 0,
@@ -45,15 +44,15 @@ class CommissionController extends Controller
             ];
         }
         TransactionController::store($user, $reference_id, 'bbps_commission', "BBPS Commission for $utility_number", $credit, $fixed_charge);
-        $this->checkParent($user, $service, $amount, $reference_id, $utility_number);
+        // $this->checkParent($user, $amount, $reference_id, $utility_number);
         return $instance;
     }
 
-    public function checkParent(User $user, string $service, float $amount, string $reference_id, string $utility_number)
+    public function checkParent(User $user, float $amount, string $reference_id, string $utility_number)
     {
         if (!is_null($user->parent_id)) {
             $parent = User::find($user->parent_id);
-            $this->distributeCommission($parent, $service, $amount,  $reference_id, $utility_number, true);
+            $this->distributeCommission($parent, $amount, $reference_id, $utility_number, true);
         }
     }
 }
