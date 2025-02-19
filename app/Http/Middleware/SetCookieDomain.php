@@ -19,7 +19,7 @@ class SetCookieDomain
     {
         $response = $next($request);
 
-        $host = $request->getHost();
+        $host = $request->headers->get('origin');
         Log::info('Current host: ' . $host);
 
         // Define your domain rules
