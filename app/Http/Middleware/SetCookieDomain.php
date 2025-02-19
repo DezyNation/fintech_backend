@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetCookieDomain
@@ -19,6 +20,7 @@ class SetCookieDomain
         $response = $next($request);
 
         $host = $request->getHost();
+        Log::info('Current host: ' . $host);
 
         // Define your domain rules
         if (Str::endsWith($host, 'dainypay.in')) {
