@@ -51,7 +51,7 @@ class AuthenticatedSessionController extends Controller
         }
         $user = auth()->user();
         $user['roles'] = auth()->user()->getRoleNames()->first();
-        $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', env('COOKIE_DOMAIN'), true, true);
+        $cookie = cookie("token", $token, auth()->factory()->getTTL() * 60, '/', config('session.domain'), true, true);
         $this->loginRecord($request);
         return response()->json($this->respondWithToken(['user' => $user]))->withCookie($cookie);
     }
@@ -105,7 +105,7 @@ class AuthenticatedSessionController extends Controller
         if (Auth::check()) {
             auth()->logout();
         }
-        $cookie = cookie("token", null, -1, '/', env('COOKIE_DOMAIN'), true, true);
+        $cookie = cookie("token", null, -1, '/', config('session.domain'), true, true);
         return response()->json(['message' => 'log out successfully.'])->withCookie($cookie);
     }
 
