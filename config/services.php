@@ -90,7 +90,11 @@ return [
         'base_url' => 'https://api.instantpay.in',
         'client_id' => env('INSTANTPAY_CLIENT_ID'),
         'client_secret' => env('INSTANTPAY_CLIENT_SECRET'),
-        'client_id' => env('INSTANTPAY_CLIENT_ID')
-    ]
+    ],
 
+    'payninja' => [
+        'base_url' => 'https://api-staging.payninja.in',
+        'client_id' => env('PAYNINJA_CLIENT_ID'),
+        'client_secret' => env('PAYNINJA_CLIENT_SECRET')
+    ]
 ];

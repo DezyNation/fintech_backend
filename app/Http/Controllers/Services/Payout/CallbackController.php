@@ -125,4 +125,39 @@ class CallbackController extends Controller
 
         return $response;
     }
+
+    public function payninja(Request $request)
+    {
+        Log::info(['callback-gro' => $request->all()]);
+
+        $response = DB::transaction(function () use ($request) {
+
+            $transaction = Transaction::where('reference_id', $request['data']['order_id'])->firstOrFail();
+            $lock = $this->lockRecords($transaction->user_id);
+
+            if (!$lock->get()) {
+                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+            }
+            $data = PayninjaController::encryptDecrypt('decrypt', $request['data'], config('services.payninja.client_secret'), $request['iv']);
+
+            if (in_array(strtolower($data['data']['status']), ["failed", "reversed"])) {
+                if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
+                    return response("Success", 200);
+                }
+                TransactionController::reverseTransaction($transaction->reference_id);
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'failed',
+                    'utr' => $data['data']['utr'] ?? null
+                ]);
+            } elseif (strtolower($data['data']['status']) == "success") {
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'success',
+                    'utr' => $data['data']['utr'] ?? null
+                ]);
+            }
+
+            $lock->release();
+            return response("Success", 200);
+        }, 2);
+    }
 }

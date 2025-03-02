@@ -152,4 +152,5 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::post('eko', 'eko');
     Route::post('safexpay', 'safexpay');
     Route::post('groscope', 'groscope');
+    Route::post('payninja', 'payninja');
 });
