@@ -43,7 +43,7 @@ class PayninjaController extends Controller
     {
         $data = [
             'ben_name' => $request->beneficiary_name,
-            'ben_phone_number' => $request->user()->phone_number ?? 9971412064,
+            'ben_phone_number' => $request->user()->phone_number,
             'ben_account_number' => $request->account_number,
             'ben_ifsc' => strtoupper($request->ifsc_code),
             'ben_bank_name' => $request->bank_name,
