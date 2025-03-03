@@ -16,7 +16,7 @@ class PayninjaController extends Controller
             $data = [
                 'status' => 'success',
                 'message' => $response['message'],
-                'utr' => $response['response']['utr'],
+                'utr' => $response['ressponse']['utr'],
                 'transaction_status' => $response['data']['status']
             ];
         } else {
@@ -63,7 +63,7 @@ class PayninjaController extends Controller
             abort($response->status(), "Gateway Failure!");
         }
 
-        return $this->processResponse($response, $response['status']);
+        return $this->processResponse($response->body(), $response['status']);
     }
 
     public function updateTransaction(string $reference_id)
