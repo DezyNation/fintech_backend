@@ -95,6 +95,7 @@ return [
     'payninja' => [
         'base_url' => 'https://api-staging.payninja.in',
         'client_id' => env('PAYNINJA_CLIENT_ID'),
-        'client_secret' => env('PAYNINJA_CLIENT_SECRET')
+        'client_secret' => env('PAYNINJA_CLIENT_SECRET'),
+        'decrypt_secret' => env('PAYNINJA_DECRYPT_KEY')
     ]
 ];

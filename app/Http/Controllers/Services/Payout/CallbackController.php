@@ -128,17 +128,17 @@ class CallbackController extends Controller
 
     public function payninja(Request $request)
     {
-        Log::info(['callback-gro' => $request->all()]);
+        Log::info(['callback-pnja' => $request->all()]);
 
-        $response = DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
 
-            $transaction = Transaction::where('reference_id', $request['data']['order_id'])->firstOrFail();
+            $data = PayninjaController::encryptDecrypt('decrypt', $request['data'], config('services.payninja.decrypt_secret'), $request['iv']);
+            $transaction = Transaction::where('reference_id', $data['data']['merchant_reference_id'])->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
 
             if (!$lock->get()) {
                 throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
             }
-            $data = PayninjaController::encryptDecrypt('decrypt', $request['data'], config('services.payninja.client_secret'), $request['iv']);
 
             if (in_array(strtolower($data['data']['status']), ["failed", "reversed"])) {
                 if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
@@ -159,5 +159,7 @@ class CallbackController extends Controller
             $lock->release();
             return response("Success", 200);
         }, 2);
+
+        return true;
     }
 }
