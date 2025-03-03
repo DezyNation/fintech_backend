@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\Log;
 
 class PayninjaController extends Controller
 {
-    public function processResponse($data, string $status)
+    public function processResponse($response, string $status)
     {
         switch ($status) {
             case 'success':
                 $data = [
                     'status' => 'success',
-                    'message' => $data['message'],
-                    'utr' => $data['data']['utr'],
-                    'transaction_status' => $data['data']['status']
+                    'message' => $response['message'],
+                    'utr' => $response['response']['utr'],
+                    'transaction_status' => $response['data']['status']
                 ];
                 break;
 
@@ -30,7 +30,7 @@ class PayninjaController extends Controller
                 break;
         }
 
-        return $data;
+        return ['data' =>  $data, 'response' => $response->body()];
     }
 
     public static function encryptDecrypt($action, $string, $secret, $iv)
@@ -61,7 +61,7 @@ class PayninjaController extends Controller
         unset($data);
 
         $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['encdata' => $encrypted_data, 'iv' => $iv, 'key' => config('services.payninja.client_id')]);
-        
+
         if ($response->failed()) {
             Log::info(['body' => $response->body()]);
             $this->releaseLock($request->user()->id);
