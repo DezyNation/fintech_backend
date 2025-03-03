@@ -15,14 +15,14 @@ class PayninjaController extends Controller
         if ($status == 'success') {
             $data = [
                 'status' => 'success',
-                'message' => $response['message'],
-                'utr' => $response['response']['utr'],
-                'transaction_status' => $response['data']['status']
+                'message' => $response->message,
+                'utr' => $response->response->utr,
+                'transaction_status' => $response->data->status
             ];
         } else {
             $data = [
                 'status' => 'error',
-                'message' => $response['message'] ?? "An error occurred while processing your request",
+                'message' => $response->message ?? "An error occurred while processing your request",
             ];
         }
 
