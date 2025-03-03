@@ -61,8 +61,9 @@ class PayninjaController extends Controller
         unset($data);
 
         $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['encdata' => $encrypted_data, 'iv' => $iv, 'key' => config('services.payninja.client_id')]);
-        Log::info(['body' => $response->body()]);
+        
         if ($response->failed()) {
+            Log::info(['body' => $response->body()]);
             $this->releaseLock($request->user()->id);
             abort($response->status(), "Gateway Failure!");
         }
