@@ -12,22 +12,18 @@ class PayninjaController extends Controller
 {
     public function processResponse($response, string $status)
     {
-        switch ($status) {
-            case 'success':
-                $data = [
-                    'status' => 'success',
-                    'message' => $response['message'],
-                    'utr' => $response['response']['utr'],
-                    'transaction_status' => $response['data']['status']
-                ];
-                break;
-
-            default:
-                $data = [
-                    'status' => 'error',
-                    'message' => $response['message'] ?? "An error occurred while processing your request",
-                ];
-                break;
+        if ($status == 'success') {
+            $data = [
+                'status' => 'success',
+                'message' => $response['message'],
+                'utr' => $response['response']['utr'],
+                'transaction_status' => $response['data']['status']
+            ];
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => $response['message'] ?? "An error occurred while processing your request",
+            ];
         }
 
         return ['data' =>  $data, 'response' => $response->body()];
