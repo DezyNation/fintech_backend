@@ -63,7 +63,7 @@ class PayninjaController extends Controller
             abort($response->status(), "Gateway Failure!");
         }
 
-        return $this->processResponse($response->body(), $response['status']);
+        return $this->processResponse($response, $response['status']);
     }
 
     public function updateTransaction(string $reference_id)
