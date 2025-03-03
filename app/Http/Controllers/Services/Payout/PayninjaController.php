@@ -16,7 +16,7 @@ class PayninjaController extends Controller
             $data = [
                 'status' => 'success',
                 'message' => $response['message'],
-                'utr' => $response['response']['utr'],
+                'utr' => $response['data']['utr'],
                 'transaction_status' => $response['data']['status']
             ];
         } else {
