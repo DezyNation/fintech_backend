@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class PayninjaController extends Controller
 {
-    public function processResponse($response, string $status)
+    public function processResponse($response, string $status) : array
     {
         if ($status == 'success') {
             $data = [
