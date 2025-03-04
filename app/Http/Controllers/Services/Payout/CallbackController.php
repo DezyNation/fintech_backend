@@ -133,26 +133,26 @@ class CallbackController extends Controller
         DB::transaction(function () use ($request) {
 
             $data = PayninjaController::encryptDecrypt('decrypt', $request['data'], config('services.payninja.decrypt_secret'), $request['iv']);
-            $transaction = Transaction::where('reference_id', $data['data']['merchant_reference_id'])->firstOrFail();
+            $transaction = Transaction::where('reference_id', $data['merchant_reference_id'])->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
 
             if (!$lock->get()) {
                 throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
             }
 
-            if (in_array(strtolower($data['data']['status']), ["failed", "reversed"])) {
+            if (in_array(strtolower($data['status']), ["failed", "reversed"])) {
                 if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
                     return response("Success", 200);
                 }
                 TransactionController::reverseTransaction($transaction->reference_id);
                 Payout::where('reference_id', $transaction->reference_id)->update([
                     'status' => 'failed',
-                    'utr' => $data['data']['utr'] ?? null
+                    'utr' => $data['utr'] ?? null
                 ]);
-            } elseif (strtolower($data['data']['status']) == "success") {
+            } elseif (strtolower($data['status']) == "success") {
                 Payout::where('reference_id', $transaction->reference_id)->update([
                     'status' => 'success',
-                    'utr' => $data['data']['utr'] ?? null
+                    'utr' => $data['utr'] ?? null
                 ]);
             }
 

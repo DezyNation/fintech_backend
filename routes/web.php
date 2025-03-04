@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return bin2hex(random_bytes(8));
     return [config('app.name') => 'Dezynation'];
 });
 
