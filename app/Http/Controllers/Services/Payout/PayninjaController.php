@@ -54,12 +54,12 @@ class PayninjaController extends Controller
         $data['signature'] = $signature;
         $iv = bin2hex(random_bytes(8));
         $encrypted_data = self::encryptDecrypt('encrypt', json_encode($data), config('services.payninja.client_secret'), $iv);
+        Log::info(['request_data' => $data, 'encrypted_data' => $encrypted_data]);
         unset($data);
-
         $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['encdata' => $encrypted_data, 'iv' => $iv, 'key' => config('services.payninja.client_id')]);
 
+        Log::info(['payninja_response' => $response->body()]);
         if ($response->failed()) {
-            Log::info(['err_payninja' => $response->body()]);
             $this->releaseLock($request->user()->id);
             abort($response->status(), "Gateway Failure!");
         }
