@@ -134,7 +134,6 @@ class CallbackController extends Controller
 
             $data = json_decode(PayninjaController::encryptDecrypt('decrypt', $request['data'], config('services.payninja.decrypt_secret'), $request['iv']));
             Log::info(['dec_data' => $data]);
-            return $data;
             $transaction = Transaction::where('reference_id', $data->merchant_reference_id)->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
 
