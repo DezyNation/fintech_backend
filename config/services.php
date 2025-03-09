@@ -100,7 +100,7 @@ return [
     ],
 
     'cashfree' => [
-        'base_url' => 'https://sandbox.cashfree.com',
+        'base_url' => 'https://api.cashfree.com',
         'client_id' => env('CASHFREE_CLIENT_ID'),
         'client_secret' => env('CASHFREE_CLIENT_SECRET'),
     ]
