@@ -167,6 +167,8 @@ class CallbackController extends Controller
     {
         Log::info(['callback-cf' => $request->all()]);
 
+        return response("Success", 200);
+
         $response = DB::transaction(function () use ($request) {
             $transaction = Transaction::where('reference_id', $request['data']['transfer_id'])->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
