@@ -167,35 +167,38 @@ class CallbackController extends Controller
     {
         Log::info(['callback-cf' => $request->all()]);
 
-        $response = DB::transaction(function () use ($request) {
-            $transaction = Transaction::where('reference_id', $request['data']['transfer_id'])->firstOrFail();
-            $lock = $this->lockRecords($transaction->user_id);
+        if ($request->has('type') && in_array(strtolower($request->type), ['transfer_rejected', 'transfer_reversed', 'transfer_failed', 'transfer_acknowledged', 'transfer_success', 'transfer_approved'])) {
+            $response = DB::transaction(function () use ($request) {
+                $transaction = Transaction::where('reference_id', $request['data']['transfer_id'])->firstOrFail();
+                $lock = $this->lockRecords($transaction->user_id);
 
-            if (!$lock->get()) {
-                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
-            }
-
-            if (in_array(strtolower($request['type']), ['transfer_rejected', 'transfer_reversed', 'transfer_failed'])) {
-                if ($transaction->status == 'failed' || $transaction->status == 'success') {
-                    return response("Success", 200);
+                if (!$lock->get()) {
+                    throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
                 }
-                TransactionController::reverseTransaction($transaction->reference_id);
-                Payout::where('reference_id', $transaction->reference_id)->update([
-                    'status' => 'failed',
-                    'utr' => $request['data']['transfer_utr'] ?? null
-                ]);
-            } elseif (in_array(strtolower($request['type']), ['transfer_acknowledged', 'transfer_success', 'transfer_approved'])) {
-                Payout::where('reference_id', $transaction->reference_id)->update([
-                    'status' => 'success',
-                    'utr' => $request['data']['transfer_utr'] ?? null
-                ]);
-            }
+
+                if (in_array(strtolower($request['type']), ['transfer_rejected', 'transfer_reversed', 'transfer_failed'])) {
+                    if ($transaction->status == 'failed' || $transaction->status == 'success') {
+                        return response("Success", 200);
+                    }
+                    TransactionController::reverseTransaction($transaction->reference_id);
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'failed',
+                        'utr' => $request['data']['transfer_utr'] ?? null
+                    ]);
+                } elseif (in_array(strtolower($request['type']), ['transfer_acknowledged', 'transfer_success', 'transfer_approved'])) {
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'success',
+                        'utr' => $request['data']['transfer_utr'] ?? null
+                    ]);
+                }
 
 
-            $lock->release();
+                $lock->release();
+                return response("Success", 200);
+            }, 2);
+            return $response;
+        } else {
             return response("Success", 200);
-        }, 2);
-
-        return $response;
+        }
     }
 }
