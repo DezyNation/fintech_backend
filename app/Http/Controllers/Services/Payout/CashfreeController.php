@@ -58,7 +58,6 @@ class CashfreeController extends Controller
     public function authorizeRequest()
     {
         $response = Http::withHeaders($this->autheticate())->post('https://payout-gamma.cashfree.com/payout/v1/authorize');
-        Log::info(['token' => $response->body()]);
         return $response['data']['token'];
     }
 
@@ -83,7 +82,7 @@ class CashfreeController extends Controller
     public function createBeneficiary(PayoutRequest $request)
     {
         $data = [
-            'beneficiary_id' => $request->beneficiary_name . time(),
+            'beneficiary_id' => str_replace(' ', '', $request->beneficiary_name . time()),
             'beneficiary_name' => $request->beneficiary_name,
             'beneficiary_instrument_details' => [
                 'bank_account_number' => $request->account_number,
