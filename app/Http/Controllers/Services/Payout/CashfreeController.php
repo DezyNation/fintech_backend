@@ -58,7 +58,9 @@ class CashfreeController extends Controller
     public function authorizeRequest()
     {
         $response = Http::withHeaders($this->autheticate())->post('https://payout-api.cashfree.com/payout/v1/authorize');
-        Log::info(['token' => $response->body()]);
+        if ($response->failed()) {
+            abort($response->status(), $response['message']);
+        }
         return $response['data']['token'];
     }
 
