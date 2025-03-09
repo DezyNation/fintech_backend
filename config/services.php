@@ -97,5 +97,11 @@ return [
         'client_id' => env('PAYNINJA_CLIENT_ID'),
         'client_secret' => env('PAYNINJA_CLIENT_SECRET'),
         'decrypt_secret' => env('PAYNINJA_DECRYPT_KEY')
+    ],
+
+    'cashfree' => [
+        'base_url' => 'https://sandbox.cashfree.com',
+        'client_id' => env('CASHFREE_CLIENT_ID'),
+        'client_secret' => env('CASHFREE_CLIENT_SECRET'),
     ]
 ];
