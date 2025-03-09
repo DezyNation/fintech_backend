@@ -186,7 +186,7 @@ class CallbackController extends Controller
                     'status' => 'failed',
                     'utr' => $request['data']['transfer_utr'] ?? null
                 ]);
-            } elseif (in_array(strtolower($request['type']), ['transfer_acknowledged', 'transfer_success'])) {
+            } elseif (in_array(strtolower($request['type']), ['transfer_acknowledged', 'transfer_success', 'transfer_approved'])) {
                 Payout::where('reference_id', $transaction->reference_id)->update([
                     'status' => 'success',
                     'utr' => $request['data']['transfer_utr'] ?? null
