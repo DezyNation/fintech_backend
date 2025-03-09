@@ -111,6 +111,7 @@ class CashfreeController extends Controller
         $data = [
             'transfer_id' => $refrence_id,
             'transfer_amount' => $request->amount,
+            'transfer_mode' => strtolower($request->mode),
             'beneficiary_details' => [
                 'beneficiary_id' => $this->getBenificiary($request)
             ]
