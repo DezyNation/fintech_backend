@@ -70,6 +70,7 @@ class PayninjaController extends Controller
     public function updateTransaction(string $reference_id)
     {
         $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['merchant_reference_id' => $reference_id]);
+        Log::info(['update' => $response->body()]);
         return $this->processResponse($response, $response['status']);
     }
 }
