@@ -69,8 +69,14 @@ class PayninjaController extends Controller
 
     public function updateTransaction(string $reference_id)
     {
-        $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['merchant_reference_id' => $reference_id]);
-        Log::info(['update' => $response->body()]);
+        $iv = bin2hex(random_bytes(8));
+        $data = ['merchant_reference_id' => $reference_id];
+        $encrypted_data = self::encryptDecrypt('encrypt', json_encode($data), config('services.payninja.client_secret'), $iv);
+        $response = Http::asJson()->withHeader('api-Key', config('services.payninja.client_id'))->post(config('services.payninja.base_url') . '/api/v1/payout/fundTransfer', ['encdata' => $encrypted_data, 'iv' => $iv, 'key' => config('services.payninja.client_id')]);
+        if ($response->failed()) {
+            Log::info(['err_payninja' => $response->body()]);
+            abort($response->status(), "Gateway Failure!");
+        }
         return $this->processResponse($response, $response['status']);
     }
 }
