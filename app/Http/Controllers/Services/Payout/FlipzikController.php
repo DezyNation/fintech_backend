@@ -49,7 +49,7 @@ class FlipzikController extends Controller
         $match = ['neft' => 1, 'imps' => 3, 'rtgs' => 4];
         $data = [
             'address' => 'VIJAYANAGAR GHAZIABAD',
-            'payment_type' => $match[strtolower($request->method)],
+            'payment_type' => $match[strtolower($request->mode)],
             'amount' => $request->amount * 100,
             'name' => $request->beneficiary_name,
             'email' => $request->user()->email,
