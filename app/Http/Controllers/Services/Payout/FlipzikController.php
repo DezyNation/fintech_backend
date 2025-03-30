@@ -26,7 +26,7 @@ class FlipzikController extends Controller
 
     public function processResponse($response)
     {
-        if (strtolower($response['status']) == 'success') {
+        if ($response['success'] == true) {
             $data = [
                 'status' => 'success',
                 'message' => $response['data']['acquirer_message'] ?? 'Transaction has been initiated.',
