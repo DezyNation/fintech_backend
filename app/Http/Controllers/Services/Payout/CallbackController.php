@@ -201,4 +201,43 @@ class CallbackController extends Controller
             return response("Success", 200);
         }
     }
+
+    public function flipzik(Request $request)
+    {
+        Log::info(['callback-fz' => $request->all()]);
+        $response = DB::transaction(function () use ($request) {
+            $controller = new FlipzikController;
+            if ($controller->verifySignature($request) == true) {
+                $transaction = Transaction::where('reference_id', $request['data']['object']['merchant_order_id'])->firstOrFail();
+                $lock = $this->lockRecords($transaction->user_id);
+
+                if (!$lock->get()) {
+                    throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+                }
+
+                if (strtolower($request['data']['object']['status']) == 'success' && strtolower($request['data']['object']['master_status']) == 'success') {
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'success',
+                        'utr' => $request['data']['object']['bank_reference_id'] ?? null
+                    ]);
+                } elseif (strtolower($request['data']['object']['status']) == 'failed' && strtolower($request['data']['object']['master_status']) == 'failed') {
+                    if ($transaction->status == 'failed' || $transaction->status == 'success') {
+                        return response("Success", 200);
+                    }
+                    TransactionController::reverseTransaction($transaction->reference_id);
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'failed',
+                        'utr' => $request['data']['object']['bank_reference_id'] ?? null
+                    ]);
+                }
+
+                $lock->release();
+                return response("Success", 200);
+            } else {
+                abort(400, "Invalid signature");
+            }
+        }, 2);
+
+        return $response;
+    }
 }

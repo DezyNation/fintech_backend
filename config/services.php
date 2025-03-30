@@ -103,5 +103,11 @@ return [
         'base_url' => 'https://api.cashfree.com',
         'client_id' => env('CASHFREE_CLIENT_ID'),
         'client_secret' => env('CASHFREE_CLIENT_SECRET'),
+    ],
+
+    'flipzik' => [
+        'base_url' => 'https://api.flipzik.com/api/v1',
+        'client_id' => env('FLIPZIK_ACCESS_KEY'),
+        'client_secret' => env('FLIPZIK_SECRET_KEY'),
     ]
 ];
