@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000'), 'https://*.zeropay.info', 'http://localhost:3000', 'https://*.finoma.in'],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000'), 'https://*.zeropay.info', 'http://localhost:3000', 'https://*.finoma.in', 'https://*.dainypay.in'],
 
     'allowed_origins_patterns' => [],
 
