@@ -26,6 +26,26 @@ class FlipzikController extends Controller
 
     public function processResponse($response)
     {
+        if (strtolower($response['status']) == 'success') {
+            $data = [
+                'status' => 'success',
+                'message' => $response['data']['acquirer_message'] ?? 'Transaction has been initiated.',
+                'utr' => $response['data']['bank_reference_id'] ?? null,
+                'transaction_status' => strtolower($response['data']['status'])
+            ];
+        } else {
+            $data = [
+                'status' => 'error',
+                'message' => "An error occurred while processing your request"
+            ];
+            Log::info(['msg_fzik' => $response->body()]);
+        }
+
+        return ['data' =>  $data, 'response' => $response->body()];
+    }
+
+    public function processUpdateResponse($response)
+    {
         if ($response['success'] == true) {
             $data = [
                 'status' => 'success',
@@ -69,6 +89,19 @@ class FlipzikController extends Controller
         }
 
         return $this->processResponse($response);
+    }
+
+    public function updateTransaction(string $reference_id)
+    {
+        $data = [];
+        $response = Http::withBasicAuth(config('services.flipzik.client_id'), config('services.flipzik.client_id'))
+            ->withHeaders($this->headers(json_encode($data), "/api/v1/payout/$reference_id", '', 'POST'))->asJson()
+            ->get(config('services.flipzik.base_url') . "/payout/$reference_id");
+
+        if ($response->failed()) {
+            Log::info(['err_fzik' => $response->body()]);
+            abort($response->status(), "Gateway Failure!");
+        }
     }
 
     public function verifySignature(Request $request)

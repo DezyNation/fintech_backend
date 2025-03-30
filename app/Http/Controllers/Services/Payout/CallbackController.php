@@ -234,7 +234,7 @@ class CallbackController extends Controller
                 $lock->release();
                 return response("Success", 200);
             } else {
-                abort(400, "Invalid signature");
+                return response("Success", 200);
             }
         }, 2);
 
