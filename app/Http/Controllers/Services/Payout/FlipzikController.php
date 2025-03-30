@@ -46,17 +46,24 @@ class FlipzikController extends Controller
 
     public function processUpdateResponse($response)
     {
-        if ($response['success'] == true) {
+        if (strtolower($response['master_status']) == 'success' && strtolower($response['status']) == 'success') {
             $data = [
                 'status' => 'success',
-                'message' => $response['data']['acquirer_message'] ?? 'Transaction has been initiated.',
-                'utr' => $response['data']['bank_reference_id'] ?? null,
-                'transaction_status' => strtolower($response['data']['status'])
+                'message' => $response['acquirer_message'] ?? 'Transaction has been initiated.',
+                'utr' => $response['bank_reference_id'] ?? null,
+                'transaction_status' => strtolower($response['status'])
+            ];
+        } elseif (strtolower($response['master_status']) == 'failed' && strtolower($response['status']) == 'failed') {
+            $data = [
+                'status' => 'success',
+                'message' => $response['acquirer_message'] ?? 'Transaction has been initiated.',
+                'utr' => $response['bank_reference_id'] ?? null,
+                'transaction_status' => strtolower($response['status'])
             ];
         } else {
             $data = [
                 'status' => 'error',
-                'message' => "An error occurred while processing your request"
+                'message' => $response['acquirer_message'] ?? 'An error has been occured',
             ];
             Log::info(['msg_fzik' => $response->body()]);
         }
@@ -102,6 +109,8 @@ class FlipzikController extends Controller
             Log::info(['err_fzik' => $response->body()]);
             abort($response->status(), "Gateway Failure!");
         }
+
+        return $this->processUpdateResponse($response);
     }
 
     public function verifySignature(Request $request)
