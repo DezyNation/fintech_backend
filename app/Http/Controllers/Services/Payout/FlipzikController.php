@@ -46,9 +46,10 @@ class FlipzikController extends Controller
 
     public function initiateTransaction(PayoutRequest $request, string $reference_id)
     {
+        $match = ['neft' => 1, 'imps' => 3, 'rtgs' => 4];
         $data = [
             'address' => 'VIJAYANAGAR GHAZIABAD',
-            'payment_type' => 3,
+            'payment_type' => $match[strtolower($request->method)],
             'amount' => $request->amount * 100,
             'name' => $request->beneficiary_name,
             'email' => $request->user()->email,
@@ -72,7 +73,7 @@ class FlipzikController extends Controller
 
     public function verifySignature(Request $request)
     {
-        $signingSecret = config('services.flipzik.client_secret');
+        $signingSecret = config('services.flipzik.endpoint_secret');
         $signatureHeader = $request->header('Signature');
         if (!$signatureHeader) return false;
 
