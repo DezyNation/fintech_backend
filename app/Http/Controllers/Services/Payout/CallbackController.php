@@ -204,8 +204,8 @@ class CallbackController extends Controller
 
     public function flipzik(Request $request)
     {
-        return response("Success", 200);
         Log::info(['callback-fz' => $request->all()]);
+        return response("Success", 200);
         $response = DB::transaction(function () use ($request) {
                 $transaction = Transaction::where('reference_id', $request['data']['object']['merchant_order_id'])->firstOrFail();
                 $lock = $this->lockRecords($transaction->user_id);
