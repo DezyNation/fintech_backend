@@ -51,7 +51,7 @@ class FlowController extends Controller
             $lock->release();
         }
 
-        $reference_id = uniqid('PAY-');
+        $reference_id = uniqid('PAY');
 
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
