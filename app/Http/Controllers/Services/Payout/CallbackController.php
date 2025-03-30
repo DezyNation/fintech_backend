@@ -206,13 +206,11 @@ class CallbackController extends Controller
     {
         Log::info(['callback-fz' => $request->all()]);
         $response = DB::transaction(function () use ($request) {
-            $controller = new FlipzikController;
-            if ($controller->verifySignature($request) == true) {
                 $transaction = Transaction::where('reference_id', $request['data']['object']['merchant_order_id'])->firstOrFail();
                 $lock = $this->lockRecords($transaction->user_id);
 
                 if (!$lock->get()) {
-                    throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+                    throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 200));
                 }
 
                 if (strtolower($request['data']['object']['status']) == 'success' && strtolower($request['data']['object']['master_status']) == 'success') {
@@ -233,9 +231,6 @@ class CallbackController extends Controller
 
                 $lock->release();
                 return response("Success", 200);
-            } else {
-                return response("Success", 200);
-            }
         }, 2);
 
         return $response;
