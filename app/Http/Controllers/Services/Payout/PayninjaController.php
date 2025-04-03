@@ -60,6 +60,7 @@ class PayninjaController extends Controller
 
         if ($response->failed()) {
             Log::info(['err_payninja' => $response->body()]);
+            Log::info(['err_pnj_req' => $request->all()]);
             $this->releaseLock($request->user()->id);
             abort($response->status(), "Gateway Failure!");
         }
