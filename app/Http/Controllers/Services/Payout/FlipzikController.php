@@ -90,7 +90,8 @@ class FlipzikController extends Controller
             ->withHeaders($this->headers(json_encode($data), '/api/v1/payout/process', '', 'POST'))->asJson()
             ->post(config('services.flipzik.base_url') . '/payout/process', $data);
 
-        if ($response->failed()) {
+        if ($response->failed()) {\
+            Log::info(['err_fzik_req' => $request->all()]);
             Log::info(['err_fzik' => $response->body()]);
             abort($response->status(), "Gateway Failure!");
         }
