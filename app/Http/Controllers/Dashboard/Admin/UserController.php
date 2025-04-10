@@ -97,7 +97,6 @@ class UserController extends Controller
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
             'plan_id' => $request->plan_id ?? $user->plan_id,
             'capped_balance' => $request->capped_balance ?? $user->capped_balance,
-            'active' => $request->active ?? $user->active,
             'date_of_birth' => $request->date_of_birth ?? $user->date_of_birth,
             'pan_number' => $request->pan_number ?? $user->getRawOriginal('pan_number')
         ]);
