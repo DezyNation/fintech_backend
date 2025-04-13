@@ -73,6 +73,7 @@ class FlowController extends Controller
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
         if ($transaction_request['data']['status'] != 'success') {
+            TransactionController::reverseTransaction($payout->reference_id);
             $payout->delete();
             Transaction::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
             $lock->release();
