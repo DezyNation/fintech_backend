@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Services\Payout;
 
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
+use App\Models\Payout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -91,6 +93,8 @@ class FlipzikController extends Controller
             ->post(config('services.flipzik.base_url') . '/payout/process', $data);
 
         if ($response->failed()) {
+            TransactionController::reverseTransaction($reference_id);
+            Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
             Log::info(['err_fzik_req' => $request->all()]);
             Log::info(['err_fzik' => $response->body()]);
             abort($response->status(), "Gateway Failure!");
