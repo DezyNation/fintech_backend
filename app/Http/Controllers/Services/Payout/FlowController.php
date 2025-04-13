@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Requests\PayoutRequest;
 use App\Http\Resources\GeneralResource;
 use App\Models\Service;
+use App\Models\Transaction;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -53,13 +54,7 @@ class FlowController extends Controller
 
         $reference_id = uniqid('PAY');
 
-        $transaction_request = $instance->initiateTransaction($request, $reference_id);
-
-        if ($transaction_request['data']['status'] != 'success') {
-            $lock->release();
-            abort(400, $transaction_request['data']['message']);
-        }
-
+        TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated for {$request->account_number}", 0, $request->amount);
         $payout = Payout::create([
             'user_id' => $request->user()->id,
             'provider' => $service->provider,
@@ -72,10 +67,17 @@ class FlowController extends Controller
             'status' => 'pending',
             'remarks' => $request->remarks,
         ]);
-
-        TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated for {$request->account_number}", 0, $request->amount);
         $commission_class = new CommissionController;
         $commission_class->distributeCommission($request->user(), $request->amount, $reference_id, false, false, $request->account_number);
+
+        $transaction_request = $instance->initiateTransaction($request, $reference_id);
+
+        if ($transaction_request['data']['status'] != 'success') {
+            $payout->delete();
+            Transaction::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
+            $lock->release();
+            abort(400, $transaction_request['data']['message']);
+        }
 
         if (in_array($transaction_request['data']['transaction_status'], ['hold', 'initiated', 'processing', 'pending'])) {
             $status = "pending";
