@@ -84,6 +84,11 @@ class RunpaisaController extends Controller
         $response = Http::withHeader('token', $token)->asJson()
             ->post(config('services.runpaisa.base_url') . '/status', ['order_id' => $reference_id]);
 
+        if ($response->failed()) {
+            Log::info(['err_fzik' => $response->body()]);
+            abort($response->status(), $response['message'] ?? "Gateway Failure!");
+        }
+
         $data = [
             'status' => 'success',
             'transaction_status' => strtolower($response['status']),
@@ -91,10 +96,6 @@ class RunpaisaController extends Controller
             'message' => $response['message']
         ];
 
-        if ($response->failed()) {
-            Log::info(['err_fzik' => $response->body()]);
-            abort($response->status(), $response['message'] ?? "Gateway Failure!");
-        }
 
         return ['data' => $data, 'response' => $response->body()];
     }
