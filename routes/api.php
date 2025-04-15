@@ -155,4 +155,5 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::post('payninja', 'payninja');
     Route::post('cashfree', 'cashfree');
     Route::post('flipzik', 'flipzik');
+    Route::post('runpaisa', 'runpaisa');
 });
