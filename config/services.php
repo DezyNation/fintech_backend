@@ -110,5 +110,11 @@ return [
         'client_id' => env('FLIPZIK_ACCESS_KEY'),
         'client_secret' => env('FLIPZIK_SECRET_KEY'),
         'endpoint_secret' => env('ENDPOINT_SECRET')
+    ],
+
+    'runpaisa' => [
+        'base_url' => 'https://runpaisa.com/api/v1',
+        'client_id' => env('RUNPAISA_CLIENT_ID'),
+        'client_secret' => env('RUNPAISA_CLIENT_SECRET'),
     ]
 ];
