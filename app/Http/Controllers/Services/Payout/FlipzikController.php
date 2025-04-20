@@ -84,7 +84,7 @@ class FlipzikController extends Controller
             'email' => $request->user()->email,
             'mobile_number' => $request->user()->phone_number,
             'account_number' => $request->account_number,
-            'ifsc_code' => $request->ifsc_code,
+            'ifsc_code' => strtoupper($request->ifsc_code),
             'merchant_order_id' => $reference_id
         ];
 

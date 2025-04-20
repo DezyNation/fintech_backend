@@ -16,11 +16,11 @@ class RunpaisaController extends Controller
 {
     public function errorLog(Response $response, Request $request, string $reference_id)
     {
-        if ($response->failed()) {
-            TransactionController::reverseTransaction($reference_id);
-            Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
-            Log::info(['err_fzik' => $response->body()]);
-            abort($response->status(), "Gateway Failure!");
+        if (strtolower($response['status']) == 'failed') {
+            // TransactionController::reverseTransaction($reference_id);
+            // Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
+            Log::info(['err_rnpaisa' => $response->body()]);
+            abort($response->status(), $response['message'] ?? "Gateway Failure!");
         }
     }
 
@@ -29,11 +29,16 @@ class RunpaisaController extends Controller
         $response = Http::withHeaders(['client_id' => config('services.runpaisa.client_id'), 'client_secret' => config('services.runpaisa.client_secret')])
             ->asJson()
             ->post(config('services.runpaisa.base_url') . '/token');
+        if (strtolower($response['status']) == 'failed') {
+            Log::info(['err_rnpaisa' => $response->body()]);
+            abort($response->status(), $response['message'] ?? "Gateway Failure!");
+        }
+        Log::info(['err_rnpsa' => $response->body()]);
         Cache::put('runpaisa_token', $response['data']['token'], 600);
         return $response['data']['token'];
     }
 
-    public function  initiateTransaction(PayoutRequest $request, string $reference_id)
+    public function  initiateTransaction(PayoutRequest $request, string $reference_id = 'test123456789')
     {
         if (!Cache::has('runpaisa_token')) {
             $this->token();
@@ -46,13 +51,18 @@ class RunpaisaController extends Controller
             'amount' => $request->amount,
             'order_id' => $reference_id,
             'beneficiary_name' => $request->beneficiary_name,
-            'payment_mode' => strtoupper($request->payment_mode)
+            'payment_mode' => strtoupper($request->mode)
         ];
 
         $response = Http::withHeader('token', $token)->asJson()
             ->post(config('services.runpaisa.base_url') . '/payment', $data);
 
         $this->errorLog($response, $request, $reference_id);
+
+        Log::info(['request' => $request->validated()]);
+        Log::info(['response' => $response->body()]);
+
+        return $this->processResponse($response);
     }
 
     public function processResponse(Response $response)
@@ -85,7 +95,7 @@ class RunpaisaController extends Controller
             ->post(config('services.runpaisa.base_url') . '/status', ['order_id' => $reference_id]);
 
         if ($response->failed()) {
-            Log::info(['err_fzik' => $response->body()]);
+            Log::info(['err_rnpaisa' => $response->body()]);
             abort($response->status(), $response['message'] ?? "Gateway Failure!");
         }
 
