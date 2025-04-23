@@ -110,7 +110,7 @@ class FlipzikController extends Controller
         ];
 
         $response = Http::withBasicAuth(config('services.flipzik.client_id'), config('services.flipzik.client_id'))
-            ->withHeaders($this->headers(json_encode([]), "/api/v1/payout", '', 'GET'))->asJson()
+            ->withHeaders($this->headers(json_encode([]), "/api/v1/payout?$reference_id", '', 'GET'))->asJson()
             ->get(config('services.flipzik.base_url') . "/payout", $data);
 
         if ($response->failed()) {
