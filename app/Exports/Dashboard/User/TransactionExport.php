@@ -28,7 +28,7 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
     {
         return Transaction::where('user_id', auth()->user()->id)
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->get(['id', 'reference_id', 'service', 'credit_amount',  'debit_amount', 'opening_balance', 'closing_balance', 'created_at', 'updated_at']);
+            ->get(['id', 'reference_id', 'service', 'credit_amount',  'debit_amount', 'gst', 'opening_balance', 'closing_balance', 'created_at', 'updated_at']);
     }
 
     public function styles(Worksheet $sheet)
@@ -40,6 +40,6 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
 
     public function headings(): array
     {
-        return ["ID", "Reference ID", "Service", "Credit Amount", "Debit Amount", "Opening Balance", "Closing Balance", "Created At", "Updated At"];
+        return ["ID", "Reference ID", "Service", "Credit Amount", "Debit Amount", "GST (Incl.)", "Opening Balance", "Closing Balance", "Created At", "Updated At"];
     }
 }
