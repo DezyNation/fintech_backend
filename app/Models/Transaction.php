@@ -25,7 +25,8 @@ class Transaction extends Model
         'debit_amount',
         'opening_balance',
         'closing_balance',
-        'metadata'
+        'metadata',
+        'gst'
     ];
 
     /**

@@ -36,14 +36,17 @@ class CommissionController extends Controller
             $credit = $instance->is_flat ? $instance->commission : $amount * $instance->commission / 100;
             $fixed_charge = 0;
         }
+
+
         if ($calculation == true) {
             return [
                 'debit_amount' => $fixed_charge,
                 'credit_amount' => $credit
             ];
         }
-        TransactionController::store($user, $reference_id, 'payout_commission', "Payout Commission for $account_number", $credit, $fixed_charge);
-        $this->checkParent($user, $amount, $reference_id, $account_number);
+        $gst = $fixed_charge * 0.18;
+        TransactionController::store($user, $reference_id, 'payout_commission', "Payout Commission for $account_number", $credit, $fixed_charge, null, $gst);
+        // $this->checkParent($user, $amount, $reference_id, $account_number);
         return $instance;
     }
 

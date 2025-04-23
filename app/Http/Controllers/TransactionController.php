@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response = null)
+    public static function store(User $user, string $reference_id, string $service, string $description, float $credit_amount, float $debit_amount, array $response = null, float $gst = 0)
     {
         $auth_user = auth()->user() ?? $user;
         $last_transaction = Transaction::where('user_id', $user->id)->latest()->orderByDesc('id')->limit(1)->first();
@@ -26,6 +26,7 @@ class TransactionController extends Controller
             'debit_amount' => $debit_amount,
             'opening_balance' => $last_transaction->closing_balance ?? 0,
             'closing_balance' => $closing_balance,
+            'gst' => $gst
         ]);
 
         DB::transaction(function () use ($user, $closing_balance) {
