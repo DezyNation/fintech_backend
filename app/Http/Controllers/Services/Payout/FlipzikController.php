@@ -106,16 +106,16 @@ class FlipzikController extends Controller
     public function updateTransaction(string $reference_id)
     {
         $data = [
-            'merchant_order_id' => $reference_id
+            $reference_id
         ];
 
         $response = Http::withBasicAuth(config('services.flipzik.client_id'), config('services.flipzik.client_id'))
-            ->withHeaders($this->headers(json_encode([]), "/api/v1/payout?$reference_id", '', 'GET'))->asJson()
+            ->withHeaders($this->headers(json_encode([]), "/api/v1/payout", $reference_id, 'GET'))->asJson()
             ->get(config('services.flipzik.base_url') . "/payout", $data);
 
         if ($response->failed()) {
             Log::info(['err_fzik' => $response->body()]);
-            abort($response->status(), "Gateway Failure!");
+            abort(400, "Gateway Failure!");
         }
 
         return $this->processUpdateResponse($response);
