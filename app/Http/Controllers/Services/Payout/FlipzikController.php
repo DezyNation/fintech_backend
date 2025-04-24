@@ -65,7 +65,7 @@ class FlipzikController extends Controller
         } else {
             $data = [
                 'status' => 'error',
-                'message' => $response['acquirer_message'] ?? 'An error has been occured',
+                'message' => $response['acquirer_message'] ?? $response['status'] ?? 'An error has occured',
             ];
             Log::info(['msg_fzik' => $response->body()]);
         }
@@ -105,13 +105,9 @@ class FlipzikController extends Controller
 
     public function updateTransaction(string $reference_id)
     {
-        $data = [
-            $reference_id
-        ];
-
         $response = Http::withBasicAuth(config('services.flipzik.client_id'), config('services.flipzik.client_id'))
-            ->withHeaders($this->headers(json_encode([]), "/api/v1/payout", $reference_id, 'GET'))->asJson()
-            ->get(config('services.flipzik.base_url') . "/payout", $data);
+            ->withHeaders($this->headers('', "/api/v1/payout/$reference_id", '', 'GET'))->asJson()
+            ->get(config('services.flipzik.base_url') . "/payout/$reference_id");
 
         if ($response->failed()) {
             Log::info(['err_fzik' => $response->body()]);
