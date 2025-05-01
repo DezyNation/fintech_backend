@@ -113,7 +113,7 @@ return [
     ],
 
     'runpaisa' => [
-        'base_url' => 'https://dev.api.payout.v1.runpaisa.com',
+        'base_url' => 'https://api.payout.v1.runpaisa.com/payout',
         'client_id' => env('RUNPAISA_CLIENT_ID'),
         'client_secret' => env('RUNPAISA_CLIENT_SECRET'),
     ]
