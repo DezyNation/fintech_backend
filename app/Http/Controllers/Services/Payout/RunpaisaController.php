@@ -38,7 +38,7 @@ class RunpaisaController extends Controller
         return $response['data']['token'];
     }
 
-    public function  initiateTransaction(PayoutRequest $request, string $reference_id = 'test123456789')
+    public function  initiateTransaction(PayoutRequest $request, string $reference_id)
     {
         if (!Cache::has('runpaisa_token')) {
             $this->token();
