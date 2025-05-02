@@ -20,7 +20,7 @@ class RunpaisaController extends Controller
             // TransactionController::reverseTransaction($reference_id);
             // Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
             Log::info(['err_rnpaisa' => $response->body()]);
-            abort($response->status(), $response['message'] ?? "Gateway Failure!");
+            abort(400, $response['message'] ?? "Gateway Failure!");
         }
     }
 
@@ -31,7 +31,7 @@ class RunpaisaController extends Controller
             ->post(config('services.runpaisa.base_url') . '/token');
         if (strtolower($response['status']) == 'failed') {
             Log::info(['err_rnpaisa' => $response->body()]);
-            abort($response->status(), $response['message'] ?? "Gateway Failure!");
+            abort(400, $response['message'] ?? "Gateway Failure!");
         }
         Log::info(['err_rnpsa' => $response->body()]);
         Cache::put('runpaisa_token', $response['data']['token'], 600);
