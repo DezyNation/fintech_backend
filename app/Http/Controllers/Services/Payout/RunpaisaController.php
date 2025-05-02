@@ -94,7 +94,7 @@ class RunpaisaController extends Controller
         $response = Http::withHeader('token', $token)->asJson()
             ->post(config('services.runpaisa.base_url') . '/status', ['order_id' => $reference_id]);
 
-        if ($response->failed()) {
+        if ($response->failed() || strtolower($response['status']) == 'failed') {
             Log::info(['err_rnpaisa' => $response->body()]);
             abort($response->status(), $response['message'] ?? "Gateway Failure!");
         }
