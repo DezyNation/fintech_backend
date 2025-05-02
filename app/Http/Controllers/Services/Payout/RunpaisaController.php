@@ -72,7 +72,7 @@ class RunpaisaController extends Controller
                 'status' => 'success',
                 'message' => $response['message'],
                 'utr' => $response['data']['utr_no'] ?? null,
-                'transaction_status' => $response['status']
+                'transaction_status' => strtolower($response['status'])
             ];
         } else {
             $data = [
