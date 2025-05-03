@@ -23,7 +23,7 @@ class PayoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'service_id' => ['required', Rule::exists('services', 'id')->where('name', 'payout')],
+            // 'service_id' => ['required', Rule::exists('services', 'id')->where('name', 'payout')],
             'account_number' => ['required', 'digits_between:9,17', 'confirmed'],
             'ifsc_code' => ['required', 'string', 'regex:/^[A-Za-z]{4}\d{7}$/'],
             'beneficiary_name' => ['required', 'string'],

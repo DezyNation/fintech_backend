@@ -19,6 +19,7 @@ class WebsiteController extends Controller
 
     public function updateService(Request $request, Service $service): JsonResource
     {
+        Service::where(['name' => $service->name])->update(['active' => 0]);
         $service->update([
             'active' => $request->active ?? $service->active,
             'api' => $request->api ?? $service->api,
