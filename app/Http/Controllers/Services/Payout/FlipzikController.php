@@ -55,7 +55,7 @@ class FlipzikController extends Controller
                 'utr' => $response['bank_reference_id'] ?? null,
                 'transaction_status' => strtolower($response['status'])
             ];
-        } elseif (strtolower($response['master_status']) == 'failed' && strtolower($response['status']) == 'failed') {
+        } elseif (in_array(strtolower($response['master_status']), ['failed', 'reversed']) && in_array(strtolower($response['status']), ['reversed', 'failed'])) {
             $data = [
                 'status' => 'success',
                 'message' => $response['acquirer_message'] ?? 'Transaction has been initiated.',
