@@ -34,7 +34,7 @@ class RunpaisaController extends Controller
             abort(400, $response['message'] ?? "Gateway Failure!");
         }
         Log::info(['err_rnpsa' => $response->body()]);
-        Cache::put('runpaisa_token', $response['data']['token'], 600);
+        Cache::put('runpaisa_token', $response['data']['token'], 59);
         return $response['data']['token'];
     }
 
