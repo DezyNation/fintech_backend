@@ -17,8 +17,8 @@ class RunpaisaController extends Controller
     public function errorLog(Response $response, Request $request, string $reference_id)
     {
         if (strtolower($response['status']) == 'failed') {
-            // TransactionController::reverseTransaction($reference_id);
-            // Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
+            TransactionController::reverseTransaction($reference_id);
+            Payout::where(['user_id' => $request->user()->id, 'reference_id' => $reference_id])->delete();
             Log::info(['err_rnpaisa' => $response->body()]);
             abort(400, $response['message'] ?? "Gateway Failure!");
         }
@@ -58,9 +58,6 @@ class RunpaisaController extends Controller
             ->post(config('services.runpaisa.base_url') . '/payment', $data);
 
         $this->errorLog($response, $request, $reference_id);
-
-        Log::info(['request' => $request->validated()]);
-        Log::info(['response' => $response->body()]);
 
         return $this->processResponse($response);
     }
