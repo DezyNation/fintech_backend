@@ -44,7 +44,7 @@ class Payout extends Model
         return $query;
     }
 
-    public function scopeAdminFiLterByRequest($query, Request $request)
+    public function scopeAdminFilterByRequest($query, Request $request)
     {
         if (!empty($request['transaction_id'])) {
             $query->where('reference_id', 'like', "%{$request->transaction_id}%");
@@ -63,8 +63,8 @@ class Payout extends Model
         }
 
         if (!empty($request['user_id'])) {
-            $query->join('users', 'users.id', '=', 'payouts.user_id')
-                ->where('users.phone_number', $request->user_id);
+            $query->where('users.phone_number', $request->user_id)
+                ->join('users', 'users.id', '=', 'payouts.user_id');
         }
 
         return $query;
