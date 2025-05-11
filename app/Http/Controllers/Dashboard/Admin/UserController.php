@@ -94,6 +94,7 @@ class UserController extends Controller
             'name' => Str::squish($request->first_name ?? $user->first_name . ' ' . $request->middle_name ?? $user->middle_name . ' ' . $request->last_name ?? $user->last_name),
             'phone_number' => $request->phone_number ?? $user->phone_number,
             'email' => $request->email ?? $user->email,
+            'active' => $request->active ?? $user->active,
             'admin_remarks' => $request->admin_remarks ?? $user->admin_remarks,
             'plan_id' => $request->plan_id ?? $user->plan_id,
             'capped_balance' => $request->capped_balance ?? $user->capped_balance,
