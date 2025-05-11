@@ -30,10 +30,9 @@ class PayoutExport implements FromCollection, WithStyles, WithHeadings, ShouldAu
      */
     public function collection()
     {
-        $user = User::where('phone_number', $this->user_id)->firstOrFail();
-        return Payout::where('user_id', $user->id)
+        return Payout::select(['id', 'account_number', 'ifsc_code', 'beneficiary_name', 'reference_id', 'status', 'amount', 'created_at', 'updated_at'])
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->get(['id', 'account_number', 'ifsc_code', 'beneficiary_name', 'reference_id', 'status', 'amount', 'created_at', 'updated_at']);
+            ->adminFilterByRequest(['user_id' => $this->user_id])->get();
     }
 
     public function styles(Worksheet $sheet)

@@ -129,7 +129,7 @@ class ReportController extends Controller
     public function payoutReports(Request $request): JsonResource
     {
         $data = Payout::with('user')
-            ->adminFilterByRequest($request)
+            ->adminFilterByRequest($request->toArray())
             ->whereBetween('payouts.created_at', [$request->from ?? Carbon::now()->startOfWeek(), $request->to ?? Carbon::now()->endOfDay()])
             ->latest('payouts.created_at')
             ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'account_number' => $request['account_number'], 'utr' => $request['utr'], 'transaction_id' => $request['transaction_id'], 'user_id' => $request['user_id'], 'status' => $request['status']]);
