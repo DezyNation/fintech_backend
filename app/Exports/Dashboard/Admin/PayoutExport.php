@@ -17,12 +17,14 @@ class PayoutExport implements FromCollection, WithStyles, WithHeadings, ShouldAu
     protected $from;
     protected $to;
     protected $user_id;
+    protected $status;
 
-    public function __construct($from, $to, $user_id)
+    public function __construct($from, $to, $user_id, $status)
     {
         $this->from = $from;
         $this->to = $to;
         $this->user_id = $user_id;
+        $this->status = $status;
     }
 
     /**
@@ -32,7 +34,7 @@ class PayoutExport implements FromCollection, WithStyles, WithHeadings, ShouldAu
     {
         return Payout::select(['id', 'account_number', 'ifsc_code', 'beneficiary_name', 'reference_id', 'status', 'amount', 'created_at', 'updated_at'])
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
-            ->adminFilterByRequest(['user_id' => $this->user_id])->get();
+            ->adminFilterByRequest(['user_id' => $this->user_id, 'status' => $this->status])->get();
     }
 
     public function styles(Worksheet $sheet)
