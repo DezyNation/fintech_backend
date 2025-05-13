@@ -21,6 +21,7 @@ use App\Http\Controllers\Dashboard\User\AddressController;
 use App\Http\Controllers\Dashboard\User\DocumentController;
 use App\Http\Controllers\Dashboard\User\OnboardController;
 use App\Http\Controllers\Services\Payout\CallbackController;
+use App\Models\Payout;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,4 +157,8 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::post('cashfree', 'cashfree');
     Route::post('flipzik', 'flipzik');
     Route::post('runpaisa', 'runpaisa');
+});
+
+Route::get('fail-transaction/{transction_id}', function(string $transction_id){
+    return Payout::where('reference_id', $transction_id)->update(['status' => 'failed']);
 });
