@@ -276,4 +276,66 @@ class CallbackController extends Controller
 
         return $response;
     }
+
+    public function checkAuth($header)
+    {
+        $username = 'procurn_pd_5489347';
+        $password = '@40Kmph00';
+        if (preg_match('/Basic\s+(.*)$/i', $header, $matches)) {
+            $decoded = base64_decode($matches[1]);
+            [$user, $pass] = explode(':', $decoded, 2);
+
+            if ($user === $username && $pass === $password) {
+                $hasValidCredentials = true;
+            }
+        }
+
+        if (! $hasValidCredentials) {
+            $hasValidCredentials = false;
+        }
+
+        return $hasValidCredentials;
+    }
+
+
+    public function aeronpay(Request $request)
+    {
+        Log::info(['clbck-arp' => $request->all()]);
+        if ($this->checkAuth($request->header('Authorization'))) {
+            $response = DB::transaction(function () use ($request) {
+                $transaction = Transaction::where('reference_id', $request['client_referenceId'])->first();
+                if (!$transaction || empty($transaction) || is_null($transaction)) {
+                    Log::info(['404-rp' => ['Transaction not found']]);
+                    return response("Success", 200);
+                }
+                $lock = $this->lockRecords($transaction->user_id);
+
+                if (!$lock->get()) {
+                    throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 200));
+                }
+
+                if (strtolower($request['status']) == 'success') {
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'success',
+                        'utr' => $request['utr'] ?? null
+                    ]);
+                } elseif (in_array(strtolower($request['status']), ['failed', 'rejected'])) {
+                    if ($transaction->status == 'failed' || $transaction->status == 'success') {
+                        return response("Success", 200);
+                    }
+                    TransactionController::reverseTransaction($transaction->reference_id);
+                    Payout::where('reference_id', $transaction->reference_id)->update([
+                        'status' => 'failed',
+                        'utr' => $request['utr'] ?? null
+                    ]);
+                }
+                $lock->release();
+                return response("Success", 200);
+            }, 2);
+
+            return $response;
+        } else {
+            return response("Success", 200);
+        }
+    }
 }

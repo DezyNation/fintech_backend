@@ -157,6 +157,7 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::post('cashfree', 'cashfree');
     Route::post('flipzik', 'flipzik');
     Route::post('runpaisa', 'runpaisa');
+    Route::post('aeronpay', 'aeronpay');
 });
 
 Route::get('fail-transaction/{transction_id}', function(string $transction_id){

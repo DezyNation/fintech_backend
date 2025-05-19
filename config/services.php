@@ -116,5 +116,11 @@ return [
         'base_url' => 'https://api.payout.v1.runpaisa.com/payout',
         'client_id' => env('RUNPAISA_CLIENT_ID'),
         'client_secret' => env('RUNPAISA_CLIENT_SECRET'),
+    ],
+
+    'aeronpay' => [
+        'base_url' => 'https://api.aeronpay.in/api/serviceapi-prod',
+        'client_id' => env('AERONPAY_CLIENT_ID'),
+        'client_secret' => env('AERONPAY_CLIENT_SECRET'),
     ]
 ];
