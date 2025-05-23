@@ -64,7 +64,7 @@ class AeronpayController extends Controller
         $response = Http::withHeaders(
             ['client-id' => config('services.aeronpay.client_id'), 'client-secret' => config('services.aeronpay.client_secret')]
         )->asJson()
-            ->get(config('services.aeronpay.base_url') . '/api/payout/imps', $parameters);
+            ->get(config('services.aeronpay.base_url') . '/api/reports/transactionStatus', $parameters);
 
         return $this->updateResponse($response);
     }
