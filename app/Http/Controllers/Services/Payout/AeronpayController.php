@@ -71,7 +71,7 @@ class AeronpayController extends Controller
 
     public function updateResponse($response)
     {
-        Log::info('resp', $response->body());
+        Log::info(['resp' => $response->body()]);
         if (in_array($response['statusCode'], [400, 200, 201])) {
             $data = [
                 'status' => 'success',
