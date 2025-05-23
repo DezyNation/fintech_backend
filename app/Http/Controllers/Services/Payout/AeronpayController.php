@@ -20,7 +20,7 @@ class AeronpayController extends Controller
             Log::info(['arnp_resp' => $response->body()]);
             Payout::where('reference_id', $reference_id)->delete();
             TransactionController::reverseTransaction($reference_id);
-            abort(400, $response['message']);
+            abort(400, $response['message'] ?? "Unknown error occured");
         }
     }
 
