@@ -301,7 +301,7 @@ class CallbackController extends Controller
     public function aeronpay(Request $request)
     {
         Log::info(['clbck-arp' => $request->all()]);
-        if ($this->checkAuth($request->header('Authorization'))) {
+
             $response = DB::transaction(function () use ($request) {
                 $transaction = Transaction::where('reference_id', $request['client_referenceId'])->first();
                 if (!$transaction || empty($transaction) || is_null($transaction)) {
@@ -334,8 +334,5 @@ class CallbackController extends Controller
             }, 2);
 
             return $response;
-        } else {
-            return response("Success", 200);
-        }
     }
 }
