@@ -110,4 +110,14 @@ class AeronpayController extends Controller
 
         return ['data' => $data, 'response' => $response->body()];
     }
+
+    public function fetchBankId()
+    {
+        $response = Http::withHeaders(
+            ['client-id' => config('services.aeronpay.client_id'), 'client-secret' => config('services.aeronpay.client_secret')]
+        )->asJson()
+            ->post(config('services.aeronpay.base_url') . '/api/reports/transactionStatus', ['category' => 'bankids']);
+
+        return $response;
+    }
 }
