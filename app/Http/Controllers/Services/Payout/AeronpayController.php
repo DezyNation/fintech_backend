@@ -116,7 +116,7 @@ class AeronpayController extends Controller
         $response = Http::withHeaders(
             ['client-id' => config('services.aeronpay.client_id'), 'client-secret' => config('services.aeronpay.client_secret')]
         )->asJson()
-            ->post(config('services.aeronpay.base_url') . '/api/reports/transactionStatus', ['category' => 'bankids']);
+            ->post(config('services.aeronpay.base_url') . '/api/serviceapi-prod/api/payout/bankid_list', ['category' => 'bankids']);
 
         return $response;
     }
