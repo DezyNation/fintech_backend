@@ -21,7 +21,7 @@ class AeronpayController extends Controller
             Log::info(['arnp_request' => $request]);
             Payout::where('reference_id', $reference_id)->delete();
             TransactionController::reverseTransaction($reference_id);
-            abort(400, $response['message'] ?? "Unknown error occured");
+            abort(400, $response['description'] ?? "Unknown error occured");
         }
     }
 
@@ -34,6 +34,7 @@ class AeronpayController extends Controller
             'transferMode' => $request['mode'],
             'remarks' => 'process salary',
             'bankProfileId' => 1,
+            'bankid' => $this->fetchBankId($request['ifsc_code']),
             'latitude' => '77.25382',
             'longitude' => '28.40082',
             'beneDetails' => [
@@ -111,13 +112,15 @@ class AeronpayController extends Controller
         return ['data' => $data, 'response' => $response->body()];
     }
 
-    public function fetchBankId()
+    public function fetchBankId(string $ifsc)
     {
+        $bank_code = strtoupper(substr($ifsc, 0, 4));
         $response = Http::withHeaders(
             ['client-id' => config('services.aeronpay.client_id'), 'client-secret' => config('services.aeronpay.client_secret')]
         )->asJson()
             ->post('https://api.aeronpay.in/api/serviceapi-prod/api/payout/bankid_list', ['category' => 'bankids']);
 
-        return $response;
+        $bank_id = collect($response['data'])->firstWhere('bank_code', $bank_code)['bank_id'] ?? null;
+        return $bank_id;
     }
 }
