@@ -7,7 +7,4 @@ Route::get('/', function () {
     return [config('app.name') => 'Dezynation India'];
 });
 
-
-Route::get('test', [AeronpayController::class, 'fetchBankId']);
-
 require __DIR__ . '/auth.php';
