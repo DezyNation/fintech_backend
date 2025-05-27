@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Log;
 class AeronpayController extends Controller
 {
 
-    public function errorHandling(Response $response, string $reference_id)
+    public function errorHandling(Response $response, string $reference_id, $request = '')
     {
         if ($response->failed()) {
             Log::info(['arnp_resp' => $response->body()]);
+            Log::info(['arnp_request' => $request]);
             Payout::where('reference_id', $reference_id)->delete();
             TransactionController::reverseTransaction($reference_id);
             abort(400, $response['message'] ?? "Unknown error occured");
@@ -50,7 +51,8 @@ class AeronpayController extends Controller
         )->asJson()
             ->post(config('services.aeronpay.base_url') . '/api/payout/imps', $data);
 
-        $this->errorHandling($response, $reference_id);
+        $this->errorHandling($response, $reference_id, $data);
+        unset($data);
         return $this->processResponse($response);
     }
 
