@@ -30,9 +30,9 @@ class WalletTransferExport implements FromCollection, WithStyles, WithHeadings, 
     public function collection()
     {
         return WalletTransfer::adminFiterByRequest($this->request)
-            ->join('users as sender', 'sender.id', '=', 'wallet_transfers.sender_id')
-            ->join('users as receiver', 'receiver.id', '=', 'wallet_transfers.receiver_id')
-            ->whereBetween('wallet_transfers.created_at', [$this->request->from ?? Carbon::now()->startOfDay(), $this->request->to ?? Carbon::now()->endOfDay()])
+            ->join('users as sender', 'sender.id', '=', 'wallet_transfers.from')
+            ->join('users as receiver', 'receiver.id', '=', 'wallet_transfers.to')
+            ->whereBetween('wallet_transfers.created_at', [$this->from ?? Carbon::now()->startOfDay(), $this->to ?? Carbon::now()->endOfDay()])
             ->select('wallet_transfers.id', 'wallet_transfers.reference_id', 'sender.name as sender_name', 'receiver.name as receiver_name', 'wallet_transfers.amount', 'wallet_transfers.status', 'wallet_transfers.user_remarks')
             ->get();
     }

@@ -16,9 +16,11 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
     protected $from;
     protected $to;
     protected $user_id;
+    protected $request;
 
-    public function __construct($from, $to, $user_id)
+    public function __construct($request, $from, $to, $user_id)
     {
+        $this->request = $request;
         $this->from = $from;
         $this->to = $to;
         $this->user_id = $user_id;
@@ -29,8 +31,7 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
      */
     public function collection()
     {
-        $user = User::where('phone_number', $this->user_id)->firstOrFail();
-        return Transaction::where('user_id', $user->id)
+        return Transaction::adminFiterByRequest($this->request)
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
             ->get(['id', 'reference_id', 'service', 'credit_amount',  'debit_amount', 'gst', 'opening_balance', 'closing_balance', 'created_at', 'updated_at']);
     }

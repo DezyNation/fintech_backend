@@ -59,20 +59,20 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'triggered_by')->select(['id', 'name', 'phone_number']);
     }
 
-    public function scopeAdminFiterByRequest($query, Request $request)
+    public function scopeAdminFiterByRequest($query, array $request)
     {
         if (!empty($request['transaction_id'])) {
-            $query->where('reference_id', 'like', "%{$request->transaction_id}%");
+            $query->where('reference_id', 'like', "%{$request['transaction_id']}%");
         }
 
 
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'transactions.user_id')
-                ->where('users.phone_number', $request->user_id)->select('transactions.*');
+                ->where('users.phone_number', $request['user_id'])->select('transactions.*');
         }
 
         if (!empty($request['account_number'])) {
-            $query->where('description', 'like', "%{$request->account_number}%");
+            $query->where('description', 'like', "%{$request['account_number']}%");
         }
 
         return $query;

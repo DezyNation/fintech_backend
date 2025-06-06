@@ -162,7 +162,7 @@ class ReportController extends Controller
                 break;
 
             case 'ledger':
-                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
+                return Excel::download(new TransactionExport($request, $request->from, $request->to, $request->user_id), "transactions.{$request->format}");
                 break;
 
             case 'fund-requests':
@@ -174,7 +174,7 @@ class ReportController extends Controller
                 break;
 
             default:
-                return Excel::download(new TransactionExport($request->from, $request->to, $request->user_id), "transactions.{$request->format}");
+                return Excel::download(new TransactionExport($request, $request->from, $request->to, $request->user_id), "transactions.{$request->format}");
                 break;
         }
     }
