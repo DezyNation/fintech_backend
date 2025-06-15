@@ -29,7 +29,7 @@ class ReportController extends Controller
     {
 
         $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
-            ->adminFiterByRequest($request)
+            ->adminFiterByRequest($request->toArray())
             ->whereBetween('transactions.created_at', [$request->from, $request->to])
             ->latest('transactions.created_at')
             ->orderByDesc('transactions.id')
