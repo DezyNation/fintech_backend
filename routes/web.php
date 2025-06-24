@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return [config('app.name') => 'Dezynation India'];
+    return [config('app.name') => 'India'];
 });
 
 require __DIR__ . '/auth.php';
