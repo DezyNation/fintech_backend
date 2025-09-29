@@ -122,5 +122,11 @@ return [
         'base_url' => 'https://api.aeronpay.in/api/serviceapi-prod',
         'client_id' => env('AERONPAY_CLIENT_ID'),
         'client_secret' => env('AERONPAY_CLIENT_SECRET'),
-    ]
+    ],
+
+    'universepay' => [
+        'base_url' => 'https://universepay.in/api',
+        'username' => env('UNIVERSEPAY_USERNAME'),
+        'password' => env('UNIVERSEPAY_PASSWORD'),
+    ],
 ];

@@ -335,4 +335,40 @@ class CallbackController extends Controller
 
             return $response;
     }
+
+    public function universepay(Request $request)
+    {
+        $response = DB::transaction(function () use ($request) {
+            $transaction = Transaction::where('reference_id', $request['orderId'])->first();
+            if (!$transaction || empty($transaction) || is_null($transaction)) {
+                Log::info(['404-up' => ['Transaction not found']]);
+                return response("Success", 200);
+            }
+            $lock = $this->lockRecords($transaction->user_id);
+
+            if (!$lock->get()) {
+                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 200));
+            }
+
+            if (strtolower($request['status']) == 'completed') {
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'success',
+                    'utr' => $request['utr'] ?? null,
+                ]);
+            } elseif (in_array(strtolower($request['status']), ['failed', 'rejected', 'declined', 'error'])) {
+                if ($transaction->status == 'failed' || $transaction->status == 'success') {
+                    return response("Success", 200);
+                }
+                TransactionController::reverseTransaction($transaction->reference_id);
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'failed',
+                    'utr' => $request['utr'] ?? null,
+                ]);
+            }
+            $lock->release();
+            return response("Success", 200);
+        }, 2);
+
+        return $response;
+    }
 }

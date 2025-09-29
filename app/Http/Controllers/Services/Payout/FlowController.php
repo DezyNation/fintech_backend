@@ -85,10 +85,16 @@ class FlowController extends Controller
             $status = $transaction_request['data']['transaction_status'];
         }
 
+        if(array_key_exists('reference_id', $transaction_request['data'])){
+            Transaction::where('reference_id', $reference_id)->update(['reference_id' => $transaction_request['data']['reference_id']]);
+            $reference_id = $transaction_request['data']['reference_id'];
+        }
+
         $payout->update([
             'status' => $status,
             'description' => $transaction_request['data']['message'],
             'utr' => $transaction_request['data']['utr'],
+            'reference_id' => $reference_id,
             'metadata' => $transaction_request['response']
         ]);
 
