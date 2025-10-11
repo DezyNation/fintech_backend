@@ -33,7 +33,7 @@ class FundTransfer extends Model
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function scopeAdminFilterByRequest($query, Request $request)
+    public function scopeAdminFilterByRequest($query, array $request)
     {
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'fund_transfers.user_id')

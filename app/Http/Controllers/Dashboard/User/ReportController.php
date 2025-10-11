@@ -115,7 +115,7 @@ class ReportController extends Controller
     {
         $data = WalletTransfer::where('from', $request->user()->id)
             ->with('receiver')
-            ->filterByRequest($request)
+            ->filterByRequest($request->toArray())
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->latest('wallet_transfers.created_at')
             ->paginate(30)->appends(['from' => $request['from'], 'to' => $request['to'], 'receiver_id' => $request['receiver_id']]);

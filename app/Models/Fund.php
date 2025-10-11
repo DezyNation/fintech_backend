@@ -41,51 +41,51 @@ class Fund extends Model
         return $this->belongsTo(Bank::class);
     }
 
-    public function scopeFilterByRequest($query, Request $request)
+    public function scopeFilterByRequest($query, array $request)
     {
         if (!empty($request['transaction_id'])) {
-            $query->where('transaction_id', 'like', "%" . $request->transaction_id . "%");
+            $query->where('transaction_id', 'like', "%" . $request['transaction_id'] . "%");
         }
 
         if (!empty($request['status'])) {
-            $query->where('status', $request->status);
+            $query->where('status', $request['status']);
         }
 
         return $query;
     }
 
-    public function scopeAdminFiterByRequest($query, Request $request)
+    public function scopeAdminFilterByRequest($query, array $request)
     {
         if (!empty($request['transaction_id'])) {
-            $query->where('transaction_id', 'like', "%" . $request->transaction_id . "%");
+            $query->where('transaction_id', 'like', "%" . $request['transaction_id'] . "%");
         }
 
         if (!empty($request['status'])) {
-            $query->where('status', $request->status);
+            $query->where('status', $request['status']);
         }
 
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'fund_requests.user_id')
-                ->where('users.phone_number', $request->user_id)
+                ->where('users.phone_number', $request['user_id'])
                 ->select('fund_requests.*');
         }
 
         return $query;
     }
 
-    public function scopeAdminFilterExport($query, Request $request)
+    public function scopeAdminFilterExport($query, array $request)
     {
         // if (!empty($request['transaction_id'])) {
         //     $query->where('transaction_id', 'like', "%" . $request->transaction_id . "%");
         // }
 
         if (!empty($request['status'])) {
-            $query->where('status', $request->status);
+            $query->where('status', $request['status']);
         }
 
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'fund_requests.user_id')
-                ->where('users.phone_number', $request->user_id)
+                ->where('users.phone_number', $request['user_id'])
                 ->select('fund_requests.*');
         }
 

@@ -31,7 +31,7 @@ class TransactionExport implements FromCollection, WithStyles, WithHeadings, Sho
      */
     public function collection()
     {
-        return Transaction::adminFiterByRequest($this->request)
+        return Transaction::adminFilterByRequest($this->request)
             ->whereBetween('created_at', [$this->from ?? Carbon::today(), $this->to ?? Carbon::tomorrow()])
             ->get(['id', 'reference_id', 'service', 'credit_amount',  'debit_amount', 'gst', 'opening_balance', 'closing_balance', 'created_at', 'updated_at']);
     }

@@ -29,7 +29,7 @@ class WalletTransferExport implements FromCollection, WithStyles, WithHeadings, 
      */
     public function collection()
     {
-        return WalletTransfer::adminFiterByRequest($this->request)
+        return WalletTransfer::adminFilterByRequest($this->request)
             ->join('users as sender', 'sender.id', '=', 'wallet_transfers.from')
             ->join('users as receiver', 'receiver.id', '=', 'wallet_transfers.to')
             ->whereBetween('wallet_transfers.created_at', [$this->from ?? Carbon::now()->startOfDay(), $this->to ?? Carbon::now()->endOfDay()])

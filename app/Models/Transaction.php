@@ -59,7 +59,7 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'triggered_by')->select(['id', 'name', 'phone_number']);
     }
 
-    public function scopeAdminFiterByRequest($query, array $request)
+    public function scopeAdminFilterByRequest($query, array $request)
     {
         if (!empty($request['transaction_id'])) {
             $query->where('reference_id', 'like', "%{$request['transaction_id']}%");

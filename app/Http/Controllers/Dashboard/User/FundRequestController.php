@@ -22,7 +22,7 @@ class FundRequestController extends Controller
     public function index(Request $request)
     {
         $data = Fund::where('user_id', $request->user()->id)
-            ->filterByRequest($request)
+            ->filterByRequest($request->toArray())
             ->paginate(30);
         return GeneralResource::collection($data);
     }

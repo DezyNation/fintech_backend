@@ -29,7 +29,7 @@ class ReportController extends Controller
     {
 
         $data = Transaction::with(['beneficiary', 'reviewer', 'triggered_by'])
-            ->adminFiterByRequest($request->toArray())
+            ->adminFilterByRequest($request->toArray())
             ->whereBetween('transactions.created_at', [$request->from, $request->to])
             ->latest('transactions.created_at')
             ->orderByDesc('transactions.id')
@@ -106,7 +106,7 @@ class ReportController extends Controller
 
     public function walletTransferReport(Request $request): JsonResource
     {
-        $data = WalletTransfer::adminFiterByRequest($request)
+        $data = WalletTransfer::adminFilterByRequest($request)
             ->with(['sender', 'receiver'])
             ->whereBetween('wallet_transfers.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->latest('wallet_transfers.created_at')
@@ -116,7 +116,7 @@ class ReportController extends Controller
 
     public function fundRequestReport(Request $request): JsonResource
     {
-        $data = Fund::adminFiterByRequest($request)->with(['reviewer' => function ($q) {
+        $data = Fund::adminFilterByRequest($request)->with(['reviewer' => function ($q) {
             $q->select('id', 'name', 'phone_number');
         }, 'user' => function ($q) {
             $q->select('id', 'name', 'phone_number');
@@ -138,7 +138,7 @@ class ReportController extends Controller
 
     public function fundTransferReport(Request $request)
     {
-        $data = FundTransfer::adminFilterByRequest($request)
+        $data = FundTransfer::adminFilterByRequest($request->toArray())
             ->with(['user' => function ($q) {
                 $q->select('id', 'name', 'phone_number');
             }, 'admin' => function ($q) {

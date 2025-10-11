@@ -24,7 +24,7 @@ class FlowController extends Controller
     public function index(Request $request)
     {
         $data = Payout::where(['user_id' => $request->user()->id])
-            ->fiterByRequest($request)
+            ->filterByRequest($request)
             ->whereBetween('created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->latest('created_at')
             ->paginate(30);

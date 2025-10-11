@@ -33,28 +33,28 @@ class WalletTransfer extends Model
         return $this->belongsTo(User::class, 'to')->select('id', 'name');
     }
 
-    public function scopeAdminFiterByRequest($query, Request $request)
+    public function scopeAdminFilterByRequest($query, array $request)
     {
 
         if (!empty($request['sender_id'])) {
             $query->join('users', 'users.id', '=', 'wallet_transfers.from')
-                ->where('users.phone_number', $request->user_id)->select('wallet_transfers.*');
+                ->where('users.phone_number', $request['user_id'])->select('wallet_transfers.*');
         }
 
         if (!empty($request['receiver_id'])) {
             $query->join('users', 'users.id', '=', 'wallet_transfers.to')
-                ->where('users.phone_number', $request->user_id)->select('wallet_transfers.*');
+                ->where('users.phone_number', $request['user_id'])->select('wallet_transfers.*');
         }
 
         return $query;
     }
 
-    public function scopeFilterByRequest($query, Request $request)
+    public function scopeFilterByRequest($query, array $request)
     {
 
         if (!empty($request['receiver_id'])) {
             $query->join('users', 'users.id', '=', 'wallet_transfer.to')
-                ->where('users.phone_number', $request->user_id)
+                ->where('users.phone_number', $request['user_id'])
                 ->select('wallet_transfer.*');
         }
 

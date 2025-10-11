@@ -27,18 +27,18 @@ class Payout extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeFiterByRequest($query, Request $request)
+    public function scopeFilterByRequest($query, array $request)
     {
         if (!empty($request['transaction_id'])) {
-            $query->where('reference_id', 'like', "%{$request->transaction_id}%");
+            $query->where('reference_id', 'like', "%{$request['transaction_id']}%");
         }
 
         if (!empty($request['utr'])) {
-            $query->where('utr', 'like', "%{$request->utr}%");
+            $query->where('utr', 'like', "%{$request['utr']}%");
         }
 
         if (!empty($request['account_number'])) {
-            $query->where('account_number', 'like', "%{$request->account_number}%");
+            $query->where('account_number', 'like', "%{$request['account_number']}%");
         }
 
         return $query;
