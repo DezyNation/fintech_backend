@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Services\Payout;
 
 use Carbon\Carbon;
 use App\Models\Payout;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -72,7 +73,7 @@ class FlowController extends Controller
 
         $transaction_request = $instance->initiateTransaction($request, $reference_id);
 
-        if ($transaction_request['data']['status'] != 'success') {
+        if ($transaction_request['data']['status'] != 'success' || in_array(strtolower($transaction_request['data']['transaction_status']), ['failed', 'rejected', 'declined', 'error'])) {
             TransactionController::reverseTransaction($payout->reference_id);
             $payout->delete();
             $lock->release();
