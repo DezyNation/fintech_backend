@@ -60,7 +60,7 @@ class SddsplController extends Controller
             "BENE_ACC_NO" => $request->account_number,
             "BENE_BRANCH" => "NA",
             "BENE_IDN_CODE" => $request->ifsc_code,
-            "REMITTER_ID" => config("services.sddspl.remitter_id"),
+            "REMITTER_NUMBER" => config("services.sddspl.remitter_id"),
         ];
 
         $beneficiary = $this->createBeneficiary($data);
