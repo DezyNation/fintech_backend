@@ -39,7 +39,7 @@ class SddsplController extends Controller
                 );
                 return $response["data"]["authorisation"]["token"];
             } else {
-                Log::info($response->body(), ['login_fail_sddspl']);
+                Log::info($response->body(), ["login_fail_sddspl"]);
                 abort(400, "Login failed");
             }
         }
@@ -54,7 +54,7 @@ class SddsplController extends Controller
             "TRANSFER_TYPE_DESC" => strtoupper($request->mode),
             "BENE_BANK" => $request->bank_name ?? "HDFC Bank",
             "INPUT_DEBIT_AMOUNT" => $request->amount,
-            "INPUT_VALUE_DATE" => date('d/m/Y'),
+            "INPUT_VALUE_DATE" => date("d/m/Y"),
             "TRANSACTION_TYPE" => "SINGLE",
             "BENE_ACC_NAME" => $request->beneficiary_name,
             "BENE_ACC_NO" => $request->account_number,
@@ -73,9 +73,8 @@ class SddsplController extends Controller
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
-        if($response->failed())
-        {
-            Log::info($response, ['txn_fail']);
+        if ($response->failed()) {
+            Log::info($response, ["txn_fail"]);
             $data = [
                 "status" => "failed",
                 "message" => $response["message"] ?? "Failure",
@@ -109,18 +108,28 @@ class SddsplController extends Controller
                 $data,
             );
 
-            Log::info($response, ['bene_add']);
+        if ($response->failed()) {
+            Log::info($response, ["txn_fail"]);
+            $data = [
+                "status" => "failed",
+                "message" => $response["message"] ?? "Failure",
+                "utr" => null,
+                "transaction_status" => "failed",
+            ];
+            return ["data" => $data, "response" => $response->body()];
+        }
+
         if ($response["status"] == true) {
             return $response["data"]["id"];
         } else {
-            Log::info($response, ['bene_fail']);
+            Log::info($response, ["bene_fail"]);
             abort(400, $response["message"] ?? "Failure");
         }
     }
 
     public function processResponse($response)
     {
-        Log::info($response, ['sddspl']);
+        Log::info($response, ["sddspl"]);
         if ($response["status"] == true) {
             $data = [
                 "status" => "success",
