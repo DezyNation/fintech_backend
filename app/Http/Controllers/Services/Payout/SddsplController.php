@@ -108,7 +108,7 @@ class SddsplController extends Controller
 
     public function processResponse($response)
     {
-        Log::info($response->body(), ['sddspl']);
+        Log::info($response, ['sddspl']);
         if ($response["status"] == true) {
             $data = [
                 "status" => "success",
