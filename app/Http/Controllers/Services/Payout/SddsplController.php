@@ -111,6 +111,7 @@ class SddsplController extends Controller
         if ($response["status"] == true) {
             return $response["data"]["id"];
         } else {
+            Log::info($response, ['bene_fail']);
             abort(400, $response["message"] ?? "Failure");
         }
     }
