@@ -64,7 +64,7 @@ class SddsplController extends Controller
         $beneficiary = $this->createBeneficiary($data);
         $data["REMITTER_BENE_ID"] = $beneficiary;
 
-        $response = Http::withToken($token)->post(
+        $response = Http::withToken($token)->withoutVerifying()->post(
             config("services.sddspl.base_url") .
                 "/api/hdfc/cbx-transaction-api",
             $data,
@@ -87,7 +87,7 @@ class SddsplController extends Controller
             "status" => 1,
         ];
 
-        $response = Http::withToken($token)->post(
+        $response = Http::withToken($token)->withoutVerifying()->post(
             config("services.sddspl.base_url") .
                 "/api/remitter-bank-details/add_bank",
             $data,
