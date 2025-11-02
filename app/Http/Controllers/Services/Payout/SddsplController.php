@@ -7,6 +7,7 @@ use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SddsplController extends Controller
 {
@@ -32,12 +33,13 @@ class SddsplController extends Controller
 
             if ($response["status"] == true) {
                 Cache::put(
-                    "login_token_sddspl",
+                    $key,
                     $response["data"]["authorisation"]["token"],
                     now()->addHours(23),
                 );
                 return $response["data"]["authorisation"]["token"];
             } else {
+                Log::info($response->body(), ['login_fail_sddspl']);
                 abort(400, "Login failed");
             }
         }
