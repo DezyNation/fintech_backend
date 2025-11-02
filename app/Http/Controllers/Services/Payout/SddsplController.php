@@ -81,7 +81,7 @@ class SddsplController extends Controller
                 "utr" => null,
                 "transaction_status" => "failed",
             ];
-            return ["data" => $data, "response" => $response->body()]
+            return ["data" => $data, "response" => $response->body()];
         }
         return $this->processResponse($response);
     }
