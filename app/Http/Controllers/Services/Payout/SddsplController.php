@@ -75,7 +75,7 @@ class SddsplController extends Controller
             );
         if($response->failed())
         {
-            Log::info($response, ['bene_fail']);
+            Log::info($response, ['txn_fail']);
             $data = [
                 "status" => "failed",
                 "message" => $response["message"] ?? "Failure",
@@ -110,6 +110,7 @@ class SddsplController extends Controller
             );
 
         if ($response["status"] == true) {
+            Log::info($response, ['bene_add'])
             return $response["data"]["id"];
         } else {
             Log::info($response, ['bene_fail']);
