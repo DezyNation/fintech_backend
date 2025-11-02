@@ -54,7 +54,7 @@ class SddsplController extends Controller
             "TRANSFER_TYPE_DESC" => strtoupper($request->mode),
             "BENE_BANK" => $request->bank_name ?? "HDFC Bank",
             "INPUT_DEBIT_AMOUNT" => $request->amount,
-            "INPUT_VALUE_DATE" => today(),
+            "INPUT_VALUE_DATE" => today('d/m/Y'),
             "TRANSACTION_TYPE" => "SINGLE",
             "BENE_ACC_NAME" => $request->beneficiary_name,
             "BENE_ACC_NO" => $request->account_number,
