@@ -73,7 +73,16 @@ class SddsplController extends Controller
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
-
+        if($response->failed())
+        {
+            $data = [
+                "status" => "failed",
+                "message" => $response["message"] ?? "Failure",
+                "utr" => null,
+                "transaction_status" => "failed",
+            ];
+            return ["data" => $data, "response" => $response->body()]
+        }
         return $this->processResponse($response);
     }
 
