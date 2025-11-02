@@ -74,7 +74,7 @@ class SddsplController extends Controller
                 $data,
             );
 
-        return $this->processResponse($response->body());
+        return $this->processResponse($response);
     }
 
     public function createBeneficiary($input)
