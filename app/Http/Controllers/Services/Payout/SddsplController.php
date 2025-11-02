@@ -74,7 +74,7 @@ class SddsplController extends Controller
                 $data,
             );
 
-        return $this->processResponse($response);
+        return $this->processResponse($response->body());
     }
 
     public function createBeneficiary($input)
@@ -108,6 +108,7 @@ class SddsplController extends Controller
 
     public function processResponse($response)
     {
+        Log::info($response->body(), ['sddspl']);
         if ($response["status"] == true) {
             $data = [
                 "status" => "success",
