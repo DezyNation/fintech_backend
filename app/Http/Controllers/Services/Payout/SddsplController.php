@@ -92,7 +92,7 @@ class SddsplController extends Controller
         $token = $this->login();
         $phone = auth()->user()->phone_number ?? "9971914198";
         $data = [
-            "mobile" => $phone,
+            "mobile" => config("services.sddspl.remitter_id"),
             "bank_name" => $input["BENE_BANK"],
             "bank_account_number" => $input["BENE_ACC_NO"],
             "bank_account_holder_name" => $input["BENE_ACC_NAME"],
