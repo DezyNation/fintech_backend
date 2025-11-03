@@ -74,7 +74,7 @@ class SddsplController extends Controller
                 $data,
             );
         Log::info("txn_data", $data);
-        Log::info("txn_token", $token);
+        Log::info("txn_token", ['token' => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -113,7 +113,7 @@ class SddsplController extends Controller
             );
 
         Log::info("bene_data", $data);
-        Log::info("bene_token", $token);
+        Log::info("bene_token", ['token' => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
