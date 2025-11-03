@@ -102,7 +102,7 @@ class SddsplController extends Controller
             "status" => 1,
         ];
 
-        $response = Http::withToken($token)
+        $response = Http::withHeader("Authorization", "Bearer ".$token)
             ->asJson()
             ->acceptJson()
             ->withoutVerifying()
