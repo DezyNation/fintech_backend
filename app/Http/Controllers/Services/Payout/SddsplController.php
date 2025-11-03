@@ -73,6 +73,7 @@ class SddsplController extends Controller
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
+        Log::info("token_txn", [$token]);
         Log::info($response, ["txn1_fail"]);
         if ($response->failed()) {
             $data = [
@@ -100,6 +101,7 @@ class SddsplController extends Controller
             "BeneficiaryMobile" => $phone,
             "status" => 1,
         ];
+        Log::info("token_bene", [$token]);
 
         $response = Http::withToken($token)
             ->withoutVerifying()
