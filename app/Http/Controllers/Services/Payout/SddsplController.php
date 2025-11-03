@@ -45,10 +45,8 @@ class SddsplController extends Controller
         }
     }
 
-    public function initiateTransaction(
-        PayoutRequest $request,
-        string $reference_id,
-    ) {
+    public function initiateTransaction(PayoutRequest $request)
+    {
         $token = $this->login();
         $data = [
             "TRANSFER_TYPE_DESC" => strtoupper($request->mode),
@@ -68,12 +66,12 @@ class SddsplController extends Controller
 
         $response = Http::withToken($token)
             ->withoutVerifying()
+            ->asJson()
             ->post(
                 config("services.sddspl.base_url") .
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
-        Log::info("token_txn", [$token]);
         Log::info($response, ["txn1_fail"]);
         if ($response->failed()) {
             $data = [
@@ -101,9 +99,9 @@ class SddsplController extends Controller
             "BeneficiaryMobile" => $phone,
             "status" => 1,
         ];
-        Log::info("token_bene", [$token]);
 
         $response = Http::withToken($token)
+            ->asJson()
             ->withoutVerifying()
             ->post(
                 config("services.sddspl.base_url") .
@@ -140,6 +138,7 @@ class SddsplController extends Controller
         ];
 
         Http::withoutVerifying()
+            ->asJson()
             ->withToken($token)
             ->post(
                 config("services.sddspl.base_url") .
