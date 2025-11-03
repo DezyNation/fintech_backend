@@ -66,6 +66,7 @@ class SddsplController extends Controller
 
         $response = Http::withToken($token)
             ->withoutVerifying()
+            ->acceptJson()
             ->asJson()
             ->post(
                 config("services.sddspl.base_url") .
@@ -102,6 +103,7 @@ class SddsplController extends Controller
 
         $response = Http::withToken($token)
             ->asJson()
+            ->acceptJson()
             ->withoutVerifying()
             ->post(
                 config("services.sddspl.base_url") .
@@ -139,6 +141,7 @@ class SddsplController extends Controller
 
         Http::withoutVerifying()
             ->asJson()
+            ->acceptJson()
             ->withToken($token)
             ->post(
                 config("services.sddspl.base_url") .
