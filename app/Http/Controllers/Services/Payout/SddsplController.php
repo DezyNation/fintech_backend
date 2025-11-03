@@ -73,7 +73,8 @@ class SddsplController extends Controller
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
-        Log::info($response, ["txn1_fail"]);
+        Log::info("txn_data", $data);
+        Log::info("txn_token", $token);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -111,7 +112,8 @@ class SddsplController extends Controller
                 $data,
             );
 
-        Log::info($response, ["txn2_fail"]);
+        Log::info("bene_data", $data);
+        Log::info("bene_token", $token);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
