@@ -73,8 +73,6 @@ class SddsplController extends Controller
                     "/api/hdfc/cbx-transaction-api",
                 $data,
             );
-        Log::info("txn_data", $data);
-        Log::info("txn_token", ["token" => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -112,8 +110,6 @@ class SddsplController extends Controller
                 $data,
             );
 
-        Log::info("bene_data", $data);
-        Log::info("bene_token", ["token" => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -173,5 +169,19 @@ class SddsplController extends Controller
         }
 
         return ["data" => $data, "response" => $response->body()];
+    }
+
+    public function updateTransaction(string $reference_id)
+    {
+        $response = Http::withToken($this->login())->get(
+            config("services.sddspl.base_url") .
+                "/api/hdfc/fund-transfer-front-status/$reference_id",
+        );
+
+        if ($response->failed()) {
+            abort(400, $response["message"]);
+        } else {
+            return $this->processResponse($response);
+        }
     }
 }
