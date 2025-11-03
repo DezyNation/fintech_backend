@@ -140,7 +140,7 @@ class FlowController extends Controller
                 $payout->save();
                 TransactionController::reverseTransaction($payout->reference_id);
                 $lock->release();
-            } elseif ($transaction_request['data']['status'] == 'success') {
+            } elseif ($transaction_request['data']['transaction_status'] == 'success') {
                 $payout->status = 'success';
                 $payout->utr = $transaction_request['data']['utr'];
                 $payout->save();

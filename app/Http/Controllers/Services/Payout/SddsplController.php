@@ -150,13 +150,14 @@ class SddsplController extends Controller
 
     public function processResponse($response)
     {
-        Log::info($response, ["sddspl"]);
         if ($response["status"] == true) {
             $data = [
                 "status" => "success",
-                "message" => $response["message"] ?? $response['status'],
-                "utr" => $response["data"]["utr_no"] ?? $response['utr_no'],
-                "transaction_status" => strtolower($response["data"]["status"] ?? $response['status']),
+                "message" => $response["message"] ?? $response["status"],
+                "utr" => $response["data"]["utr_no"] ?? $response["utr_no"],
+                "transaction_status" => strtolower(
+                    $response["data"]["status"] ?? $response["status"],
+                ),
                 "reference_id" => $response["data"]["paymentrefno"],
             ];
         } else {
@@ -167,6 +168,18 @@ class SddsplController extends Controller
                 "transaction_status" => "failed",
             ];
         }
+
+        return ["data" => $data, "response" => $response->body()];
+    }
+
+    public function updateResponse($response)
+    {
+        $data = [
+            "status" => "success",
+            "message" => $response["status"] ?? "No message relayed",
+            "utr" => $response["utr_no"],
+            "transaction_status" => strtolower($response["status"]),
+        ];
 
         return ["data" => $data, "response" => $response->body()];
     }
