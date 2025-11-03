@@ -154,15 +154,15 @@ class SddsplController extends Controller
         if ($response["status"] == true) {
             $data = [
                 "status" => "success",
-                "message" => $response["message"],
-                "utr" => $response["data"]["utr_no"],
-                "transaction_status" => strtolower($response["data"]["status"]),
+                "message" => $response["message"] ?? $response['status'],
+                "utr" => $response["data"]["utr_no"] ?? $response['utr_no'],
+                "transaction_status" => strtolower($response["data"]["status"] ?? $response['status']),
                 "reference_id" => $response["data"]["paymentrefno"],
             ];
         } else {
             $data = [
                 "status" => "failed",
-                "message" => $response["message"],
+                "message" => $response["message"] ?? "Failed",
                 "utr" => null,
                 "transaction_status" => "failed",
             ];
