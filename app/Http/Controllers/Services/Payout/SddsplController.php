@@ -194,7 +194,7 @@ class SddsplController extends Controller
         if ($response->failed()) {
             abort(400, $response["message"]);
         } else {
-            return $this->processResponse($response);
+            return $this->updateResponse($response);
         }
     }
 }
