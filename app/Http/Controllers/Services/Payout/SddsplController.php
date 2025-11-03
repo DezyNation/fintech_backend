@@ -127,6 +127,24 @@ class SddsplController extends Controller
         }
     }
 
+    public function remitterLogin()
+    {
+        $token = $this->login();
+        $data = [
+            "mobileNumber" => config("services.sddspl.remitter_id"),
+            "lat" => "26.8913845",
+            "long" => "75.7728197",
+        ];
+
+        $response = Http::withoutVerifying()
+            ->withToken($token)
+            ->post(
+                config("services.sddspl.base_url") .
+                    "/api/financial-services/mobile-verify",
+                $data,
+            );
+    }
+
     public function processResponse($response)
     {
         Log::info($response, ["sddspl"]);
