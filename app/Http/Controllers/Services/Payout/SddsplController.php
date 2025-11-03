@@ -137,7 +137,7 @@ class SddsplController extends Controller
             "long" => "75.7728197",
         ];
 
-        $response = Http::withoutVerifying()
+        Http::withoutVerifying()
             ->withToken($token)
             ->post(
                 config("services.sddspl.base_url") .

@@ -131,7 +131,7 @@ return [
 
     "sddspl" => [
         "remitter_id" => env("SDDSPL_REMITTER_ID"),
-        "base_url" => "https://uatapi.sddspl.com",
+        "base_url" => "https://api.sddspl.com",
         "username" => env("SDDSPL_USERNAME"),
         "password" => env("SDDSPL_PASSWORD"),
     ],
