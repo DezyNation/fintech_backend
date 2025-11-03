@@ -106,10 +106,6 @@ class SddsplController extends Controller
             ->asJson()
             ->acceptJson()
             ->withoutVerifying()
-            ->beforeSending(function ($request, $options) {
-                Log::info("Request Headers", $request->getHeaders());
-                Log::info("Request Body", [(string) $request->getBody()]);
-            })
             ->post(
                 config("services.sddspl.base_url") .
                     "/api/remitter-bank-details/add_bank",
