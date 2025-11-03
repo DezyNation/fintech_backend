@@ -155,6 +155,7 @@ class SddsplController extends Controller
                 "message" => $response["message"],
                 "utr" => $response["data"]["utr_no"],
                 "transaction_status" => strtolower($response["data"]["status"]),
+                "reference_id" => $response["data"]["paymentrefno"],
             ];
         } else {
             $data = [
