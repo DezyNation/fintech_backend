@@ -89,6 +89,7 @@ class SddsplController extends Controller
     public function createBeneficiary($input)
     {
         $token = $this->login();
+        $this->remitterLogin();
         $phone = auth()->user()->phone_number ?? "9971914198";
         $data = [
             "mobile" => config("services.sddspl.remitter_id"),
