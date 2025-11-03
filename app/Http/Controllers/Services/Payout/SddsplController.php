@@ -74,7 +74,7 @@ class SddsplController extends Controller
                 $data,
             );
         Log::info("txn_data", $data);
-        Log::info("txn_token", ['token' => $token]);
+        Log::info("txn_token", ["token" => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -102,10 +102,14 @@ class SddsplController extends Controller
             "status" => 1,
         ];
 
-        $response = Http::withHeader("Authorization", "Bearer ".$token)
+        $response = Http::withHeader("Authorization", "Bearer " . $token)
             ->asJson()
             ->acceptJson()
             ->withoutVerifying()
+            ->beforeSending(function ($request, $options) {
+                Log::info("Request Headers", $request->getHeaders());
+                Log::info("Request Body", [(string) $request->getBody()]);
+            })
             ->post(
                 config("services.sddspl.base_url") .
                     "/api/remitter-bank-details/add_bank",
@@ -113,7 +117,7 @@ class SddsplController extends Controller
             );
 
         Log::info("bene_data", $data);
-        Log::info("bene_token", ['token' => $token]);
+        Log::info("bene_token", ["token" => $token]);
         if ($response->failed()) {
             $data = [
                 "status" => "failed",
@@ -137,7 +141,7 @@ class SddsplController extends Controller
         $token = $this->login();
         $data = [
             "mobileNumber" => config("services.sddspl.remitter_id"),
-            "lat" => "26.8913845",
+            "lat" => "26.9194401",
             "long" => "75.7728197",
         ];
 
