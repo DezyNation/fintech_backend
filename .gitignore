@@ -19,3 +19,4 @@ yarn-error.log
 /.vscode
 # composer.lock
 composer-old.lock
+.DS_Store
