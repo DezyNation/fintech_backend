@@ -27,7 +27,7 @@ class UpdatePendingPayouts extends Command
      */
     public function handle()
     {
-        $payouts = Payout::where("status", "pending")->pluck("id");
+        $payouts = Payout::where("status", "pending")->where('metadata', '!=', null)->pluck("id");
         foreach ($payouts as $id) {
             UpdateTransaction::dispatch($id);
         }

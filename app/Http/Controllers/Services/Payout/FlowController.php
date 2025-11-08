@@ -114,7 +114,6 @@ class FlowController extends Controller
                 $q->where('status', 'initiated')
                     ->orWhere('status', 'pending');
             })
-            ->where('metadata', '!=', null)
             ->findOrFail($id);
 
             $class_name = Str::of($payout->provider . "_" . "controller")->studly();
