@@ -112,9 +112,10 @@ class FlowController extends Controller
         $data = DB::transaction(function () use ($id) {
             $payout = Payout::where(function ($q) {
                 $q->where('status', 'initiated')
-                    ->where('metadata', '!=', null)
                     ->orWhere('status', 'pending');
-            })->findOrFail($id);
+            })
+            ->where('metadata', '!=', null)
+            ->findOrFail($id);
 
             $class_name = Str::of($payout->provider . "_" . "controller")->studly();
             $class = __NAMESPACE__ . "\\" . $class_name;
