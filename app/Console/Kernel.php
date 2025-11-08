@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command("app:update-payouts")->hourly()->withoutOverlapping();
+        $schedule->command("app:update-payouts")->everyFiveMinutes()->withoutOverlapping();
     }
 
     /**
