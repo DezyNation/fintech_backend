@@ -106,7 +106,7 @@ class ReportController extends Controller
 
     public function walletTransferReport(Request $request): JsonResource
     {
-        $data = WalletTransfer::adminFilterByRequest($request)
+        $data = WalletTransfer::adminFilterByRequest($request->toArray())
             ->with(['sender', 'receiver'])
             ->whereBetween('wallet_transfers.created_at', [$request->from ?? Carbon::now()->startOfDay(), $request->to ?? Carbon::now()->endOfDay()])
             ->latest('wallet_transfers.created_at')
@@ -116,7 +116,7 @@ class ReportController extends Controller
 
     public function fundRequestReport(Request $request): JsonResource
     {
-        $data = Fund::adminFilterByRequest($request)->with(['reviewer' => function ($q) {
+        $data = Fund::adminFilterByRequest($request->toArray())->with(['reviewer' => function ($q) {
             $q->select('id', 'name', 'phone_number');
         }, 'user' => function ($q) {
             $q->select('id', 'name', 'phone_number');
