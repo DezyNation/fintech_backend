@@ -129,7 +129,7 @@ class FlowController extends Controller
                 abort(400, $transaction_request['data']['message']);
             }
 
-            if (in_array($transaction_request['data']['transaction_status'], ['failed', 'reversed'])) {
+            if (in_array($transaction_request['data']['transaction_status'], ['failed', 'reversed', 'refunded', 'refund'])) {
 
                 $lock = $this->lockRecords($payout->user_id);
                 if (!$lock->get()) {
