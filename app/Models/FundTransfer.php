@@ -37,7 +37,7 @@ class FundTransfer extends Model
     {
         if (!empty($request['user_id'])) {
             $query->join('users', 'users.id', '=', 'fund_transfers.user_id')
-                ->where('users.phone_number', $request->user_id)
+                ->where('users.phone_number', $request['user_id'])
                 ->select('fund_transfers.*');
         }
     }
