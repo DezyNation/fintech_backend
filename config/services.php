@@ -135,4 +135,10 @@ return [
         "username" => env("SDDSPL_USERNAME"),
         "password" => env("SDDSPL_PASSWORD"),
     ],
+
+    "paylive" => [
+        "base_url" => "https://login.binobhai.com",
+        "secret_key" => env("PAYLIVE_SECRET_KEY"),
+        "salt_key" => env("PAYLIVE_SALT_KEY"),
+    ]
 ];
