@@ -603,6 +603,7 @@ class CallbackController extends Controller
     public function paylive(Request $request)
     {
         $response = DB::transaction(function () use ($request) {
+            Log::info("Paylive callback received", $request->all());
             $transaction = Transaction::where(
                 "reference_id",
                 $request["client_transction_id"],
