@@ -20,7 +20,7 @@ class PayliveController extends Controller
             "Email" => $request->user()->email,
             "mode" => strtolower($request->mode),
             "Mobile" => $request->user()->phone_number,
-            "ifsc" => $request->ifsc_code,
+            "Ifsc" => $request->ifsc_code,
             "Bank" => $request->bank_name ?? "HDFC Bank",
             "accountNumber" => $request->account_number,
             "Amount" => $request->amount,
