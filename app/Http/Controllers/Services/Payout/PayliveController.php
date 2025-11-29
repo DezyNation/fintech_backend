@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PayoutRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PayliveController extends Controller
 {
@@ -41,6 +42,7 @@ class PayliveController extends Controller
 
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
+            Log::info("failed_paylive", [$response->body()]);
             abort(
                 $response->status(),
                 $response["message"] ?? "Gateway Failure!",
