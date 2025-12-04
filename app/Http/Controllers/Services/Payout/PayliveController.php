@@ -123,7 +123,6 @@ class PayliveController extends Controller
 
     public function processResponse($response)
     {
-        Log:info()
         switch (strtoupper($response->json("status"))) {
             case "SUCCESS":
                 // Handle successful response
