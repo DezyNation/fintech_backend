@@ -40,9 +40,9 @@ class PayliveController extends Controller
                 $data,
             );
 
+        Log::info("paylive_response", [$response->body()]);
         if ($response->failed()) {
             $this->releaseLock($request->user()->id);
-            Log::info("failed_paylive", [$response->body()]);
             abort(
                 $response->status(),
                 $response["message"] ?? "Gateway Failure!",
@@ -123,6 +123,7 @@ class PayliveController extends Controller
 
     public function processResponse($response)
     {
+        Log:info()
         switch (strtoupper($response->json("status"))) {
             case "SUCCESS":
                 // Handle successful response
