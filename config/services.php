@@ -137,8 +137,14 @@ return [
     ],
 
     "paylive" => [
-        "base_url" => "https://login.binobhai.com",
+        "base_url" => "https://app.paylive.info",
         "secret_key" => env("PAYLIVE_SECRET_KEY"),
         "salt_key" => env("PAYLIVE_SALT_KEY"),
-    ]
+    ],
+
+    "rafifintech" => [
+        "base_url" => "https://rafifintech.in/v1",
+        "client_id" => env("RAFIFINTECH_CLIENT_ID"),
+        "client_secret" => env("RAFIFINTECH_CLIENT_SECRET"),
+    ],
 ];

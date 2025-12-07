@@ -662,4 +662,39 @@ class CallbackController extends Controller
 
         return $response;
     }
+
+    public function rafifintech(Request $request)
+    {
+        Log::info(['callback-rafi' => $request->all()]);
+
+        $data = DB::transaction(function () use ($request) {
+            $transaction = Transaction::where('reference_id', $request['data']['clientRefId'])->firstOrFail();
+            $lock = $this->lockRecords($transaction->user_id);
+
+            if (!$lock->get()) {
+                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+            }
+
+            if ($request['event'] == 'payout.transfer.failed') {
+                if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
+                    return response("Success", 200);
+                }
+                TransactionController::reverseTransaction($transaction->reference_id);
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'failed',
+                    'utr' => $request['data']['utr'] ?? null
+                ]);
+            } elseif ($request['event'] == 'payout.transfer.success') {
+                Payout::where('reference_id', $transaction->reference_id)->update([
+                    'status' => 'success',
+                    'utr' => $request['data']['utr'] ?? null
+                ]);
+            }
+
+            $lock->release();
+            return response("Success", 200);
+        }, 2);
+
+        return $data;
+    }
 }
