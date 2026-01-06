@@ -149,8 +149,8 @@ return [
     ],
 
     "brachx" => [
-        "base_url" => "http://10x.api.branchx.in",
-        "api_token" => env("BRANCHX_API TOKEN"),
+        "base_url" => "https://10x.api.branchx.in",
+        "api_token" => env("BRANCHX_API_TOKEN"),
         "secret_key" => env("BRANCHX_SECRET_KEY"),
     ]
 ];
