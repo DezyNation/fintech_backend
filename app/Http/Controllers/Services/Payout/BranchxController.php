@@ -40,6 +40,7 @@ class BranchxController extends Controller
 
         Log::info("branchx_response", [$response->body()]);
         if ($response->failed()) {
+            Log::info("branchx_request", $data);
             $this->releaseLock($request->user()->id);
             abort(
                 $response->status(),
@@ -57,7 +58,8 @@ class BranchxController extends Controller
                 "apiToken" => config("services.branchx.api_token"),
             ])
             ->post(
-                config("services.branchx.base_url") . "/service/status_check/v3",
+                config("services.branchx.base_url") .
+                    "/service/status_check/v3",
                 ["requestId" => $referenceId],
             );
 
