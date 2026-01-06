@@ -147,4 +147,10 @@ return [
         "client_id" => env("RAFIFINTECH_CLIENT_ID"),
         "client_secret" => env("RAFIFINTECH_CLIENT_SECRET"),
     ],
+
+    "brachx" => [
+        "base_url" => "http://10x.api.branchx.in",
+        "api_token" => env("BRANCHX_API TOKEN"),
+        "secret_key" => env("BRANCHX_SECRET_KEY"),
+    ]
 ];

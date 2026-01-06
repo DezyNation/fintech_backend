@@ -1,0 +1,165 @@
+<?php
+
+namespace App\Http\Controllers\Services\Payout;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PayoutRequest;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+class BranchxController extends Controller
+{
+    public function initiateTransaction(
+        PayoutRequest $request,
+        string $reference_id,
+    ) {
+        $name = preg_split("/\s+/", trim($request->beneficiary_name));
+        $data = [
+            "amount" => $request->amount,
+            "mobileNumber" => $request->user()->phone_number,
+            "requestId" => $reference_id,
+            "accountNumber" => $request->account_number,
+            "ifscCode" => $request->ifsc_code,
+            "beneficiaryName" => $request->beneficiary_name,
+            "bankName" => $request->bank_name ?? "HDFC Bank",
+            "transferMode" => strtoupper($request->mode),
+            "latitude" => "11.0297079",
+            "longitude" => "77.0338217",
+            "emailId" => $request->user()->email,
+            "purpose" => "Contractor Payment",
+        ];
+
+        $response = Http::asJson()
+            ->withHeaders([
+                "apiToken" => config("services.branchx.api_token"),
+            ])
+            ->post(
+                config("services.branchx.base_url") . "/service/payout/v3",
+                $data,
+            );
+
+        Log::info("branchx_response", [$response->body()]);
+        if ($response->failed()) {
+            $this->releaseLock($request->user()->id);
+            abort(
+                $response->status(),
+                $response["message"] ?? "Gateway Failure!",
+            );
+        }
+
+        return $this->processResponse($response);
+    }
+
+    public function updateTransaction(string $referenceId)
+    {
+        $response = Http::asJson()
+            ->withHeaders([
+                "apiToken" => config("services.branchx.api_token"),
+            ])
+            ->post(
+                config("services.branchx.base_url") . "/service/status_check/v3",
+                ["requestId" => $referenceId],
+            );
+
+        if ($response->failed()) {
+            abort(
+                $response->status(),
+                $response["message"] ?? "Gateway Failure!",
+            );
+        }
+
+        return $this->processUpdateResponse($response);
+    }
+
+    public function processUpdateResponse($response)
+    {
+        switch (strtoupper($response->json("status"))) {
+            case "SUCCESS":
+                // Handle successful response
+                $data = [
+                    "status" => "success",
+                    "message" => $response["message"],
+                    "utr" => $response["opRefId"] ?? null,
+                    "transaction_status" => strtolower($response["status"]),
+                ];
+                break;
+            case "FAILURE":
+                // Handle failed response
+                $data = [
+                    "status" => "failed",
+                    "message" => $response["message"],
+                    "utr" => $response["opRefId"] ?? null,
+                    "transaction_status" => strtolower(
+                        $response["status"] ?? "failed",
+                    ),
+                ];
+                break;
+            case "PENDING":
+                // Handle pending response
+                $data = [
+                    "status" => "success",
+                    "message" => $response["message"],
+                    "utr" => $response["opRefId"] ?? null,
+                    "transaction_status" => strtolower($response["status"]),
+                ];
+                break;
+            default:
+                $data = [
+                    "status" => "failed",
+                    "message" => $response["message"],
+                    "utr" => $response["data"]["utr"] ?? null,
+                    "transaction_status" => strtolower(
+                        $response["status"] ?? "failed",
+                    ),
+                ];
+                break;
+        }
+        return ["data" => $data, "response" => $response->body()];
+    }
+
+    public function processResponse($response)
+    {
+        switch (strtoupper($response->json("status"))) {
+            case "SUCCESS":
+                // Handle successful response
+                $data = [
+                    "status" => "success",
+                    "message" => $response["message"],
+                    "utr" => $response["data"]["utr"] ?? null,
+                    "transaction_status" => strtolower($response["status"]),
+                ];
+                break;
+            case "FAILURE":
+                // Handle failed response
+                $data = [
+                    "status" => "failed",
+                    "message" => $response["message"],
+                    "utr" => $response["data"]["utr"] ?? null,
+                    "transaction_status" => strtolower(
+                        $response["status"] ?? "failed",
+                    ),
+                ];
+                break;
+            case "PENDING":
+                // Handle pending response
+                $data = [
+                    "status" => "success",
+                    "message" => $response["message"],
+                    "utr" => $response["data"]["utr"] ?? null,
+                    "transaction_status" => strtolower($response["status"]),
+                ];
+                break;
+            default:
+                $data = [
+                    "status" => "failed",
+                    "message" => $response["message"],
+                    "utr" => $response["data"]["utr"] ?? null,
+                    "transaction_status" => strtolower(
+                        $response["status"] ?? "failed",
+                    ),
+                ];
+                break;
+        }
+        return ["data" => $data, "response" => $response->body()];
+    }
+}
