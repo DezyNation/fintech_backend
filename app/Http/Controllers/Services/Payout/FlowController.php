@@ -143,7 +143,6 @@ class FlowController extends Controller
                 $lock->release();
             } elseif ($transaction_request['data']['transaction_status'] == 'success') {
                 $payout->status = 'success';
-                $payout->message = $transaction_request['data']['message'];
                 $payout->utr = $transaction_request['data']['utr'];
                 $payout->save();
             }
