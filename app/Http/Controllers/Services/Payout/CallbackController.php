@@ -665,34 +665,111 @@ class CallbackController extends Controller
 
     public function rafifintech(Request $request)
     {
-        Log::info(['callback-rafi' => $request->all()]);
+        Log::info(["callback-rafi" => $request->all()]);
 
         $data = DB::transaction(function () use ($request) {
-            $transaction = Transaction::where('reference_id', $request['data']['clientRefId'])->firstOrFail();
+            $transaction = Transaction::where(
+                "reference_id",
+                $request["data"]["clientRefId"],
+            )->firstOrFail();
             $lock = $this->lockRecords($transaction->user_id);
 
             if (!$lock->get()) {
-                throw new HttpResponseException(response()->json(['data' => ['message' => "Failed to acquire lock"]], 423));
+                throw new HttpResponseException(
+                    response()->json(
+                        ["data" => ["message" => "Failed to acquire lock"]],
+                        423,
+                    ),
+                );
             }
 
-            if ($request['event'] == 'payout.transfer.failed') {
-                if ($transaction->status == 'failed' || $transaction->status == 'reversed') {
+            if ($request["event"] == "payout.transfer.failed") {
+                if (
+                    $transaction->status == "failed" ||
+                    $transaction->status == "reversed"
+                ) {
                     return response("Success", 200);
                 }
-                TransactionController::reverseTransaction($transaction->reference_id);
-                Payout::where('reference_id', $transaction->reference_id)->update([
-                    'status' => 'failed',
-                    'utr' => $request['data']['utr'] ?? null
+                TransactionController::reverseTransaction(
+                    $transaction->reference_id,
+                );
+                Payout::where(
+                    "reference_id",
+                    $transaction->reference_id,
+                )->update([
+                    "status" => "failed",
+                    "utr" => $request["data"]["utr"] ?? null,
                 ]);
-            } elseif ($request['event'] == 'payout.transfer.success') {
-                Payout::where('reference_id', $transaction->reference_id)->update([
-                    'status' => 'success',
-                    'utr' => $request['data']['utr'] ?? null
+            } elseif ($request["event"] == "payout.transfer.success") {
+                Payout::where(
+                    "reference_id",
+                    $transaction->reference_id,
+                )->update([
+                    "status" => "success",
+                    "utr" => $request["data"]["utr"] ?? null,
                 ]);
             }
 
             $lock->release();
             return response("Success", 200);
+        }, 2);
+
+        return $data;
+    }
+
+    public function branchx(Request $request)
+    {
+        Log::info(["callback-branchx" => $request->all()]);
+
+        $data = DB::transaction(function () use ($request) {
+            $transaction = Transaction::where(
+                "reference_id",
+                $request["requestId"],
+            )->firstOrFail();
+            $lock = $this->lockRecords($transaction->user_id);
+
+            if (!$lock->get()) {
+                throw new HttpResponseException(
+                    response()->json(
+                        ["data" => ["message" => "Failed to acquire lock"]],
+                        423,
+                    ),
+                );
+            }
+
+            if (strtolower($request["status"]) == "success") {
+                Payout::where(
+                    "reference_id",
+                    $transaction->reference_id,
+                )->update([
+                    "status" => "success",
+                    "utr" => $request["utr"] ?? null,
+                ]);
+            } elseif (
+                in_array(strtolower($request["status"]), [
+                    "failed",
+                    "rejected",
+                    "declined",
+                    "error",
+                ])
+            ) {
+                if (
+                    $transaction->status == "failed" ||
+                    $transaction->status == "success"
+                ) {
+                    return response("Success", 200);
+                }
+                TransactionController::reverseTransaction(
+                    $transaction->reference_id,
+                );
+                Payout::where(
+                    "reference_id",
+                    $transaction->reference_id,
+                )->update([
+                    "status" => "failed",
+                    "utr" => $request["utr"] ?? null,
+                ]);
+            }
         }, 2);
 
         return $data;

@@ -13,7 +13,6 @@ class BranchxController extends Controller
         PayoutRequest $request,
         string $reference_id,
     ) {
-        $name = preg_split("/\s+/", trim($request->beneficiary_name));
         $data = [
             "amount" => $request->amount,
             "mobileNumber" => $request->user()->phone_number,
@@ -34,7 +33,7 @@ class BranchxController extends Controller
                 "apiToken" => config("services.branchx.api_token"),
             ])
             ->post(
-                config("services.branchx.base_url") . "/service/payout/v3",
+                config("services.branchx.base_url") . "/service/payout/v2",
                 $data,
             );
 
@@ -59,7 +58,7 @@ class BranchxController extends Controller
             ])
             ->post(
                 config("services.branchx.base_url") .
-                    "/service/status_check/v3",
+                    "/service/status_check/v2",
                 ["requestId" => $referenceId],
             );
 
