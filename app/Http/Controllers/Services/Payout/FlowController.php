@@ -112,7 +112,7 @@ class FlowController extends Controller
         $data = DB::transaction(function () use ($id) {
             $payout = Payout::where(function ($q) {
                 $q->where('status', 'initiated')
-                    ->orWhere('status', 'pending');
+                    ->orWhere('status', 'pending')
                     ->orWhere('utr', null);
             })
             ->findOrFail($id);
