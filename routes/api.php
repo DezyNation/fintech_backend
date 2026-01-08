@@ -160,6 +160,7 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::post('aeronpay', 'aeronpay');
     Route::post('universepay', 'universepay');
     Route::get('paylive', 'paylive');
+    Route::get('branchx', 'branchx');
 });
 
 Route::get('fail-transaction/{transction_id}', function(string $transction_id){
