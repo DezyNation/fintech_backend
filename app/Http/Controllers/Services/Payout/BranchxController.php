@@ -20,6 +20,7 @@ class BranchxController extends Controller
             "accountNumber" => $request->account_number,
             "ifscCode" => $request->ifsc_code,
             "beneficiaryName" => $request->beneficiary_name,
+            "remitterName" => $request->user()->name,
             "bankName" => $request->bank_name ?? "HDFC Bank",
             "transferMode" => strtoupper($request->mode),
             "latitude" => "11.0297079",
