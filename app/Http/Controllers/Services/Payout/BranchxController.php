@@ -82,7 +82,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "success",
                     "message" => $response["message"],
-                    "utr" => $response["opRefId"] ?? null,
+                    "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
                 break;
@@ -91,7 +91,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "failed",
                     "message" => $response["message"],
-                    "utr" => $response["opRefId"] ?? null,
+                    "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
                     ),
@@ -102,7 +102,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "success",
                     "message" => $response["message"],
-                    "utr" => $response["opRefId"] ?? null,
+                    "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
                 break;
@@ -110,7 +110,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "failed",
                     "message" => $response["message"],
-                    "utr" => $response["data"]["utr"] ?? null,
+                    "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
                     ),
@@ -128,7 +128,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "success",
                     "message" => $response["message"],
-                    "utr" => $response["data"]["opRefId"] ?? null,
+                    "utr" => $response["data"]["utr"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
                 break;
@@ -137,7 +137,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "failed",
                     "message" => $response["message"],
-                    "utr" => $response["data"]["opRefId"] ?? null,
+                    "utr" => $response["data"]["utr"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
                     ),
@@ -148,7 +148,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "success",
                     "message" => $response["message"],
-                    "utr" => $response["data"]["opRefId"] ?? null,
+                    "utr" => $response["data"]["utr"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
                 break;
@@ -156,7 +156,7 @@ class BranchxController extends Controller
                 $data = [
                     "status" => "failed",
                     "message" => $response["message"],
-                    "utr" => $response["data"]["opRefId"] ?? null,
+                    "utr" => $response["data"]["utr"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
                     ),
