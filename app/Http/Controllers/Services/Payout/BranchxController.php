@@ -38,7 +38,7 @@ class BranchxController extends Controller
                 $data,
             );
 
-        Log::info("branchx_response", [$response->body()]);
+        Log::info("branchx_resp", [$response->body()]);
         if ($response->failed()) {
             Log::info("branchx_request", $data);
             $this->releaseLock($request->user()->id);
@@ -70,6 +70,7 @@ class BranchxController extends Controller
             );
         }
 
+        Log::info("branchx_upd_resp", [$response->body()]);
         return $this->processUpdateResponse($response);
     }
 
