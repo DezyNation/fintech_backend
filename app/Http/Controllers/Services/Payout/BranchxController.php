@@ -76,12 +76,12 @@ class BranchxController extends Controller
 
     public function processUpdateResponse($response)
     {
-        switch (strtoupper($response->json("status"))) {
+        switch (strtoupper($response["data"]["status"])) {
             case "SUCCESS":
                 // Handle successful response
                 $data = [
                     "status" => "success",
-                    "message" => $response["message"],
+                    "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
@@ -90,7 +90,7 @@ class BranchxController extends Controller
                 // Handle failed response
                 $data = [
                     "status" => "failed",
-                    "message" => $response["message"],
+                    "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
@@ -101,7 +101,7 @@ class BranchxController extends Controller
                 // Handle pending response
                 $data = [
                     "status" => "success",
-                    "message" => $response["message"],
+                    "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower($response["status"]),
                 ];
@@ -109,7 +109,7 @@ class BranchxController extends Controller
             default:
                 $data = [
                     "status" => "failed",
-                    "message" => $response["message"],
+                    "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
                         $response["status"] ?? "failed",
