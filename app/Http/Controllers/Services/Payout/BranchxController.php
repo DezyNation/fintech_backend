@@ -83,7 +83,9 @@ class BranchxController extends Controller
                     "status" => "success",
                     "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
-                    "transaction_status" => strtolower($response["status"]),
+                    "transaction_status" => strtolower(
+                        $response["data"]["status"],
+                    ),
                 ];
                 break;
             case "FAILURE":
@@ -93,7 +95,7 @@ class BranchxController extends Controller
                     "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
-                        $response["status"] ?? "failed",
+                        $response["data"]["status"] ?? "failed",
                     ),
                 ];
                 break;
@@ -103,7 +105,9 @@ class BranchxController extends Controller
                     "status" => "success",
                     "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
-                    "transaction_status" => strtolower($response["status"]),
+                    "transaction_status" => strtolower(
+                        $response["data"]["status"],
+                    ),
                 ];
                 break;
             default:
@@ -112,7 +116,7 @@ class BranchxController extends Controller
                     "message" => $response["data"]["message"],
                     "utr" => $response["data"]["opRefId"] ?? null,
                     "transaction_status" => strtolower(
-                        $response["status"] ?? "failed",
+                        $response["data"]["status"] ?? "failed",
                     ),
                 ];
                 break;
