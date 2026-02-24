@@ -152,5 +152,11 @@ return [
         "base_url" => "https://10x.api.branchx.in",
         "api_token" => env("BRANCHX_API_TOKEN"),
         "secret_key" => env("BRANCHX_SECRET_KEY"),
-    ]
+    ],
+
+    "m2m" => [
+        "base_url" => env("M2M_BASE_URL", "https://dashboard.m2money.in"),
+        "username" => env("M2M_USERNAME"),
+        "password" => env("M2M_PASSWORD"),
+    ],
 ];
