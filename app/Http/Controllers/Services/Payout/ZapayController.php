@@ -111,7 +111,7 @@ class ZapayController extends Controller
         $data = [
             "transaction_type" => "ReqStatus",
             "transaction_mode" => "IMPS",
-            "transaction_id" => "STATUS_" . $reference_id,
+            "transaction_id" => $reference_id,
             "org_transaction_id" => $reference_id,
         ];
 
