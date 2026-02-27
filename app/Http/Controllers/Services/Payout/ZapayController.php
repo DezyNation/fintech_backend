@@ -177,7 +177,7 @@ class ZapayController extends Controller
             default:
                 // Handles initial payout response where transactioninfo may not yet be present
                 $data = [
-                    "status" => "success",
+                    "status" => "error",
                     "message" =>
                         $response["message"] ??
                         "Transaction has been initiated.",
