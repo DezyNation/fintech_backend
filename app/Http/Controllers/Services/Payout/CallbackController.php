@@ -832,9 +832,9 @@ class CallbackController extends Controller
         return $data;
     }
 
-    public function zapay(Request $request)
+    public function zaypay(Request $request)
     {
-        Log::info(["callback-zapay24" => $request->all()]);
+        Log::info(["callback-zaypay" => $request->all()]);
 
         $data = DB::transaction(function () use ($request) {
             $transaction = Transaction::where(
