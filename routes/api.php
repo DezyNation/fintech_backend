@@ -167,6 +167,6 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
 });
 
 Route::get('fail-transaction/{transction_id}', function(string $transction_id){
-    TransactionController::reverseTransaction($transction_id);
+    // TransactionController::reverseTransaction($transction_id);
     return Payout::where('reference_id', $transction_id)->update(['status' => 'failed']);
 });
