@@ -121,16 +121,13 @@ class ZapayController extends Controller
             $data,
         );
 
-        Log::info("zapay24_status_resp", [$response->body()]);
-
+        $decoded = json_decode(json_decode($response->body(), true), true);
+        Log::info("zapay24_initiate_decoded", [$decoded]);
         if ($response->failed()) {
-            abort(
-                $response->status(),
-                $response["message"] ?? "Gateway Failure!",
-            );
+            abort(400, $decoded["message"]);
         }
 
-        return $this->processResponse($response, $reference_id);
+        return $this->processResponse($decoded, $reference_id);
     }
 
     public function processResponse($response, $reference_id): array
