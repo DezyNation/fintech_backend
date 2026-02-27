@@ -161,7 +161,7 @@ class ZapayController extends Controller
             case "error":
             case "reversed":
                 $data = [
-                    "status" => "error",
+                    "status" => "success",
                     "message" =>
                         $txnInfo["message"] ??
                         ($response["message"] ?? "Transaction failed."),
