@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\OtpController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Services\Bbps\FlowController as BbpsFlowController;
@@ -166,5 +167,6 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
 });
 
 Route::get('fail-transaction/{transction_id}', function(string $transction_id){
+    TransactionController::reverseTransaction($transction_id);
     return Payout::where('reference_id', $transction_id)->update(['status' => 'failed']);
 });
