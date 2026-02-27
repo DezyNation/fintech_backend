@@ -123,7 +123,7 @@ class ZapayController extends Controller
 
         $decoded = json_decode(json_decode($response->body(), true), true);
         Log::info("zapay24_initiate_decoded", [$decoded]);
-        if ($response->failed()) {
+        if ($decoded['response_code'] != "00") {
             abort(400, $decoded["message"]);
         }
 
