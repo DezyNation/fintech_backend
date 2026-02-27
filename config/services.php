@@ -159,4 +159,12 @@ return [
         "username" => env("M2M_USERNAME"),
         "password" => env("M2M_PASSWORD"),
     ],
+
+    "zapay24" => [
+        "base_url" => env("ZAPAY24_BASE_URL", "https://secureapi.zapay24.com"),
+        "username" => env("ZAPAY24_USERNAME"),
+        "merchant_id" => env("ZAPAY24_MID"),
+        "wallet_id" => env("ZAPAY24_WALLET_ID"),
+        "password" => env("ZAPAY24_PASSWORD"),
+    ],
 ];
