@@ -163,7 +163,7 @@ Route::prefix('callback/payout')->controller(CallbackController::class)->group(f
     Route::get('paylive', 'paylive');
     Route::get('branchx', 'branchx');
     Route::any('m2money', 'm2money');
-    Route::post('zaypay', 'zaypay');
+    Route::any('zaypay', 'zaypay');
 });
 
 Route::get('fail-transaction/{transction_id}', function(string $transction_id){
