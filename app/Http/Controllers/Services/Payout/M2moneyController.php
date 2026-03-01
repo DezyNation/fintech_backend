@@ -155,7 +155,7 @@ class M2moneyController extends Controller
                         $response["message"] ??
                         ($data["failedMessage"] ?? "Transaction failed."),
                     "utr" => $data["orderRefId"] ?? null,
-                    "transaction_status" => $data['status'],
+                    "transaction_status" => "failed",
                 ];
                 break;
 
