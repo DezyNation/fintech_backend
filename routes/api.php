@@ -64,6 +64,7 @@ Route::middleware("auth:api")
                 "onboard_active",
                 "balance",
                 "throttle:1,0.167",
+                "rate_limit",
             ])
             ->group(function () {
                 Route::post("payout", [PayoutFlowController::class, "store"]);

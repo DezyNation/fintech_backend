@@ -20,7 +20,7 @@ class M2moneyController extends Controller
             "firstName" => $firstName,
             "lastName" => $lastName,
             "email" => $request->user()->email,
-            "mobile" => $request->user()->phone_number,
+            "mobile" => $request->phone_number,
             "type" => "customer",
             "bankName" => $request->bank_name ?? "",
             "accountType" => "bank_account",

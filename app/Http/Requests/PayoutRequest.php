@@ -27,6 +27,7 @@ class PayoutRequest extends FormRequest
             'account_number' => ['required', 'digits_between:9,17', 'confirmed'],
             'ifsc_code' => ['required', 'string', 'regex:/^[A-Za-z]{4}\d{7}$/'],
             'beneficiary_name' => ['required', 'string'],
+            'phone_number' => ['required', 'numeric', 'digits_between:10,12'],
             'mode' => ['required', 'in:imps,neft,rtgs,5,4,13'],
             'remarks' => ['nullable'],
             'amount' => ['required', 'numeric', 'min:1']

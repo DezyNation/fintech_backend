@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'eko_onboard' => \App\Http\Middleware\EkoOnboard::class,
         'pin' => \App\Http\Middleware\PinCheck::class,
         'freeze' => \App\Http\Middleware\FreezeAccount::class,
+        'rate_limit' => \App\Http\Middleware\LimitTransaction::class
     ];
 }
