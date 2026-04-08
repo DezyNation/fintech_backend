@@ -95,9 +95,12 @@ class ZapayController extends Controller
             config("services.zapay24.base_url") . "/payout/Payout/1.0/ReqPay",
             $data,
         );
-        $decoded = json_decode(json_decode($response->body(), true), true);
+        $decoded = json_decode($response->body(), true);
+        if (is_string($decoded)) {
+            $decoded = json_decode($decoded, true);
+        }
         Log::info("zapay24_initiate_decoded", [$decoded]);
-        if ($response->failed() || !array_key_exists('response_code', $decoded)) {
+        if ($response->failed() || !is_array($decoded)) {
             $this->releaseLock($request->user()->id);
             abort(400, $decoded["message"] ?? "An error occured");
         }
