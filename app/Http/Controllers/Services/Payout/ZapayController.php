@@ -98,9 +98,9 @@ class ZapayController extends Controller
         Log::info("zapay24_initiate_encoded", [$response->json()]);
         $decoded = json_decode(json_decode($response->body(), true), true);
         Log::info("zapay24_initiate_decoded", [$decoded]);
-        if ($response->failed()) {
+        if ($response->failed() || !array_key_exists('response_code', $decoded)) {
             $this->releaseLock($request->user()->id);
-            abort(400, $decoded["message"]);
+            abort(400, $decoded["message"] ?? "An error occured");
         }
 
         return $this->processResponse($decoded, $reference_id);
