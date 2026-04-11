@@ -1,16 +1,20 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 
-Route::get('/', function () {
-    return [config('app.name') => 'India'];
+Route::get("/", function () {
+    return [config("app.name") => "India"];
 });
-Route::get('0eDSWjx/switch/{provider}', function ($provider) {
-    // Implement logic to switch between providers
-    DB::table('services')->where(['name' => 'payout', 'active' => 1])->update(['active' => 0]);
-    DB::table('services')->where(['name' => 'payout', 'provider' => $provider])->update(['active' => 1]);
-    return [config('app.name') => 'India'];
+Route::get("cache/{operation}", function ($operation) {
+    if ($operation == "clear") {
+        Artisan::call("optimize:clear");
+        return ["status" => "optimization cleared"];
+    } elseif ($operation == "optimize") {
+        Artisan::call('optimize');
+        return ["status" => "system optimized"];
+    }
+    return ["invalid arguments"];
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__ . "/auth.php";

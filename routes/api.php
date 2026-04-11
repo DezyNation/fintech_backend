@@ -100,7 +100,13 @@ Route::middleware("auth:api")
         Route::apiResource(
             "fund-requests",
             FundRequestController::class,
-        )->names(["users.fund_requests.index"]);
+        )->names([
+            'index' => 'users.fund-requests.index',
+            'store' => 'users.fund-requests.store',
+            'show' => 'users.fund-requests.show',
+            'update' => 'users.fund-requests.update',
+            'destroy' => 'users.fund-requests.destroy',
+        ]);
         Route::apiResource("address", AddressController::class);
         Route::get("wallet", [UserController::class, "wallet"]);
         Route::get("permissions", [UserController::class, "permissions"]);
@@ -108,7 +114,13 @@ Route::middleware("auth:api")
         Route::post("document", [UserController::class, "uploadDocument"]);
 
         Route::prefix("report")->group(function () {
-            Route::apiResource("ledger", UserReportController::class);
+            Route::apiResource("ledger", UserReportController::class)->names([
+                'index' => 'users.report.ledger.index',
+                'store' => 'users.report.ledger.store',
+                'show' => 'users.report.ledger.show',
+                'update' => 'users.report.ledger.update',
+                'destroy' => 'users.report.ledger.destroy',
+            ]);
             Route::get("overview", [UserReportController::class, "overview"]);
             Route::get("payout", [PayoutFlowController::class, "index"]);
             Route::get("wallet-transfer", [
@@ -131,7 +143,13 @@ Route::middleware("auth:api")
 Route::prefix("admin")
     ->middleware(["auth:api", "role:admin"])
     ->group(function () {
-        Route::apiResource("fund-requests", AdminFundRequestController::class);
+        Route::apiResource("fund-requests", AdminFundRequestController::class)->names([
+            'index' => 'admin.fund-requests.index',
+            'store' => 'admin.fund-requests.store',
+            'show' => 'admin.fund-requests.show',
+            'update' => 'admin.fund-requests.update',
+            'destroy' => 'admin.fund-requests.destroy',
+        ]);
         Route::post("funds/assign-request", [
             AdminFundRequestController::class,
             "assignRequest",
@@ -169,7 +187,13 @@ Route::prefix("admin")
         });
 
         Route::group(["prefix" => "report"], function () {
-            Route::apiResource("ledger", ReportController::class);
+            Route::apiResource("ledger", ReportController::class)->names([
+                'index' => 'admin.report.ledger.index',
+                'store' => 'admin.report.ledger.store',
+                'show' => 'admin.report.ledger.show',
+                'update' => 'admin.report.ledger.update',
+                'destroy' => 'admin.report.ledger.destroy',
+            ]);
             Route::get("overview", [ReportController::class, "overview"]);
             Route::get("daily-sales", [ReportController::class, "dailySales"]);
             Route::get("payout", [ReportController::class, "payoutReports"]);

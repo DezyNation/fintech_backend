@@ -38,4 +38,4 @@ Route::post('/api/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 Route::get('/api/auth-user', [AuthenticatedSessionController::class, 'me'])
                 ->middleware('auth:api')
-                ->name('logout');
+                ->name('auth-user');
