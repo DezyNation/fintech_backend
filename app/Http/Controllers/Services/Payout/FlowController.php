@@ -54,6 +54,14 @@ class FlowController extends Controller
         }
 
         $reference_id = uniqid('PAY');
+        if ($service->provider == 'zapay') {
+            $merchant_id = config("services.zapay24.merchant_id");
+            $reference_id = preg_replace(
+                "/^PAY/",
+                "$merchant_id" . "_",
+                $reference_id,
+            );
+        }
 
         TransactionController::store($request->user(), $reference_id, 'payout', "Payout initiated for {$request->account_number}", 0, $request->amount);
         $payout = Payout::create([
