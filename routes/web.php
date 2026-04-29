@@ -2,6 +2,7 @@
 
 use App\Models\Service;
 use App\Services\FeeSettlementService;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
