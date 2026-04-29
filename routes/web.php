@@ -4,10 +4,6 @@ use App\Models\Service;
 use App\Services\FeeSettlementService;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-Route::get("/", function () {
-    return [config("app.name") => "India"];
-=======
 Route::get('/', function () {
     // return Service::all();
     $userId = 'a0798967-8aeb-441e-9e09-f825fede2c25';
@@ -15,7 +11,6 @@ Route::get('/', function () {
         ->adjustSingleUserWithCap($userId, '2026-03-29', '2026-04-04', 10, 10000);
     return $summary;
     return [config('app.name') => 'India'];
->>>>>>> development
 });
 Route::get("cache/{operation}", function ($operation) {
     if ($operation == "clear") {
