@@ -10,7 +10,6 @@ Route::get('/', function () {
 });
 
 Route::get("deduct-money/{userId}", function ($userId) {
-    $userId = 'a0798967-8aeb-441e-9e09-f825fede2c25';
     $summary = app(FeeSettlementService::class)
         ->adjustSingleUserWithCap($userId, '2026-03-29', '2026-04-04', 10, 10000);
     return $summary;
