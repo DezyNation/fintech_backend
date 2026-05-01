@@ -102,6 +102,7 @@ class ZapayController extends Controller
         }
         Log::info("zapay24_initiate_decoded", [$decoded]);
         if ($response->failed() || !is_array($decoded)) {
+            Log::info("zapay24_initiate_error", ['is_array' => is_array($decoded)]);
             $this->releaseLock($request->user()->id);
             abort(400, $decoded["message"] ?? "An error occured");
         }
